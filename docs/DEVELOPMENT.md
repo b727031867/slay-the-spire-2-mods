@@ -1,6 +1,6 @@
 # 构建、部署与最小加载检查
 
-当前最小工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`，版本0.0.1。它验证固定基础库、DLL入口和PCK资源读取，不包含卡牌、连招或遗物。两台PC均可使用以下步骤，首次环境配置参见 [COLLABORATION](COLLABORATION.md)。
+当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；TASK-002增量A版本0.0.3已实现三张牌、风岩与岩雷两条连招，剩余内容见STATUS。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。历史技术预览结果不代表当前全部玩法均已验收。
 
 ## 前提
 
