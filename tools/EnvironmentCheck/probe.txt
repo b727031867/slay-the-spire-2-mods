@@ -1,0 +1,1 @@
+STS2 development environment resource export probe. No game content is included.

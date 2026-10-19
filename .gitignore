@@ -1,0 +1,20 @@
+# Machine-specific settings and proprietary game references
+local.settings.json
+local.props
+*.user
+.local/
+artifacts/
+**/bin/
+**/obj/
+**/.godot/
+.vs/
+.vscode/settings.json
+*.log
+# Game binaries, local packages and release output must not enter the source repo.
+*.dll
+*.exe
+*.pdb
+*.pck
+*.nupkg
+*.zip
+references/
