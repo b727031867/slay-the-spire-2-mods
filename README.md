@@ -2,7 +2,7 @@
 
 面向《杀戮尖塔 2》（Slay the Spire 2）的 Mod 开发项目，通过新增卡牌、遗物与组合机制，拓展现有角色的构筑和出牌选择。
 
-项目目前处于技术调查与开发准备阶段。仓库已包含需求说明、开发环境脚本和可编译的环境验证工程，尚未实现正式卡牌内容，也没有可供玩家安装的 Mod 发布包。
+项目目前处于最小工程验证阶段。已建立可构建、部署的技术预览Mod，并在PC-A真实游戏中验证DLL初始化与PCK资源加载。尚未实现正式卡牌内容，技术预览不等于首版玩法发布。
 
 ## 项目方向
 
@@ -24,12 +24,13 @@
 | 第二台 PC（PC-B）开发环境 | 待接入和独立验证 |
 | 引用本机真实游戏程序集编译 | 已通过，0 警告、0 错误 |
 | Godot 无界面资源包导出 | 已通过 |
-| Mod 框架兼容版本与游戏接口调查 | 待完成 |
+| 最小 Mod 的真实加载与原生模组列表 | PC-A 已通过开发冒烟检查 |
+| Mod 框架与游戏接口调查 | 固定 BaseLib 3.3.2；静态接口调查已记录，玩法时序待实测 |
 | 卡牌、遗物与连招实现 | 待开发 |
-| 游戏加载、单人及双人联机验收 | 未执行 |
-| 玩家发布包 | 尚未提供 |
+| 正式玩法的单人及双人联机验收 | 未执行 |
+| 技术预览包 | 支持本地构建，非完整玩法版 |
 
-环境验证通过只说明工具链能够编译和打包，不代表 Mod 已通过游戏兼容性或联机测试。当前状态见 [STATUS](docs/STATUS.md)，本机核查证据见 [TECH_BASELINE](docs/TECH_BASELINE.md)。
+最小加载通过不代表卡牌、连招、存档或双人联机已验收。当前状态见 [STATUS](docs/STATUS.md)，本机核查证据见 [TECH_BASELINE](docs/TECH_BASELINE.md)，玩法接口调查见 [API_FINDINGS](docs/API_FINDINGS.md)。
 
 ## 技术栈与版本
 
@@ -42,10 +43,11 @@
 | Mod 目标框架 | net9.0，与本机游戏一致 |
 | Godot .NET / Godot.NET.Sdk | 4.5.1 |
 | Mod 模板 | Alchyr.Sts2.Templates 2.5.3 |
+| 唯一运行时框架 | BaseLib 3.3.2，NuGet精确版本与锁文件固定 |
 | 源码查看工具 | ILSpy CLI 11.1.0.9782 |
 | 版本管理与编辑器 | Git、VS Code + C# 扩展 |
 
-BaseLib 与 RitsuLib 为候选框架；正式工程会按目标游戏分支选定一个兼容方案并固定版本。当前环境验证工程不依赖二者。其他游戏版本需要重新核查，尚不在已验证范围内。
+正式最小工程采用BaseLib 3.3.2，不同时引入RitsuLib；最初的`tools/EnvironmentCheck`仍作为独立工具链检查。其他游戏或基础库版本需要重新核查，尚不在已验证范围内。
 
 ## Windows 开发入门
 
@@ -74,6 +76,14 @@ BaseLib 与 RitsuLib 为候选框架；正式工程会按目标游戏分支选�
 
 检查脚本会编译 `tools/EnvironmentCheck`、执行 Godot 无界面导入，并将资源包输出到 `artifacts/environment-check/`，不会自动安装到游戏。
 
+构建正式最小工程（PC-B将设备参数改为PC-B）：
+
+```powershell
+.\scripts\Build-Mod.ps1 -DeviceId PC-A
+```
+
+构建要求干净提交，并输出可部署目录、ZIP和SHA256。使用实际输出目录运行`Deploy-Mod.ps1 -PackageDirectory '<目录>/Sts2Mod' -InstallDependencies`，再运行`Start-ModGame.ps1`。首次原生模组确认、加载日志检查、移除与恢复步骤见 [开发操作说明](docs/DEVELOPMENT.md)。
+
 本地配置与构建产物由 `.gitignore` 排除。PC-A（当前电脑）和 PC-B（后续另一台电脑）均可开发、构建和测试，通过同一个 GitHub 仓库接续工作；开发和测试不绑定某一台设备。PC-A 已核查为 Windows，PC-B 按相同 Windows 工具链准备，实际环境在接入时核查。
 
 ## 两台 PC 的协作与产物同步
@@ -84,7 +94,7 @@ BaseLib 与 RitsuLib 为候选框架；正式工程会按目标游戏分支选�
 - **本地环境**：两台 PC 各自安装工具和游戏、配置 `local.settings.json`，不共享绝对路径、游戏程序集或存档。PC-A 的验证结果不代表 PC-B 已通过。
 - **游戏测试**：两台 PC 均可做单人测试；双人联机需两端客户端、账号及操作者条件满足，并交换主客机验收。
 
-上述产物交接为后续约定，当前尚无正式 Mod 包或自动构建上传流程。详细接入与切换步骤见 [双 PC 协作说明](docs/COLLABORATION.md)，调整依据见 [决策记录](docs/DECISIONS.md)。
+目前已有本地构建与打包脚本；GitHub附件交接按任务记录提供，尚未启用自动构建上传或公开发布。详细接入与切换步骤见 [双 PC 协作说明](docs/COLLABORATION.md)，调整依据见 [决策记录](docs/DECISIONS.md)。
 
 ## 仓库结构
 
@@ -95,12 +105,16 @@ BaseLib 与 RitsuLib 为候选框架；正式工程会按目标游戏分支选�
 │   ├── STATUS.md                 # 当前进度与下一步
 │   ├── TECH_BASELINE.md          # 按设备记录工具版本与验证证据
 │   ├── COLLABORATION.md          # 双 PC 开发测试与产物交接
-│   └── DECISIONS.md              # 已确认的项目决策
+│   ├── DECISIONS.md              # 已确认的项目决策
+│   ├── DEVELOPMENT.md            # 构建、部署、启动、移除与恢复
+│   └── API_FINDINGS.md           # 原生加载与玩法接口的调查证据
 ├── scripts/
 │   ├── Enter-DevEnvironment.ps1  # 加载本机工具路径
 │   ├── Start-DevShell.ps1        # 开发终端入口
 │   └── Test-DevEnvironment.ps1   # 编译与资源包导出检查
+├── src/Sts2Mod/                 # 可加载的最小Mod工程
 ├── tools/EnvironmentCheck/      # 环境验证工程，非正式 Mod
+├── dependencies.json           # 目标游戏及固定框架下载校验
 ├── global.json                 # 固定 .NET SDK 版本
 └── local.settings.example.json  # 本地路径配置样例
 ```

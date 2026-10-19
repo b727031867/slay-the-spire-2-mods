@@ -1,0 +1,14 @@
+{
+  "id": "Sts2Mod",
+  "name": "STS2 Mod - Technical Preview",
+  "author": "b727031867",
+  "description": "Minimal loading verification. No cards, relics or gameplay changes yet.",
+  "version": "0.0.1",
+  "has_pck": true,
+  "has_dll": true,
+  "affects_gameplay": false,
+  "min_game_version": "0.107.1",
+  "dependencies": [
+    { "id": "BaseLib", "min_version": "3.3.2" }
+  ]
+}

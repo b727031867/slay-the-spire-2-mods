@@ -8,7 +8,7 @@
 
 | 设备 | 用途 | 环境与验证状态 |
 |---|---|---|
-| PC-A | 当前电脑，开发、构建、单人测试及联机测试 | Windows 环境已安装，真实程序集编译和 PCK 导出已通过；游戏实测未执行 |
+| PC-A | 当前电脑，开发、构建、单人测试及联机测试 | 环境、程序集编译、PCK导出及最小Mod图形界面加载通过；正式玩法与联机未测试 |
 | PC-B | 后续另一台电脑，同样开发、构建与测试 | 尚未接入；实际系统、工具、游戏版本、本地引用、构建和游戏测试均待核查 |
 
 PC-B 先按同一 Windows 工具链准备，接入后再记录实测版本。两台 PC 使用各自的本地配置和合法游戏安装；涉及联机时统一游戏分支、构建与 Mod 及依赖版本。
@@ -43,6 +43,7 @@ PC-B 先按同一 Windows 工具链准备，接入后再记录实测版本。两
 | Godot .NET | 4.5.1.stable.mono.official.f62fdbde1 | 已安装，匹配本机 GodotSharp 4.5.1 |
 | Godot.NET.Sdk | 4.5.1 | 实际还原并编译通过；packages.lock.json 记录 GodotSharp/SourceGenerators 4.5.1 |
 | Alchyr.Sts2.Templates | 2.5.3 | 已安装，包含空 Mod、内容 Mod、角色 Mod 三种模板 |
+| BaseLib | 3.3.2 | 唯一运行时框架；官方发行包校验通过，真实游戏初始化通过 |
 | ILSpy CLI | 11.1.0.9782 | 已安装并成功启动 |
 | VS Code C# 扩展 | ms-dotnettools.csharp 2.160.4 | 已安装 |
 | 扩展依赖 | ms-dotnettools.vscode-dotnet-runtime 3.2.0 | 自动安装 |
@@ -82,19 +83,21 @@ PC-B 接入时：克隆同一 GitHub 仓库，按本表固定版本安装工具�
 | Godot 无 UI 导出资源包 | PASS，退出码 0 |
 | 导出结果 | artifacts/environment-check/EnvironmentCheck.pck，840 字节 |
 | 资源包 SHA256 | 1885468FED231FC669B517A6ECEECF1316DB2A827E453643E0691B96B6B21318 |
-| 游戏加载该 Mod、正常卡池、UI、存档 | NOT_RUN |
+| src/Sts2Mod的DLL/PCK和BaseLib初始化 | PASS，开发冒烟日志每次出现一次READY，进入图形主菜单，无启动ERROR |
+| 原生模组列表可见性 | PASS，游戏设置→Modding列出BaseLib与STS2 Mod - Technical Preview |
+| 正常卡池、连招UI、玩法与存档 | NOT_RUN，尚未实现相关内容 |
 | 双人、主客机同步 | NOT_RUN |
 | PC-B 环境、编译、资源包导出与游戏测试 | NOT_RUN，设备尚未接入 |
 
-验证工程只用于证明真实程序集能被编译器引用，以及编辑器能生成资源包。它没有卡牌或连招实现，也没有自动部署到游戏。无需额外安装 Godot 导出模板即可完成此次 `.pck` 导出；完整可执行游戏导出不在本次范围内。
+原先tools/EnvironmentCheck只证明工具链可用；后续src/Sts2Mod已建立真实可加载入口。两者均没有卡牌或连招实现。无需额外安装Godot导出模板即可完成当前PCK导出；完整可执行游戏导出不在本次范围内。正式干净提交的包身份与重复部署/移除结果写入TASK-000测试报告。
 
 ## 后续 TASK-000 的剩余工作
 
-1. 按 v0.107.1 核查并固定 BaseLib 或 RitsuLib 之一的兼容版本；本次只装模板，没有给游戏安装尚未核实的运行时框架。
-2. 模板默认 BaseLib 引用为浮动版本；创建正式工程时须改成经过兼容验证的精确版本。模板构建默认会复制文件到游戏 mods，首次构建前须改为显式部署或临时输出目录。
-3. 核实卡池、遗物、主动/自动出牌、动作 ID、回合和同步接口；准备最小可加载 Mod。
-4. 在PC-A完成正式Mod构建与加载路径；PC-B接入后独立核查环境，验证同一提交的本地构建和GitHub构建包交接。GitHub仓库信息见STATUS，当前尚未实现自动打包上传。
-5. 任一PC均可继续单人实测；双人验证仍需两端游戏客户端、账号及操作者条件。PC-B未接入不阻塞PC-A开发与单人测试。安装开发环境不代表TASK-000全部完成。
+已完成本次第1、2步的最小路径：选用并固定BaseLib 3.3.2、精确NuGet引用与锁文件、真实加载和资源读取；工程没有模板中的自动部署钩子，构建与部署由独立脚本执行。依赖官方ZIP的SHA256为`600d7ab3e4d735ec9bc97f06f1dfb03e51680d1ba2756117bcabcc5ea1d50e8a`。
+
+玩法接口调查见 [API_FINDINGS](API_FINDINGS.md)，实际操作见 [DEVELOPMENT](DEVELOPMENT.md)。后续TASK-001须解决动作暂停/恢复时ID变化的逻辑动作关联，验证正常获取、回合与奖励时序；这些静态证据不等于玩法已实测。
+
+PC-B接入后独立核查环境；双人测试还需要两个可同时使用的客户端、账号及操作者。当前无自动打包上传或公开发行流程。
 
 ## 来源
 
