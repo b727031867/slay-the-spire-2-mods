@@ -64,6 +64,18 @@ for (var used = 0; used < 2; used++)
     for (var i = 0; i < used; i++) { Play(state, Element.Wind); Play(state, Element.Rock); }
     Play(state, Element.Lightning);
     Check(encodings.Add(state.Encoded), $"encoded Lightning does not collide {used}");
-    Check(!Play(state, Element.Wind).Triggered, "Lightning Wind reserved for later TASK-002 increment");
+    Check(Play(state, Element.Wind).Kind == ComboKind.LightningWind && state.Last == Element.None,
+        "TC-03 Lightning Wind consumes sequence");
 }
+var paimon = new ComboState();
+Play(paimon, Element.Wind);
+Check(Play(paimon, Element.Rock).Triggered && paimon.TryReservePaimonReward() && paimon.PaimonUsed,
+    "TC-12 first combo reserves Paimon reward");
+Play(paimon, Element.Rock);
+Check(Play(paimon, Element.Lightning).Triggered && !paimon.TryReservePaimonReward() && paimon.Used == 2,
+    "TC-12 second combo does not reserve Paimon again");
+paimon.BeginTurn();
+Check(!paimon.PaimonUsed && paimon.PaimonRewardsGranted == 0 && paimon.TryReservePaimonReward(), "Paimon reward resets on native turn start");
+paimon.MarkPaimonRewardGranted();
+Check(paimon.PaimonRewardsGranted == 1, "Paimon grant counter records actual reward once");
 Console.WriteLine($"COMBO_RULES_PASS assertions={passed}");

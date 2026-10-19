@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -13,6 +14,8 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.Powers.Mocks;
+using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Screens;
 using MegaCrit.Sts2.Core.Helpers;
@@ -20,6 +23,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using Sts2Mod.Cards;
 using Sts2Mod.Combo;
+using Sts2Mod.Relics;
 
 namespace Sts2Mod.Debug;
 
@@ -73,6 +77,7 @@ public partial class TravelerTestRunner : Node
     }
     private async Task NextTurn()
     {
+        _player.Creature.HealInternal(9999m);
         var turn = _player.PlayerCombatState!.TurnNumber;
         await Queue(new EndPlayerTurnAction(_player, turn));
         await Until(() => _player.PlayerCombatState.TurnNumber > turn && ReadyToPlay, "next native turn");
@@ -82,6 +87,31 @@ public partial class TravelerTestRunner : Node
         Check(Power.State.Last == Element.None && Power.State.Used == 0, "native_turn_reset");
     }
     private static bool ReadyToPlay => RunManager.Instance.ActionQueueSynchronizer.CombatState == ActionSynchronizerCombatState.PlayPhase;
+
+    private async Task StartFreshCombat()
+    {
+        await CreatureCmd.Kill(_player.Creature.CombatState!.Enemies.ToArray(), force: true);
+        await CombatManager.Instance.CheckWinCondition();
+        await Until(() => !CombatManager.Instance.IsInProgress, "combat end before fresh fixture");
+        var encounter = ModelDb.Encounter<CultistsNormal>().ToMutable();
+        encounter.DebugRandomizeRng();
+        await RunManager.Instance.EnterRoomDebug(RoomType.Monster, model: encounter);
+        await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay && _player.Creature.GetPower<ComboPower>() is not null, "fresh combat");
+        _target = _player.Creature.CombatState!.Enemies.First();
+        _target.SetMaxHpInternal(3000m);
+        _target.SetCurrentHpInternal(3000m);
+        await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
+        await PlayerCmd.SetEnergy(30m, _player);
+    }
+
+    private async Task SeedDraw(int count = 12)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            var filler = CombatManager.Instance.DebugOnlyGetState()!.CreateCard(ModelDb.Card<DefendIronclad>(), _player);
+            await CardPileCmd.Add(filler, PileType.Draw);
+        }
+    }
 
     private async Task Run()
     {
@@ -96,10 +126,20 @@ public partial class TravelerTestRunner : Node
         await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay && _player.Creature.GetPower<ComboPower>() is not null, "first player turn");
         _target = _player.Creature.CombatState!.Enemies.First();
         if (CommandLineHelper.HasArg("sts2mod-rewards")) { await ScanNormalRewards(); return; }
-        // Fixed high health only in the unsaved fixture, so all cases share a live target.
+        // Fixed high health only in the unsaved fixture, so long-running turn-boundary cases remain deterministic.
+        _player.Creature.SetMaxHpInternal(5000m); _player.Creature.SetCurrentHpInternal(5000m);
         _target.SetMaxHpInternal(2000m); _target.SetCurrentHpInternal(2000m);
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(20m, _player);
+        if (CommandLineHelper.HasArg("sts2mod-acceptance"))
+        {
+            await RelicCmd.Obtain<PaimonCheer>(_player);
+            await TestTask003Acceptance();
+            if (!CombatManager.Instance.IsInProgress) await StartFreshCombat();
+            await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
+            GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
+            return;
+        }
         var pool = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>().GetUnlockedCards(_player.UnlockState, 0).ToArray();
         Check(pool.Count(c => c is WindBlade) == 1 && pool.Count(c => c is RockGuard) == 1, "two_cards_once_in_native_unlocked_pool");
         Check(!ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.SilentCardPool>().GetUnlockedCards(_player.UnlockState, 0).Any(c => c is WindBlade or RockGuard), "theme_cards_absent_from_silent_pool");
@@ -166,7 +206,11 @@ public partial class TravelerTestRunner : Node
         await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay && _player.Creature.GetPower<ComboPower>() is not null, "new combat");
         Check(Power != oldPower && Power.State.Last == Element.None && Power.State.Used == 0, "TC18_new_combat_has_fresh_state");
         await TestLightning();
-        await TravelerHandCommand.Prepare(_player, 1, false, lightning: true);
+        await StartFreshCombat();
+        await TestFullContent();
+        await TestTask003Acceptance();
+        if (!CombatManager.Instance.IsInProgress) await StartFreshCombat();
+        await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
     }
 
@@ -225,6 +269,153 @@ public partial class TravelerTestRunner : Node
         GD.Print("STS2MOD_LIGHTNING_COMPLETE multiplayer=NOT_RUN normal_acquisition=NOT_RUN");
     }
 
+    private async Task TestFullContent()
+    {
+        var themeTypes = new HashSet<Type>
+        {
+            typeof(WindBlade), typeof(RockGuard), typeof(LightningThrust),
+            typeof(TailwindPrep), typeof(RockAdvance), typeof(ThunderPrep)
+        };
+        var pool = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>().GetUnlockedCards(_player.UnlockState, 0).ToArray();
+        Check(themeTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "TASK002_six_cards_once_in_ironclad_pool");
+        Check(!ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.SilentCardPool>().GetUnlockedCards(_player.UnlockState, 0)
+            .Any(c => themeTypes.Contains(c.GetType())), "TASK002_theme_cards_absent_from_silent_pool");
+        Check(!_player.Deck.Cards.Any(c => themeTypes.Contains(c.GetType())), "TASK002_normal_starting_deck_unchanged");
+
+        var relicPool = ModelDb.RelicPool<IroncladRelicPool>().GetUnlockedRelics(_player.UnlockState).ToArray();
+        Check(relicPool.Count(r => r is PaimonCheer) == 1 && ModelDb.Relic<PaimonCheer>().Rarity == RelicRarity.Uncommon,
+            "TASK002_paimon_once_in_ironclad_uncommon_relic_pool");
+        Check(!ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(_player.UnlockState).Any(r => r is PaimonCheer),
+            "TASK002_paimon_absent_from_shared_pool");
+
+        await SeedDraw();
+        await Play<TailwindPrep>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 1
+            && PileType.Exhaust.GetPile(_player).Cards.Any(c => c is TailwindPrep)
+            && Power.State.Last == Element.Wind && Power.State.Used == 0,
+            "TC23_tailwind_draw1_exhaust_wind");
+        await NextTurn(); await SeedDraw();
+        await Play<TailwindPrep>(true);
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 2, "TC13_tailwind_upgrade_draw2");
+
+        await NextTurn(); await SeedDraw();
+        await Play<LightningThrust>();
+        await Play<TailwindPrep>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 2 && Power.State.Used == 1 && Power.State.Last == Element.None,
+            "TC03_lightning_wind_base_draw1_bonus_draw1");
+
+        await NextTurn(); await SeedDraw();
+        var lightning = await Play<LightningThrust>();
+        await PowerCmd.Apply<BurstPower>(lightning.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
+        await Play<TailwindPrep>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1 && Power.State.Last == Element.None,
+            "TC11_burst_tailwind_two_base_resolutions_one_combo_draw");
+
+        await NextTurn();
+        var hp = _target.CurrentHp;
+        await Play<RockAdvance>();
+        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 3 && Power.State.Last == Element.Rock,
+            "TC13_rock_advance_damage5_then_block3");
+        await NextTurn(); hp = _target.CurrentHp;
+        await Play<RockAdvance>(true);
+        Check(hp - _target.CurrentHp == 7 && _player.Creature.Block == 5, "TC13_rock_advance_upgrade_damage7_block5");
+
+        await NextTurn(); await SeedDraw();
+        await Play<ThunderPrep>();
+        Check(_player.Creature.Block == 5 && PileType.Hand.GetPile(_player).Cards.Count == 1 && Power.State.Last == Element.Lightning,
+            "TC13_thunder_prep_block5_then_draw1");
+        await NextTurn(); await SeedDraw();
+        await Play<ThunderPrep>(true);
+        Check(_player.Creature.Block == 8 && PileType.Hand.GetPile(_player).Cards.Count == 1,
+            "TC13_thunder_prep_upgrade_block8_draw1");
+
+        await NextTurn(); await SeedDraw(); hp = _target.CurrentHp;
+        await Play<RockAdvance>(); await Play<ThunderPrep>();
+        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 8 && Power.State.Used == 1 && Power.State.Last == Element.None,
+            "rock_to_targetless_thunder_consumes_combo_without_retarget");
+        await NextTurn(); await SeedDraw();
+        await Play<ThunderPrep>(); await Play<TailwindPrep>();
+        Check(_player.Creature.Block == 5 && PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1,
+            "new_cards_lightning_wind_draw_order");
+
+        await RelicCmd.Obtain<PaimonCheer>(_player);
+        await NextTurn();
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(_player.Creature.Block == 14 && Power.State.PaimonUsed && Power.State.PaimonRewardsGranted == 1 && Power.State.Used == 1,
+            "TC12_paimon_first_combo_adds3_after_wind_rock");
+        hp = _target.CurrentHp;
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(_player.Creature.Block == 21 && hp - _target.CurrentHp == 11 && Power.State.PaimonRewardsGranted == 1 && Power.State.Used == 2,
+            "TC12_paimon_second_combo_no_second_reward");
+        await NextTurn();
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(_player.Creature.Block == 14 && Power.State.PaimonUsed, "paimon_resets_and_rewards_on_next_turn");
+
+        await RelicCmd.Obtain<PaimonCheer>(_player);
+        await NextTurn();
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(_player.Relics.Count(r => r is PaimonCheer) == 2 && _player.Creature.Block == 14,
+            "duplicate_paimon_does_not_stack_reward");
+
+        var originalRelic = ModelDb.Relic<PaimonCheer>().ToMutable();
+        var restoredRelic = RelicModel.FromSerializable(originalRelic.ToSerializable());
+        Check(restoredRelic is PaimonCheer && restoredRelic.Id == originalRelic.Id,
+            "native_relic_serialization_roundtrip_TC_R01");
+        foreach (var canonical in new CardModel[] { ModelDb.Card<TailwindPrep>(), ModelDb.Card<RockAdvance>(), ModelDb.Card<ThunderPrep>() })
+        {
+            var original = canonical.ToMutable();
+            original.UpgradeInternal(); original.FinalizeUpgradeInternal();
+            var restored = CardModel.FromSerializable(original.ToSerializable());
+            Check(restored.GetType() == original.GetType() && restored.Id == original.Id && restored.CurrentUpgradeLevel == 1,
+                "native_card_serialization_roundtrip_" + original.Id.Entry);
+        }
+        GD.Print($"STS2MOD_TASK002_COMPLETE assertions={_assertions} cards=6 relics=1 multiplayer=NOT_RUN acquisition=POOL_VERIFIED");
+    }
+
+    private async Task TestTask003Acceptance()
+    {
+        await NextTurn(); await SeedDraw();
+        var lightning = await Play<LightningThrust>();
+        var automaticWind = await Add<TailwindPrep>();
+        await CardCmd.AutoPlay(lightning.PlayerChoiceContext!, automaticWind, null);
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 1 && Power.State.Last == Element.Lightning && Power.State.Used == 0,
+            "TASK003_auto_tailwind_draws_base_only_and_preserves_lightning");
+        await Play<TailwindPrep>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1 && Power.State.Last == Element.None,
+            "TASK003_manual_tailwind_after_auto_triggers_once");
+
+        await NextTurn();
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(Power.State.PaimonUsed && _player.Creature.Block == 14, "TASK003_paimon_used_before_extra_turn");
+        var source = await Play<WindBlade>();
+        await PowerCmd.Apply<MockExtraTurnPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
+        await NextTurn();
+        Check(!Power.State.PaimonUsed && Power.State.Used == 0 && Power.State.Last == Element.None
+            && _player.Creature.GetPower<MockExtraTurnPower>() is null, "TASK003_native_extra_turn_resets_combo_and_paimon");
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(_player.Creature.Block == 14 && Power.State.PaimonUsed, "TASK003_paimon_rewards_on_extra_turn");
+
+        await NextTurn();
+        var enemies = _player.Creature.CombatState!.Enemies.Where(e => e.IsAlive).ToArray();
+        _target = enemies[0];
+        _target.SetCurrentHpInternal(7m);
+        var survivor = enemies.First(e => e != _target);
+        survivor.SetMaxHpInternal(3000m); survivor.SetCurrentHpInternal(3000m);
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(_target.IsDead && survivor.IsAlive && _player.Creature.Block == 10 && Power.State.Used == 1,
+            "TASK003_dead_rock_lightning_target_still_allows_paimon_if_combat_continues");
+
+        await NextTurn();
+        _target = survivor;
+        _target.SetCurrentHpInternal(7m);
+        var finalTurnState = Power.State;
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(_target.IsDead && finalTurnState.PaimonUsed && finalTurnState.PaimonRewardsGranted == 0,
+            "TASK003_base_kill_ending_combat_skips_combo_and_paimon_rewards");
+        await Until(() => !CombatManager.Instance.IsInProgress, "TASK003 combat ending after final base kill");
+        GD.Print($"STS2MOD_TASK003_AUTOMATION_COMPLETE assertions={_assertions} singleplayer=PASS multiplayer=NOT_RUN ui=READY_FOR_USER_PLAYTEST");
+    }
+
     private async Task ScanNormalRewards()
     {
         for (var battle = 1; battle <= 60; battle++)
@@ -235,7 +426,7 @@ public partial class TravelerTestRunner : Node
             await Until(() => RewardProbe.Latest is not null
                 && GetTree().Root.FindChildren("*", recursive: true, owned: false).OfType<NRewardsScreen>().Any(s => s.IsVisibleInTree()), "native room reward screen");
             var reward = RewardProbe.Latest!;
-            var theme = reward.Cards.FirstOrDefault(c => c is WindBlade or RockGuard);
+            var theme = reward.Cards.FirstOrDefault(c => c is WindBlade or RockGuard or LightningThrust or TailwindPrep or RockAdvance or ThunderPrep);
             if (theme is not null)
             {
                 GD.Print($"STS2MOD_ACQUISITION_READY battle={battle} card={theme.Id.Entry} source=unmodified_native_room_reward shouldSave={RunManager.Instance.ShouldSave}");

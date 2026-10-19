@@ -1,4 +1,4 @@
-param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards)
+param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Enter-DevEnvironment.ps1')
 $projectRoot = Split-Path $PSScriptRoot -Parent
@@ -11,9 +11,10 @@ $logDir = Join-Path $projectRoot '.local/logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $logPath = Join-Path $logDir ('game-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffffffZ') + '.log')
 $arguments = @('--log-file', ('"' + $logPath + '"'))
-if ($TravelerDebug -or $TravelerTest -or $TravelerRewards) { $arguments += '--sts2mod-debug' }
-if ($TravelerTest -or $TravelerRewards) { $arguments += '--sts2mod-test' }
+if ($TravelerDebug -or $TravelerTest -or $TravelerRewards -or $TravelerAcceptance) { $arguments += '--sts2mod-debug' }
+if ($TravelerTest -or $TravelerRewards -or $TravelerAcceptance) { $arguments += '--sts2mod-test' }
 if ($TravelerRewards) { $arguments += '--sts2mod-rewards' }
+if ($TravelerAcceptance) { $arguments += '--sts2mod-acceptance' }
 if ($Headless) { $arguments += '--headless' } else { $arguments += @('--windowed','--resolution','1280x720') }
 $oldAppId = $env:SteamAppId
 $oldGameId = $env:SteamGameId

@@ -2,12 +2,14 @@ param(
     [Parameter(Mandatory)][string]$LogFile,
     [Parameter(Mandatory)][string]$CodeCommit,
     [switch]$Acquisition,
-    [switch]$Lightning
+    [switch]$Lightning,
+    [switch]$Task002,
+    [switch]$Task003
 )
 $ErrorActionPreference = 'Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit
 $content = Get-Content -LiteralPath $LogFile -Raw
-if ($Acquisition -and $Lightning) { throw 'Choose either acquisition or Lightning rule evidence.' }
+if ($Acquisition -and ($Lightning -or $Task002 -or $Task003)) { throw 'Choose either acquisition or rule evidence.' }
 if ($content -match 'STS2MOD_TEST_FAIL|(?m)^ERROR:') { throw 'Traveler game integration test failed. Read the local log.' }
 if ($Acquisition) {
     if ($content -notmatch 'STS2MOD_ACQUISITION_COMPLETE shouldSave=false' -or $content -notmatch 'TC21_native_room_reward_selected_into_deck') {
@@ -18,11 +20,42 @@ if ($Acquisition) {
     foreach ($case in $required) {
         if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing passing case: $case" }
     }
-    if ($Lightning) {
+    if ($Lightning -or $Task002 -or $Task003) {
         foreach ($case in @('TC002_lightning_once_in_native_pool','TC02_rock_lightning_damage7_plus4','TC13_lightning_upgrade10_plus4','TC08_mixed_combos_share_cap','TC10_auto_lightning_preserves_rock','TC10_manual_lightning_after_auto_triggers','TC11_native_duplicated_lightning_one_bonus','TC24_strength_weak_vulnerable_block_native_formula','TC14_dead_target_no_retarget_counter_consumed','native_card_serialization_roundtrip_TC_C03')) {
             if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing Lightning case: $case" }
         }
         if (!$content.Contains('STS2MOD_LIGHTNING_COMPLETE')) { throw 'Lightning tests have not completed.' }
+    }
+    if ($Task002 -or $Task003) {
+        foreach ($case in @(
+            'TASK002_six_cards_once_in_ironclad_pool','TASK002_theme_cards_absent_from_silent_pool','TASK002_normal_starting_deck_unchanged',
+            'TASK002_paimon_once_in_ironclad_uncommon_relic_pool','TASK002_paimon_absent_from_shared_pool',
+            'TC23_tailwind_draw1_exhaust_wind','TC13_tailwind_upgrade_draw2','TC03_lightning_wind_base_draw1_bonus_draw1',
+            'TC11_burst_tailwind_two_base_resolutions_one_combo_draw','TC13_rock_advance_damage5_then_block3',
+            'TC13_rock_advance_upgrade_damage7_block5','TC13_thunder_prep_block5_then_draw1',
+            'TC13_thunder_prep_upgrade_block8_draw1','rock_to_targetless_thunder_consumes_combo_without_retarget',
+            'new_cards_lightning_wind_draw_order','TC12_paimon_first_combo_adds3_after_wind_rock',
+            'TC12_paimon_second_combo_no_second_reward','paimon_resets_and_rewards_on_next_turn',
+            'duplicate_paimon_does_not_stack_reward','native_relic_serialization_roundtrip_TC_R01',
+            'native_card_serialization_roundtrip_TC_C04','native_card_serialization_roundtrip_TC_C05','native_card_serialization_roundtrip_TC_C06')) {
+            if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing TASK-002 case: $case" }
+        }
+        if ($content -notmatch 'STS2MOD_TASK002_COMPLETE assertions=\d+ cards=6 relics=1 multiplayer=NOT_RUN acquisition=POOL_VERIFIED') {
+            throw 'Full TASK-002 tests have not completed.'
+        }
+    }
+    if ($Task003) {
+        foreach ($case in @(
+            'TASK003_auto_tailwind_draws_base_only_and_preserves_lightning',
+            'TASK003_manual_tailwind_after_auto_triggers_once','TASK003_paimon_used_before_extra_turn',
+            'TASK003_native_extra_turn_resets_combo_and_paimon','TASK003_paimon_rewards_on_extra_turn',
+            'TASK003_dead_rock_lightning_target_still_allows_paimon_if_combat_continues',
+            'TASK003_base_kill_ending_combat_skips_combo_and_paimon_rewards')) {
+            if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing TASK-003 case: $case" }
+        }
+        if ($content -notmatch 'STS2MOD_TASK003_AUTOMATION_COMPLETE assertions=\d+ singleplayer=PASS multiplayer=NOT_RUN ui=READY_FOR_USER_PLAYTEST') {
+            throw 'TASK-003 automated acceptance has not completed.'
+        }
     }
     if ($content -notmatch 'STS2MOD_TEST_COMPLETE assertions=\d+ multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave=False') {
         throw 'The rule test has not completed.'

@@ -4,5 +4,11 @@
   "TC_C01.description": "造成[blue]{Damage}[/blue]点伤害。\n[gold]风元素[/gold]：记录本次主动打出的元素。",
   "TC_C01.title": "风起之刃",
   "TC_C03.title": "雷光突刺",
-  "TC_C03.description": "造成[blue]{Damage}[/blue]点伤害。\n[gold]雷元素[/gold]：主动岩→雷对同一目标额外造成[blue]4[/blue]点攻击伤害。每回合连招共用[blue]2[/blue]次上限。"
+  "TC_C03.description": "造成[blue]{Damage}[/blue]点伤害。\n[gold]雷元素[/gold]：主动岩→雷对同一目标额外造成[blue]4[/blue]点攻击伤害。每回合连招共用[blue]2[/blue]次上限。",
+  "TC_C04.title": "顺风整备",
+  "TC_C04.description": "抽[blue]{Cards}[/blue]张牌。\n[gold]风元素[/gold]：主动雷→风额外抽[blue]1[/blue]张牌。",
+  "TC_C05.title": "磐岩进击",
+  "TC_C05.description": "造成[blue]{Damage}[/blue]点伤害，然后获得[blue]{Block}[/blue]点[gold]格挡[/gold]。\n[gold]岩元素[/gold]。",
+  "TC_C06.title": "雷鸣整备",
+  "TC_C06.description": "获得[blue]{Block}[/blue]点[gold]格挡[/gold]，然后抽[blue]{Cards}[/blue]张牌。\n[gold]雷元素[/gold]。岩→雷奖励仅在本牌具有存活敌方目标时造成伤害。"
 }
