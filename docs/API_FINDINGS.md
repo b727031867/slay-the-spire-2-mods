@@ -40,6 +40,14 @@
 
 TASK-000验证最小加载、DLL/PCK读取及BaseLib版本检查。TASK-001已经在真实游戏使用基础命令、回合边界、正常奖励与状态提示；精确被测提交、结果及未测项以TASK-001报告为准。完整读档、双人、主客机交换和断线恢复不能由单人结果推断。
 
+## TASK-002/003 PC-B 实测补充
+
+- `CardPileCmd.Draw` 已用于雷→风，沿用当前 `PlayerChoiceContext`；基础抽牌先于连招抽牌。Burst 对整备牌的第二次基础结算不再推进连招。
+- `AfterPlayerTurnStart` 在原生额外回合中触发，实测会重置同一玩家的连招次数、上一元素和派蒙本回合奖励状态。
+- `CombatManager.Instance.IsEnding` 在基础伤害击杀最后敌人的紧邻结算点可能仍为 false，不能单独用于判断是否发战斗内后续奖励。实现同时检查敌方是否仍有存活成员；91项回归覆盖最后击杀和“原目标死亡但战斗继续”两种边界。
+- `CustomRelicModel` 与 `IroncladRelicPool` 已用于派蒙；重复测试遗物由共享的每玩家 `ComboState` 预占一次奖励，因此不会叠加。
+- 卡牌与遗物的 `ToSerializable`/`FromSerializable` 模型往返已通过，但原生保存不包含任意战斗中动作队列/Power，因此仍不能等价为完整退出读档验收。
+
 ## 公开参考
 
 - [BaseLib 3.3.2官方发行](https://github.com/Alchyr/BaseLib-StS2/releases/tag/v3.3.2)。

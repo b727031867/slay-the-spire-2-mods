@@ -1,6 +1,6 @@
 # 构建、部署与最小加载检查
 
-当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；TASK-002增量A版本0.0.3已实现三张牌、风岩与岩雷两条连招，剩余内容见STATUS。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。历史技术预览结果不代表当前全部玩法均已验收。
+当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.0 已实现六张牌、三条连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
 
 ## 前提
 
@@ -54,7 +54,7 @@ Sts2Mod/
 .\scripts\Collect-ModLogs.ps1 -LogFile '<实际日志路径>'
 ```
 
-应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现ERROR的日志。TASK-002增量A版本为0.0.3，原生清单中显示BaseLib和STS2 Mod - Traveler Elements。
+应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现未知 ERROR 的日志；仅在显式 `-Headless` 时可精确过滤已知 Godot RID/shader 渲染噪声。原生清单中显示BaseLib和STS2 Mod - Traveler Elements。
 
 原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。游戏原生启动可能同步Steam云存档，部署和移除脚本本身不修改存档。
 
@@ -101,10 +101,10 @@ dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
 
 双人端必须使用相同代码包、游戏和BaseLib版本，按需求书TC-16/17交换主客机验证；测试手牌通过测试新局的正常获取或双方原生支持的调试入口准备，`tc_hand`明确不适用于多人。缺少第二客户端时保留NOT_RUN/BLOCKED。
 
-## TASK-002 增量A：雷光突刺与岩雷
+## TASK-002/003：完整内容与单人自动化
 
-0.0.3新增TC_C03雷光突刺：铁甲普通牌，1费7伤害，升级10，雷元素。岩→雷在基础伤害后对同一存活目标额外执行4点原生攻击伤害，受力量、虚弱、易伤和目标格挡影响；基础伤害杀死目标则不转移追加伤害，次数仍消费。风岩与岩雷共用每回合2次上限。
+0.1.0包含六张铁甲主题牌、风岩/岩雷/雷风三条连招及派蒙遗物。岩→雷在基础伤害后对同一存活目标额外执行4点原生攻击伤害；雷→风抽1；派蒙在本回合第一次成功连招后额外3格挡。三条连招共用每回合2次上限。
 
-仍未实现雷→风抽牌、TC_C04/05/06和派蒙；当前是部分TASK-002内容。正常模式不赠牌。显式测试模式下，`tc_hand 1 lightning`准备一组岩/雷，`tc_hand 1 lightning upgraded`准备升级岩/雷；原有风岩用法保留。
+正常模式不赠牌。显式测试模式下，`tc_hand 1 full paimon`准备完整普通卡组和派蒙，`tc_hand 1 full upgraded paimon`准备升级卡；`lightning`及原有风岩用法保留。调试入口只用于单人测试。
 
-`Start-ModGame.ps1 -TravelerTest`同时执行已有风岩回归与新增岩雷测试，完成后用`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Lightning`检查完整标记。`-Headless`可执行真实游戏进程的逻辑集成检查，但不能替代卡牌图形界面的人工验收。完整退出读档及双人测试仍未执行。
+`Start-ModGame.ps1 -TravelerTest -Headless`执行完整单人回归，完成后用`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Task003 -Headless`检查标记。`Start-ModGame.ps1 -TravelerAcceptance -Headless`可只跑TASK-003边界。无窗口逻辑检查不能替代卡牌图形界面验收；完整退出读档及双人测试仍未执行。

@@ -6,4 +6,4 @@ TASK-001 的 `src/Sts2Mod/Sts2Mod/art/wind.svg`、`rock.svg`、`combo.svg` 是�
 
 后续替换正式美术时，在此逐项记录来源、作者和许可；本条记录不为未来新增素材自动授权。
 
-TASK-002增量A新增`src/Sts2Mod/Sts2Mod/art/lightning.svg`，为本项目通过SVG代码绘制的闪电占位图，未导入外部图片；随源码分发。
+TASK-002新增`lightning.svg`、`tailwind.svg`、`rock_advance.svg`、`thunder_prep.svg`和`paimon.svg`，均为本项目通过SVG代码绘制的占位图，未导入外部图片；随源码分发。
