@@ -1,6 +1,17 @@
 # Windows 开发环境基线
 
-核查日期：2026-10-19。范围：按需求书第 8 节安装 Windows 开发与后续测试所需工具。需求原文仍为根目录 `STS2-Mod-Requirements-v0.1.md`，本次没有改动玩法设计。
+核查日期：2026-10-19。范围：按需求书第 8 节安装当前 PC（PC-A）的 Windows 开发与测试工具。需求原文仍为根目录 `STS2-Mod-Requirements-v0.1.md`，本次协作方式调整没有改动玩法设计。
+
+协作基线：PC-A 和后续接入的 PC-B 均可开发、构建与测试，通过 GitHub 同步代码、文档和构建产物。操作约定见 [COLLABORATION](COLLABORATION.md)，本次决定见 [DECISIONS](DECISIONS.md)。以下版本与 PASS 记录均只属于 PC-A，不代表 PC-B 已安装或验证。
+
+## 设备登记
+
+| 设备 | 用途 | 环境与验证状态 |
+|---|---|---|
+| PC-A | 当前电脑，开发、构建、单人测试及联机测试 | Windows 环境已安装，真实程序集编译和 PCK 导出已通过；游戏实测未执行 |
+| PC-B | 后续另一台电脑，同样开发、构建与测试 | 尚未接入；实际系统、工具、游戏版本、本地引用、构建和游戏测试均待核查 |
+
+PC-B 先按同一 Windows 工具链准备，接入后再记录实测版本。两台 PC 使用各自的本地配置和合法游戏安装；涉及联机时统一游戏分支、构建与 Mod 及依赖版本。
 
 ## 已核实的游戏
 
@@ -57,7 +68,7 @@ ilspycmd --version
 
 或者用 PowerShell 7 的 `-NoExit -File scripts/Start-DevShell.ps1` 打开专用终端。VS Code 重新打开本项目后，新建集成终端也会使用本地 SDK。Godot 可用 `& $env:STS2_GODOT_EXE --editor --path .\tools\EnvironmentCheck` 打开环境验证工程。
 
-重新配置其他电脑时：复制 `local.settings.example.json` 为 `local.settings.json` 并填入实际路径；按本表固定版本安装；运行上述检查。Debian 端仍需独立安装 Linux 版本工具与私有游戏引用，本次未连接或安装远程 Debian。
+PC-B 接入时：克隆同一 GitHub 仓库，按本表固定版本安装工具，复制 `local.settings.example.json` 为该机的 `local.settings.json` 并填入实际路径；从该机合法游戏安装读取引用，然后运行上述检查。PC-A 上的工具安装目录和下载缓存不会随 Git 自动同步，当前也没有通用的一键环境安装脚本；逐项检查步骤见 COLLABORATION。PC-B 的结果须单独写入本表和测试报告。
 
 ## 验证事实
 
@@ -73,7 +84,7 @@ ilspycmd --version
 | 资源包 SHA256 | 1885468FED231FC669B517A6ECEECF1316DB2A827E453643E0691B96B6B21318 |
 | 游戏加载该 Mod、正常卡池、UI、存档 | NOT_RUN |
 | 双人、主客机同步 | NOT_RUN |
-| Debian 编译、无 UI 导出 | NOT_RUN |
+| PC-B 环境、编译、资源包导出与游戏测试 | NOT_RUN，设备尚未接入 |
 
 验证工程只用于证明真实程序集能被编译器引用，以及编辑器能生成资源包。它没有卡牌或连招实现，也没有自动部署到游戏。无需额外安装 Godot 导出模板即可完成此次 `.pck` 导出；完整可执行游戏导出不在本次范围内。
 
@@ -82,8 +93,8 @@ ilspycmd --version
 1. 按 v0.107.1 核查并固定 BaseLib 或 RitsuLib 之一的兼容版本；本次只装模板，没有给游戏安装尚未核实的运行时框架。
 2. 模板默认 BaseLib 引用为浮动版本；创建正式工程时须改成经过兼容验证的精确版本。模板构建默认会复制文件到游戏 mods，首次构建前须改为显式部署或临时输出目录。
 3. 核实卡池、遗物、主动/自动出牌、动作 ID、回合和同步接口；准备最小可加载 Mod。
-4. 建立 Debian 私有引用准备步骤与 Git 远程交接；GitHub 仓库信息见 STATUS。
-5. 单人和双人验证仍需游戏实测和第二客户端条件。安装开发环境不代表 TASK-000 全部完成。
+4. 在PC-A完成正式Mod构建与加载路径；PC-B接入后独立核查环境，验证同一提交的本地构建和GitHub构建包交接。GitHub仓库信息见STATUS，当前尚未实现自动打包上传。
+5. 任一PC均可继续单人实测；双人验证仍需两端游戏客户端、账号及操作者条件。PC-B未接入不阻塞PC-A开发与单人测试。安装开发环境不代表TASK-000全部完成。
 
 ## 来源
 
