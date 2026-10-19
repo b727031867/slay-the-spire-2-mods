@@ -19,7 +19,7 @@ PC-B 先按同一 Windows 工具链准备，接入后再记录实测版本。两
 |---|---|
 | Steam App ID | 2868840 |
 | 游戏版本 | v0.107.1 |
-| 游戏发布分支字段 | release_info.json：v0.107.1；Steam manifest 未设置 BetaKey，未通过 Steam UI 另行确认分支选择 |
+| 游戏发布分支字段 | release_info.json：v0.107.1；Steam manifest未设置BetaKey；实际启动日志报告Platform branch为public |
 | Steam buildid | 23811903 |
 | 游戏提交 | 59260271 |
 | 游戏程序集 | data_sts2_windows_x86_64/sts2.dll，文件版本 0.1.0.0（该值不等于游戏发行版本） |
@@ -83,13 +83,15 @@ PC-B 接入时：克隆同一 GitHub 仓库，按本表固定版本安装工具�
 | Godot 无 UI 导出资源包 | PASS，退出码 0 |
 | 导出结果 | artifacts/environment-check/EnvironmentCheck.pck，840 字节 |
 | 资源包 SHA256 | 1885468FED231FC669B517A6ECEECF1316DB2A827E453643E0691B96B6B21318 |
-| src/Sts2Mod的DLL/PCK和BaseLib初始化 | PASS，开发冒烟日志每次出现一次READY，进入图形主菜单，无启动ERROR |
+| src/Sts2Mod的DLL/PCK和BaseLib初始化 | PASS，干净提交af2bd55139fa；每次READY一次，进入图形主菜单，无启动ERROR |
+| 连续两次干净构建 | PASS，ExportRelease/win-x64，DLL与PCK哈希分别一致 |
+| 重复部署、重启、移除、恢复 | PASS，移除后不加载本项目，BaseLib保留，备份恢复同一提交 |
 | 原生模组列表可见性 | PASS，游戏设置→Modding列出BaseLib与STS2 Mod - Technical Preview |
 | 正常卡池、连招UI、玩法与存档 | NOT_RUN，尚未实现相关内容 |
 | 双人、主客机同步 | NOT_RUN |
 | PC-B 环境、编译、资源包导出与游戏测试 | NOT_RUN，设备尚未接入 |
 
-原先tools/EnvironmentCheck只证明工具链可用；后续src/Sts2Mod已建立真实可加载入口。两者均没有卡牌或连招实现。无需额外安装Godot导出模板即可完成当前PCK导出；完整可执行游戏导出不在本次范围内。正式干净提交的包身份与重复部署/移除结果写入TASK-000测试报告。
+原先tools/EnvironmentCheck只证明工具链可用；后续src/Sts2Mod已建立真实可加载入口。两者均没有卡牌或连招实现。无需额外安装Godot导出模板即可完成当前PCK导出；完整可执行游戏导出不在本次范围内。正式包身份与精确结果见 [TASK-000报告](tests/TASK-000-PC-A-run-01.md)，跨机获取与部署见 [handoff](handoffs/TASK-000.md)。
 
 ## 后续 TASK-000 的剩余工作
 
