@@ -1,23 +1,19 @@
 # 项目状态
 
-更新：2026-10-19。
+更新：2026-10-19。当前任务 **TASK-001：WAITING_MULTIPLAYER**。代码和PC-A单人部分已完成；完整阶段门槛要求双人实测，目前不能记为DONE。
 
-当前完成：PC-A工具链安装与验证；固定BaseLib 3.3.2；建立src/Sts2Mod与构建、部署、启动、移除、日志检查脚本；开发冒烟已在真实游戏验证DLL/PCK初始化与原生模组列表。版本和证据见 `TECH_BASELINE.md`、`API_FINDINGS.md`。
+已实现Mod0.0.2：旅行者风/岩两张铁甲普通牌、风→岩额外4格挡、每玩家每回合2次上限、普通牌保留序列、自动/额外结算不推进、原生状态及短提示、中英文本、自制SVG和显式测试入口。四张后续牌、雷连招与派蒙尚未实现。
 
-当前阶段：TASK-000本次授权的第1、2步DONE。干净提交打包、两次重复构建、真实加载、重复部署、移除及备份恢复验收均通过。任务见 `tasks/TASK-000.md`，操作说明见 `DEVELOPMENT.md`，证据见 `tests/TASK-000-PC-A-run-01.md`。
+PC-A结果：21项纯规则断言、28项真实游戏断言、手动中文界面/取消/出牌、正常奖励获取、连续干净构建、部署/移除/恢复和GitHub回下载校验通过。完整退出读档、实际暂停恢复、英文界面、额外回合、死亡复活与其他Mod组合未测；PC-B环境及双人主客机均未测。详见[测试报告](tests/TASK-001-PC-A-run-01.md)。
 
-已有需求基线：`../STS2-Mod-Requirements-v0.1.md`，文档版本0.2；本次仅调整开发测试与GitHub交接安排，玩法规则未变。
+被测代码提交S：`3c95e19441261410ed254ceada47c83c1af53b62`，分支`codex/TASK-001`已推送；后续文档提交不替换包内代码身份。92,141字节的ZIP及SHA256见[交接](handoffs/TASK-001.md)，已上传GitHub草稿且回下载一致。当前本机已恢复此包，以默认参数运行到主菜单，测试能力关闭。
 
-已确认协作方式：PC-A（当前电脑）与PC-B（后续另一台电脑）均可开发、构建和测试，通过GitHub同步代码、文档和构建产物，不固定开发端/测试端。具体流程见 [COLLABORATION](COLLABORATION.md)，决策见 [DECISIONS](DECISIONS.md)。
+[草稿PR #2](https://github.com/b727031867/slay-the-spire-2-mods/pull/2)基于未合并的`codex/TASK-000`。PR #1保留，未自动合并、重写main或公开发行；源码、文档和开发包均按现有GitHub交接方式同步。仓库为 [b727031867/slay-the-spire-2-mods](https://github.com/b727031867/slay-the-spire-2-mods)。
 
-设备状态：PC-A最小Mod图形界面启动与加载通过；正式卡牌玩法、存档和双人联机未测试。PC-B尚未接入，不能沿用PC-A的PASS结论。
+下一步：PC-B独立接入和单人核查，再执行TC-16/17并交换主客机；完整退出读档TC-19另记真实结果。未满足双人门槛前不自动进入TASK-002。
 
-下一步：完成本次可追溯包及交接记录后，进入TASK-001两张牌与单条连招验证；动作ID在暂停/恢复时变化，需先设计并实测稳定的逻辑动作关联。主题与宿主仍待确认。
+PC-A与PC-B均可开发、构建、测试，设备不固定角色；各机维护自己的工具/游戏/路径，通过Git同步指定分支和提交，通过草稿Release同步安装包。参见[协作流程](COLLABORATION.md)、[开发操作](DEVELOPMENT.md)、[决策](DECISIONS.md)。
 
-本次代码提交S：`af2bd55139fae1fec88c7862db31d9d5bc853060`，分支`codex/TASK-000`已推送；后续文档提交引用S，不替代被测代码身份。ZIP及SHA256已上传[GitHub草稿Release](https://github.com/b727031867/slay-the-spire-2-mods/releases/tag/untagged-59ecdcfdca41046ed7cd)，附件和操作步骤见 `handoffs/TASK-000.md`。未启用自动构建上传，未公开发行。
+历史：TASK-000已完成固定BaseLib3.3.2与最小可重复构建/部署/加载工程，原报告及包身份保留在[TASK-000报告](tests/TASK-000-PC-A-run-01.md)。当前游戏v0.107.1 / Steam构建23811903的工具与接口依据见[技术基线](TECH_BASELINE.md)、[接口调查](API_FINDINGS.md)。
 
-Git：公开仓库为 [b727031867/slay-the-spire-2-mods](https://github.com/b727031867/slay-the-spire-2-mods)，本次成果保留在`codex/TASK-000`，main仍是此前的共享基线。
-
-初始化代码提交：`5f7b07388cb4fefb06cbb0cdf7236f475a36ac6c`，包含需求书、项目 README、环境文档、脚本和验证工程。个人路径配置、游戏二进制文件和本地构建产物未提交。
-
-本机已安装BaseLib和Sts2Mod用于加载验证；未更换游戏分支，未开始新对局。部署脚本不修改存档；实际游戏启动按原生行为执行Steam云同步。
+个人路径、凭据、游戏程序集、原始日志、存档和本地产物不进入源码仓库。测试run使用ShouldSave=false，但游戏仍会按原生行为维护模组档案进度和Steam云同步；部署/移除脚本不手工改存档。

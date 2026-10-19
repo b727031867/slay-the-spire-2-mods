@@ -1,0 +1,12 @@
+Removed own Sts2Mod directory; BaseLib file hashes unchanged.
+Removed run:
+[INFO] Finished mod initialization for 'BaseLib' (BaseLib).
+[INFO] [Startup] Time to main menu: 17,008ms
+Restored exact four files from verified GitHub ZIP.
+Restored default run:
+[INFO] Finished mod initialization for 'BaseLib' (BaseLib).
+STS2MOD_READY version=0.0.2+3c95e19441261410ed254ceada47c83c1af53b62 baselib=3.3.2 resource=ok
+[INFO] Finished mod initialization for 'STS2 Mod - Traveler Combo' (Sts2Mod).
+[INFO] [Startup] Time to main menu: 16,757ms
+UI: main menu; tc_hand refused without --sts2mod-debug.
+No test runner START marker in default launch.

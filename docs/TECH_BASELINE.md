@@ -101,6 +101,12 @@ PC-B 接入时：克隆同一 GitHub 仓库，按本表固定版本安装工具�
 
 PC-B接入后独立核查环境；双人测试还需要两个可同时使用的客户端、账号及操作者。当前无自动打包上传或公开发行流程。
 
+## TASK-001 当前增量（2026-10-19）
+
+以上TASK-000矩阵是历史加载阶段结果。当前Mod0.0.2已在同一版本基线实现并验证风/岩两张牌、单条连招、原生状态与奖励入口。代码S为`3c95e19441261410ed254ceada47c83c1af53b62`；21项纯规则、28项真实游戏断言、手动界面、两次干净构建与部署/移除/恢复通过。默认启动不运行测试Node，游戏内`tc_hand`也明确拒绝未开启测试参数的调用。
+
+PC-B及双人仍NOT_RUN/BLOCKED，完整退出读档NOT_RUN，阶段WAITING_MULTIPLAYER。精确包、结果及限制见[TASK-001报告](tests/TASK-001-PC-A-run-01.md)和[交接](handoffs/TASK-001.md)。Godot导入配置与源码UID文件随仓库提交，工具基线未变。
+
 ## 来源
 
 - [模板作者安装指南](https://github.com/Alchyr/ModTemplate-StS2/wiki/Setup)：.NET SDK、Godot/MegaDot、模板与默认部署行为。

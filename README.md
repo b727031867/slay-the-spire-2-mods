@@ -27,10 +27,10 @@ TASK-001已确认「旅行者」风/岩主题、铁甲战士宿主：风起之�
 | 最小 Mod 的真实加载与原生模组列表 | PC-A已通过；干净提交包完成重复部署、移除与恢复 |
 | Mod 框架与游戏接口调查 | 固定 BaseLib 3.3.2；风岩基础命令与回合时序已用于真实测试 |
 | 卡牌、遗物与连招实现 | 两张风岩牌、单条连招、状态与中英文本已实现；其余待开发 |
-| 正式玩法的单人及双人联机验收 | PC-A单人验证进行中；双人NOT_RUN |
-| 技术预览包 | 已同步到GitHub草稿附件，非完整玩法版 |
+| 正式玩法的单人及双人联机验收 | PC-A风岩单人通过；完整读档与双人NOT_RUN |
+| 0.0.2风岩开发包 | 已同步GitHub草稿附件并回下载校验，非完整玩法版 |
 
-最小加载通过不代表卡牌、连招、存档或双人联机已验收。当前状态见 [STATUS](docs/STATUS.md)，本机核查证据见 [TECH_BASELINE](docs/TECH_BASELINE.md)，玩法接口调查见 [API_FINDINGS](docs/API_FINDINGS.md)。
+TASK-001代码和PC-A单人部分完成：21项纯规则、28项真实游戏断言、手动界面和原生奖励获取通过；缺少第二客户端，阶段状态为WAITING_MULTIPLAYER。[草稿PR #2](https://github.com/b727031867/slay-the-spire-2-mods/pull/2)、[交接与下载](docs/handoffs/TASK-001.md)、[测试报告](docs/tests/TASK-001-PC-A-run-01.md)。完整读档及双人尚未验收。当前状态见 [STATUS](docs/STATUS.md)，工具版本见 [TECH_BASELINE](docs/TECH_BASELINE.md)，接口依据见 [API_FINDINGS](docs/API_FINDINGS.md)。
 
 ## 技术栈与版本
 
@@ -94,7 +94,7 @@ TASK-001已确认「旅行者」风/岩主题、铁甲战士宿主：风起之�
 - **本地环境**：两台 PC 各自安装工具和游戏、配置 `local.settings.json`，不共享绝对路径、游戏程序集或存档。PC-A 的验证结果不代表 PC-B 已通过。
 - **游戏测试**：两台 PC 均可做单人测试；双人联机需两端客户端、账号及操作者条件满足，并交换主客机验收。
 
-目前已有本地构建与打包脚本；最小技术预览ZIP和SHA256已上传草稿附件，获取方式及被测提交见 [TASK-000交接](docs/handoffs/TASK-000.md)，实测结果见 [PC-A报告](docs/tests/TASK-000-PC-A-run-01.md)。尚未启用自动构建上传或公开发布。详细接入与切换步骤见 [双 PC 协作说明](docs/COLLABORATION.md)，调整依据见 [决策记录](docs/DECISIONS.md)。
+目前已有本地构建、打包和检查脚本；当前0.0.2 ZIP与SHA256已上传草稿附件，获取方式及被测提交见 [TASK-001交接](docs/handoffs/TASK-001.md)，实测结果见 [PC-A报告](docs/tests/TASK-001-PC-A-run-01.md)。历史最小工程记录保留在 [TASK-000交接](docs/handoffs/TASK-000.md)。尚未启用自动构建上传或公开发布。详细接入与切换步骤见 [双 PC 协作说明](docs/COLLABORATION.md)，调整依据见 [决策记录](docs/DECISIONS.md)。
 
 ## 仓库结构
 
