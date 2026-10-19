@@ -11,27 +11,16 @@ public readonly record struct ComboStep(bool Advanced, ComboKind Kind, Element B
 /// <summary>One player's combat state. Action identity is stable across engine choice/resume IDs.</summary>
 public sealed class ComboState
 {
-    public const int Limit = 2;
+    public const int Limit = 3;
     private readonly HashSet<object> _seen = new(ReferenceEqualityComparer.Instance);
     public Element Last { get; private set; }
     public int Used { get; private set; }
-    public bool PaimonUsed { get; private set; }
-    public int PaimonRewardsGranted { get; private set; }
     public int Remaining => Limit - Used;
     // Always positive: the engine removes powers whose amount reaches zero.
     public int Encoded => 1 + (int)Last + 4 * Used;
 
-    public void BeginTurn() { Last = Element.None; Used = 0; PaimonUsed = false; PaimonRewardsGranted = 0; }
+    public void BeginTurn() { Last = Element.None; Used = 0; }
     public void EndTurn() => Last = Element.None;
-
-    public bool TryReservePaimonReward()
-    {
-        if (PaimonUsed) return false;
-        PaimonUsed = true;
-        return true;
-    }
-
-    public void MarkPaimonRewardGranted() => PaimonRewardsGranted++;
 
     public ComboStep Reserve(object action, Element element, bool automatic = false, bool firstInSeries = true)
     {
@@ -46,9 +35,9 @@ public sealed class ComboState
         }
         var kind = (Last, element) switch
         {
-            (Element.Wind, Element.Rock) => ComboKind.WindRock,
-            (Element.Rock, Element.Lightning) => ComboKind.RockLightning,
-            (Element.Lightning, Element.Wind) => ComboKind.LightningWind,
+            (Element.Wind, Element.Rock) or (Element.Rock, Element.Wind) => ComboKind.WindRock,
+            (Element.Rock, Element.Lightning) or (Element.Lightning, Element.Rock) => ComboKind.RockLightning,
+            (Element.Lightning, Element.Wind) or (Element.Wind, Element.Lightning) => ComboKind.LightningWind,
             _ => ComboKind.None
         };
         if (kind != ComboKind.None) { Used++; Last = Element.None; }

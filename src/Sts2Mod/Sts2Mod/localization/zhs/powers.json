@@ -1,14 +1,14 @@
 {
   "TC_ELEMENT_ROCK": "岩",
   "TC_COMBO.title": "元素连招：{Element}",
-  "TC_COMBO.description": "上一元素：[gold]{Element}[/gold]。\n本回合剩余[blue]{Remaining}[/blue]次连招（共用）。\n主动风→岩：额外4格挡。主动岩→雷：对同一存活目标额外4点攻击伤害，受伤害修正影响。主动雷→风：额外抽1张牌。触发后清空序列。普通牌不打断；自动及额外结算不推进。回合结束清空元素。",
+  "TC_COMBO.description": "上一元素：[gold]{Element}[/gold]。\n本回合剩余[blue]{Remaining}[/blue]次连招（共用）。\n主动风↔岩：额外4格挡。主动岩↔雷：对同一存活目标额外4点攻击伤害，受伤害修正影响。主动雷↔风：额外抽1张牌。元素对顺序可互换。触发后清空序列。普通牌不打断；自动及额外结算不推进。回合结束清空元素。",
   "TC_ELEMENT_WIND": "风",
   "TC_ELEMENT_NONE": "无",
   "TC_COMBO.exhaustedTitle": "元素连招：本回合已用完",
-  "TC_COMBO.exhaustedDescription": "本回合剩余0次连招。上一元素：无。主题牌仅执行基础效果。下回合重新获得2次连招。",
+  "TC_COMBO.exhaustedDescription": "本回合剩余0次连招。上一元素：无。主题牌仅执行基础效果。下回合重新获得3次连招。",
   "TC_COMBO.trigger": "风岩守势：+4格挡",
   "TC_ELEMENT_LIGHTNING": "雷",
   "TC_COMBO.rockLightningTrigger": "岩雷破击：追加攻击",
   "TC_COMBO.lightningWindTrigger": "雷风回旋：抽1张牌",
-  "TC_COMBO.paimonTrigger": "派蒙的应援：+3格挡"
+  "TC_COMBO.paimonTrigger": "派蒙的应援：连招效果翻倍"
 }

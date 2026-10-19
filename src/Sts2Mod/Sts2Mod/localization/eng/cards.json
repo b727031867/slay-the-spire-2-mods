@@ -1,14 +1,14 @@
 {
-  "TC_C02.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold].\n[gold]Rock[/gold]: manual Wind → Rock grants [blue]4[/blue] extra Block, up to [blue]2[/blue] times per turn.",
+  "TC_C02.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold].\n[gold]Rock[/gold]: manual Wind ↔ Rock grants [blue]4[/blue] extra Block, up to [blue]3[/blue] times per turn.",
   "TC_C02.title": "Rock Guard",
   "TC_C01.description": "Deal [blue]{Damage}[/blue] damage.\n[gold]Wind[/gold]: records the element of this manual play.",
   "TC_C01.title": "Wind Blade",
   "TC_C03.title": "Lightning Thrust",
-  "TC_C03.description": "Deal [blue]{Damage}[/blue] damage.\n[gold]Lightning[/gold]: manual Rock → Lightning deals [blue]4[/blue] extra attack damage to the same target. Combos share a [blue]2[/blue]-per-turn limit.",
+  "TC_C03.description": "Deal [blue]{Damage}[/blue] damage.\n[gold]Lightning[/gold]: manual Rock ↔ Lightning deals [blue]4[/blue] extra attack damage to the same target. Combos share a [blue]3[/blue]-per-turn limit.",
   "TC_C04.title": "Tailwind Prep",
-  "TC_C04.description": "Draw [blue]{Cards}[/blue] card(s).\n[gold]Wind[/gold]: manual Lightning → Wind draws [blue]1[/blue] extra card.",
+  "TC_C04.description": "Draw [blue]{Cards}[/blue] card(s).\n[gold]Wind[/gold]: manual Lightning ↔ Wind draws [blue]1[/blue] extra card.",
   "TC_C05.title": "Rock Advance",
   "TC_C05.description": "Deal [blue]{Damage}[/blue] damage, then gain [blue]{Block}[/blue] [gold]Block[/gold].\n[gold]Rock[/gold].",
   "TC_C06.title": "Thunder Prep",
-  "TC_C06.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold], then draw [blue]{Cards}[/blue] card.\n[gold]Lightning[/gold]. A Rock → Lightning bonus needs this card to have a living enemy target."
+  "TC_C06.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold], then draw [blue]{Cards}[/blue] card.\n[gold]Lightning[/gold]. A Rock ↔ Lightning bonus needs the triggering card to have a living enemy target."
 }

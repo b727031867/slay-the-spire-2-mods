@@ -1,5 +1,5 @@
 {
   "TC_R01.title": "Paimon's Cheer",
-  "TC_R01.description": "After your first successful element combo each turn, gain [blue]3[/blue] [gold]Block[/gold]. Duplicate copies do not stack.",
-  "TC_R01.flavor": "The best travel companion never misses a chance to cheer you on."
+  "TC_R01.description": "Element combo rewards are doubled. This shared relic can be obtained only once per run.",
+  "TC_R01.flavor": "The best travel companion makes every elemental flourish count twice."
 }

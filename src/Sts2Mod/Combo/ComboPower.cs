@@ -17,7 +17,7 @@ using Sts2Mod.Relics;
 
 namespace Sts2Mod.Combo;
 
-public readonly record struct Reservation(ComboKind Kind, uint? ActionId, bool PaimonReward);
+public readonly record struct Reservation(ComboKind Kind, uint? ActionId, bool PaimonDoubles);
 
 [CustomID("TC_COMBO")]
 public sealed class ComboPower : CustomPowerModel
@@ -62,19 +62,18 @@ public sealed class ComboPower : CustomPowerModel
             || action.Player != card.Owner || action.NetCombatCard.ToCardModel() != card)
             return default;
         var step = power.State.Reserve(action, element, play.IsAutoPlay, play.IsFirstInSeries);
-        var paimonReward = step.Triggered
-            && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false })
-            && power.State.TryReservePaimonReward();
+        var paimonDoubles = step.Triggered
+            && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false });
         var reward = step.Kind switch
         {
-            ComboKind.WindRock => "block4",
-            ComboKind.RockLightning => "attack4",
-            ComboKind.LightningWind => "draw1",
+            ComboKind.WindRock => paimonDoubles ? "block8" : "block4",
+            ComboKind.RockLightning => paimonDoubles ? "attack8" : "attack4",
+            ComboKind.LightningWind => paimonDoubles ? "draw2" : "draw1",
             _ => "none"
         };
         power.Publish(step.Advanced ? "reserve" : "ignored");
-        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={action.Id} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} kind={step.Kind} reward={reward} paimon={paimonReward}");
-        return new(step.Kind, action.Id, paimonReward);
+        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={action.Id} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} kind={step.Kind} reward={reward} paimonDouble={paimonDoubles}");
+        return new(step.Kind, action.Id, paimonDoubles);
     }
 
     public static async Task Resolve(CardModel card, PlayerChoiceContext context, CardPlay play, Reservation reservation)
@@ -87,6 +86,13 @@ public sealed class ComboPower : CustomPowerModel
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=combat_ended_or_dead");
             return;
         }
+        var bonus = reservation.PaimonDoubles ? 8m : 4m;
+        var draws = reservation.PaimonDoubles ? 2m : 1m;
+        if (reservation.PaimonDoubles)
+        {
+            card.Owner.Relics.OfType<PaimonCheer>().First(r => !r.IsMelted).Flash();
+            ShowTrigger(creature, "TC_COMBO.paimonTrigger");
+        }
         if (reservation.Kind == ComboKind.RockLightning)
         {
             var target = play.Target;
@@ -97,36 +103,26 @@ public sealed class ComboPower : CustomPowerModel
             else
             {
                 var hp = target.CurrentHp;
-                await DamageCmd.Attack(4m).FromCard(card).Targeting(target)
+                await DamageCmd.Attack(bonus).FromCard(card).Targeting(target)
                     .WithHitFx("vfx/vfx_attack_slash").Execute(context);
                 ShowTrigger(creature, "TC_COMBO.rockLightningTrigger");
-                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} base_bonus=4");
+                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} bonus={bonus}");
             }
         }
         else if (reservation.Kind == ComboKind.LightningWind)
         {
             var handBefore = PileType.Hand.GetPile(card.Owner).Cards.Count;
-            await CardPileCmd.Draw(context, 1m, card.Owner);
+            await CardPileCmd.Draw(context, draws, card.Owner);
             ShowTrigger(creature, "TC_COMBO.lightningWindTrigger");
-            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=LightningWind hand_before={handBefore} hand_after={PileType.Hand.GetPile(card.Owner).Cards.Count} bonus_draw=1");
+            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=LightningWind hand_before={handBefore} hand_after={PileType.Hand.GetPile(card.Owner).Cards.Count} bonus_draw={draws}");
         }
         else
         {
             var before = creature.Block;
             creature.GetPower<ComboPower>()?.Flash();
-            await CreatureCmd.GainBlock(creature, 4m, ValueProp.Unpowered, play);
+            await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
             ShowTrigger(creature, "TC_COMBO.trigger");
-            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus=4");
-        }
-
-        if (reservation.PaimonReward && CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsEnding && creature.IsAlive)
-        {
-            var before = creature.Block;
-            card.Owner.Relics.OfType<PaimonCheer>().FirstOrDefault(r => !r.IsMelted)?.Flash();
-            await CreatureCmd.GainBlock(creature, 3m, ValueProp.Unpowered, null);
-            creature.GetPower<ComboPower>()?.State.MarkPaimonRewardGranted();
-            ShowTrigger(creature, "TC_COMBO.paimonTrigger");
-            GD.Print($"STS2MOD_PAIMON player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus=3");
+            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
         }
     }
 
