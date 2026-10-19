@@ -1,4 +1,4 @@
-param([Parameter(Mandatory)][string]$LogFile, [string]$CodeCommit, [switch]$ExpectAbsent)
+param([Parameter(Mandatory)][string]$LogFile, [string]$CodeCommit, [switch]$ExpectAbsent, [switch]$Headless)
 $ErrorActionPreference = 'Stop'
 $deadline = [DateTime]::UtcNow.AddSeconds(45)
 $text = ''
@@ -18,6 +18,16 @@ if ($ready.Count -ne 1) { throw "Expected one Sts2Mod initialization marker, got
 if ($CodeCommit -and $ready[0].Value -notmatch ('\+' + [regex]::Escape($CodeCommit) + '(?=\s)')) { throw 'Loaded assembly does not match the expected source commit.' }
 if ($ready[0].Value -notmatch 'baselib=3\.3\.2 resource=ok') { throw 'Dependency/resource verification failed.' }
 if ($text -notmatch "Finished mod initialization for 'BaseLib' \(BaseLib\)" -or $text -notmatch "Finished mod initialization for '[^']*' \(Sts2Mod\)") { throw 'Game loader did not report both mods initialized.' }
-if ($text -match '\[ERROR\]|(?m)^ERROR:') { throw 'Game startup logged an error. Review it before marking the smoke test as passed.' }
+$errorLines = [regex]::Matches($text, '(?m)^ERROR:[^\r\n]*') | ForEach-Object Value
+if ($Headless) {
+    $knownHeadlessRenderErrors = @(
+        'ERROR: Attempting to initialize the wrong RID',
+        'ERROR: Parameter "mem" is null.',
+        'ERROR: Attempting to use an uninitialized RID',
+        'ERROR: Parameter "shader" is null.'
+    )
+    $errorLines = $errorLines | Where-Object { $_ -notin $knownHeadlessRenderErrors }
+}
+if ($text -match '\[ERROR\]' -or $errorLines.Count) { throw 'Game startup logged an unexpected error. Review it before marking the smoke test as passed.' }
 Write-Output $ready[0].Value
 Write-Output 'PASS: exactly one initialization, pinned BaseLib and resource check succeeded, game reached main menu without startup errors.'
