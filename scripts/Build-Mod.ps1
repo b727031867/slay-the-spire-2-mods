@@ -32,16 +32,16 @@ try {
     $env:SourceRevisionId = $sourceIdentity
     $env:ContinuousIntegrationBuild = 'true'
     $project = Join-Path $projectRoot 'src/Sts2Mod/Sts2Mod.csproj'
-    & dotnet restore $project --locked-mode
+    & dotnet restore $project --locked-mode -p:Configuration=ExportRelease --runtime win-x64
     if ($LASTEXITCODE -ne 0) { throw 'Locked restore failed.' }
-    & dotnet build $project --configuration Release --no-restore --nologo
+    & dotnet build $project --configuration ExportRelease --runtime win-x64 --no-restore --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Mod build failed.' }
     $godotProject = Join-Path $projectRoot 'src/Sts2Mod'
     & $env:STS2_GODOT_EXE --headless --path $godotProject --editor --import
     if ($LASTEXITCODE -ne 0) { throw 'Godot import failed.' }
     & $env:STS2_GODOT_EXE --headless --path $godotProject --export-pack ModPack (Join-Path $modOutput 'Sts2Mod.pck')
     if ($LASTEXITCODE -ne 0) { throw 'Godot export failed.' }
-    Copy-Item -LiteralPath (Join-Path $godotProject '.godot/mono/temp/bin/Release/Sts2Mod.dll') -Destination $modOutput -Force
+    Copy-Item -LiteralPath (Join-Path $godotProject '.godot/mono/temp/bin/ExportRelease/win-x64/Sts2Mod.dll') -Destination $modOutput -Force
     Copy-Item -LiteralPath (Join-Path $godotProject 'Sts2Mod.json') -Destination $modOutput -Force
     $fileHashes = @{}
     foreach ($name in @('Sts2Mod.dll','Sts2Mod.json','Sts2Mod.pck')) {

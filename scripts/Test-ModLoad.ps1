@@ -15,7 +15,7 @@ if ($ExpectAbsent) {
     return
 }
 if ($ready.Count -ne 1) { throw "Expected one Sts2Mod initialization marker, got $($ready.Count)." }
-if ($CodeCommit -and $ready[0].Value -notmatch [regex]::Escape($CodeCommit)) { throw 'Loaded assembly does not match the expected source commit.' }
+if ($CodeCommit -and $ready[0].Value -notmatch ('\+' + [regex]::Escape($CodeCommit) + '(?=\s)')) { throw 'Loaded assembly does not match the expected source commit.' }
 if ($ready[0].Value -notmatch 'baselib=3\.3\.2 resource=ok') { throw 'Dependency/resource verification failed.' }
 if ($text -notmatch "Finished mod initialization for 'BaseLib' \(BaseLib\)" -or $text -notmatch "Finished mod initialization for '[^']*' \(Sts2Mod\)") { throw 'Game loader did not report both mods initialized.' }
 if ($text -match '\[ERROR\]|(?m)^ERROR:') { throw 'Game startup logged an error. Review it before marking the smoke test as passed.' }
