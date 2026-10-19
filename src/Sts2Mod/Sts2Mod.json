@@ -1,14 +1,17 @@
 {
   "id": "Sts2Mod",
-  "name": "STS2 Mod - Technical Preview",
+  "name": "STS2 Mod - Traveler Combo",
   "author": "b727031867",
-  "description": "Minimal loading verification. No cards, relics or gameplay changes yet.",
-  "version": "0.0.1",
+  "description": "Traveler Wind/Rock cards for Ironclad, with a two-combo-per-turn block reward. Singleplayer preview; multiplayer validation pending.",
+  "version": "0.0.2",
   "has_pck": true,
   "has_dll": true,
-  "affects_gameplay": false,
+  "affects_gameplay": true,
   "min_game_version": "0.107.1",
   "dependencies": [
-    { "id": "BaseLib", "min_version": "3.3.2" }
+    {
+      "id": "BaseLib",
+      "min_version": "3.3.2"
+    }
   ]
 }

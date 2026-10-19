@@ -25,9 +25,20 @@
 | 抽牌 | `CardPileCmd.Draw(PlayerChoiceContext,decimal,Player,bool)` | 沿用原生选择上下文和队列 |
 | 多人同步 | `ActionQueueSynchronizer`处理RequestEnqueueAction、ActionEnqueued与恢复消息；按确定顺序同步动作 | 存在原生命令/动作链；本任务仅静态调查，不宣称双人实测通过，不额外广播一次奖励 |
 
+## TASK-001 实现依据
+
+- BaseLib `CustomCardModel`结合`[Pool(typeof(IroncladCardPool))]`自动调用原生池扩展，`[CustomID]`固定为TC_C01/TC_C02。构造函数不同时手工重复加入池；测试检查原生解锁池中每种仅1条。
+- 两张牌在自己的`OnPlay`中先预占连招，再执行原生基础命令和奖励。`GameActionPlayerChoiceContext.Action`保留动作对象，暂停恢复只改变其数字Id；按动作引用去重，记录当前引擎Id。不持久化对象标识，不增加网络消息。实际暂停/恢复出牌与双人网络幂等仍待实测。
+- `ComboLifecycle`是无状态`SingletonModel`订阅者；每个玩家的`ComboPower`可变实例通过`InitInternalData`获得独立`ComboState`。回合开始Early钩子重置，玩家阵营回合结束、死亡与战斗结束清序列。显示用`DisplayAmount`表示剩余次数，原生Amount保留正数并编码元素/已用次数，避免零层被移除且让原生校验覆盖可见规则状态。
+- 基础伤害使用`DamageCmd.Attack(...).FromCard(this)`；基础格挡使用`BlockVar(..., ValueProp.Move)`。连招奖励用`CreatureCmd.GainBlock(...,4,ValueProp.Unpowered,cardPlay)`，作为额外固定格挡，不伪造新卡牌动作。状态图标闪烁及原生思考气泡仅负责显示。
+- 原生`BurstPower`通过`ModifyCardPlayCount`产生额外结算；实际游戏验证`CardPlay.PlayIndex=1`不会推进序列。`CardCmd.AutoPlay`的原生自动岩牌保留之前的风，后续手动岩牌仍能触发。
+- 原生本地化入口读取PCK内`res://Sts2Mod/localization/<eng|zhs>/<cards|powers>.json`。这些JSON不能散放在mods目录；导出排除项只排除根清单和包锁，保留本地化资源。自制SVG的Godot导入设置随源代码提交。
+- 显式启动参数控制测试Node/只读奖励观察者，默认不创建。`tc_hand`仅允许显式开启的单人铁甲可出牌阶段；无自定义网络动作/消息类型。
+- 保存边界：v0.107.1原生`RunManager.ToSave`序列化永久牌组、玩家与地图；`CombatRoom.ToSerializable`保存遭遇/完成标记/奖励，不序列化正在进行的手牌、Power或动作队列。普通存档不能作为任意战斗中间点快照；不声称支持中途连招恢复。卡牌ID与升级序列化往返可独立测试，完整退出/读档仍需实机用例TC-19，不能用模型往返替代。
+
 ## 验证等级
 
-真实游戏已验证最小加载、DLL/PCK读取及BaseLib版本检查。上表的玩法接口为静态证据，尚未用于正式卡牌实现；存档恢复、正常获取、伤害回调、动作幂等及双人同步均需后续游戏用例。
+TASK-000验证最小加载、DLL/PCK读取及BaseLib版本检查。TASK-001已经在真实游戏使用基础命令、回合边界、正常奖励与状态提示；精确被测提交、结果及未测项以TASK-001报告为准。完整读档、双人、主客机交换和断线恢复不能由单人结果推断。
 
 ## 公开参考
 

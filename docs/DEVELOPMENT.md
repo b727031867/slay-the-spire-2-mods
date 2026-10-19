@@ -54,7 +54,7 @@ Sts2Mod/
 .\scripts\Collect-ModLogs.ps1 -LogFile '<实际日志路径>'
 ```
 
-应看到一次`STS2MOD_READY version=0.0.1+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现启动ERROR的日志。原生清单入口：设置→游戏设置，滚动到底部→Modding“模组设置”；其中应显示BaseLib和STS2 Mod - Technical Preview。
+应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现ERROR的日志。当前版本为0.0.2，原生清单中显示BaseLib和STS2 Mod - Traveler Combo。
 
 原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。游戏原生启动可能同步Steam云存档，部署和移除脚本本身不修改存档。
 
@@ -74,6 +74,29 @@ Sts2Mod/
 
 移除后也可启动游戏，并使用`Test-ModLoad.ps1 -LogFile '<日志>' -ExpectAbsent`检查本项目不再加载；BaseLib作为共享框架仍会加载。
 
-## 后续范围
+## TASK-001：风岩玩法与测试
 
-最小加载通过不能替代FR-02至FR-07的卡池、连招、联机等验收。玩法实现前将`affects_gameplay`改为真实值，并验证正常获取、玩家状态与动作幂等。PC-B的环境、运行和双人同步结果单独记录，不沿用PC-A的结论。
+两张普通牌加入铁甲战士原生卡池，不修改初始牌组。风起之刃1费6伤害（升级9），岩之守护1费7格挡（升级10）；主动风→岩额外4格挡，每人每回合最多2次。普通牌不打断，自动打出和额外结算不推进。上一元素、剩余次数在原生状态图标的提示中显示；触发有短气泡提示。
+
+默认 `Start-ModGame.ps1` 只启动正常游戏，不开启测试局或赠牌。纯规则测试：
+
+```powershell
+. .\scripts\Enter-DevEnvironment.ps1
+dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
+```
+
+退出游戏后，以明确参数启动不保存run快照的单人测试局：
+
+```powershell
+.\scripts\Start-ModGame.ps1 -TravelerTest
+```
+
+等待日志出现 `STS2MOD_TEST_COMPLETE`，再运行 `Test-TravelerRun.ps1 -LogFile '<本次日志>' -CodeCommit '<S>'`。测试用原生出牌动作和回合转换验证规则；仅在测试夹具中补能量、清手牌、治疗玩家及提高靶子生命。结束后留下风岩手牌供手动检查。测试角色/seed固定，正常模式无这些处理。
+
+游戏内按 `Shift+8`（原生控制台也支持键盘左上角的反引号）打开控制台，输入 `tc_hand 1`，或 `tc_hand 3 upgraded`。该命令要求显式测试参数、单人铁甲战斗、玩家阶段且无执行中的动作；替换当前战斗手牌并提供2/4/6能量，不改永久牌组，不重置连招状态。测试下一组前先正常结束回合。命令用 `-TravelerDebug` 或 `-TravelerTest` 开启，默认会拒绝执行；不能用于双人联机测试。
+
+正常获取入口的独立检查：`Start-ModGame.ps1 -TravelerRewards`。它创建独立测试局，用原生Kill快速结束测试战斗，保留未修改的原生三选一奖励逻辑，跳过不含主题牌的奖励。出现 `STS2MOD_ACQUISITION_READY` 后，手动点击卡牌奖励并选择主题牌；只有原生奖励流程把牌加入永久牌组后才输出 `STS2MOD_ACQUISITION_COMPLETE`。用 `Test-TravelerRun.ps1 ... -Acquisition` 检查证据。该模式不强塞奖励、不替换奖励卡池，属于正常奖励入口的集成测试，不代表自然通关/平衡性测试。
+
+测试局设置 `ShouldSave=false`，不创建该run的保存快照；游戏仍可能按原生行为写入模组档案的进度及同步Steam云数据。脚本不手工读取、删除或覆盖玩家存档，测试模式不要打开自己的既有对局。
+
+双人端必须使用相同代码包、游戏和BaseLib版本，按需求书TC-16/17交换主客机验证；测试手牌通过测试新局的正常获取或双方原生支持的调试入口准备，`tc_hand`明确不适用于多人。缺少第二客户端时保留NOT_RUN/BLOCKED。

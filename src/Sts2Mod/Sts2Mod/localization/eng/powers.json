@@ -1,0 +1,10 @@
+{
+  "TC_ELEMENT_ROCK": "Rock",
+  "TC_COMBO.title": "Element Combo: {Element}",
+  "TC_COMBO.description": "Last element: [gold]{Element}[/gold].\n[blue]{Remaining}[/blue] combos remaining this turn.\nManual Wind → Rock: resolve the card, then gain 4 extra Block and clear the sequence. Other cards preserve it. Auto plays and extra replays do not advance it. Turn end clears the element.",
+  "TC_ELEMENT_WIND": "Wind",
+  "TC_ELEMENT_NONE": "None",
+  "TC_COMBO.exhaustedTitle": "Element Combo: limit reached",
+  "TC_COMBO.exhaustedDescription": "0 combos remaining. Last element: None. Theme cards resolve only their base effects. Reset to 2 combos next turn.",
+  "TC_COMBO.trigger": "Wind–Rock: +4 Block"
+}
