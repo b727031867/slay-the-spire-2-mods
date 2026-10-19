@@ -30,7 +30,7 @@ TASK-001已确认「旅行者」风/岩主题、铁甲战士宿主：风起之�
 | 正式玩法的单人及双人联机验收 | PC-A风岩单人通过；完整读档与双人NOT_RUN |
 | 0.0.2风岩开发包 | 已同步GitHub草稿附件并回下载校验，非完整玩法版 |
 
-TASK-001代码和PC-A单人部分完成：21项纯规则、28项真实游戏断言、手动界面和原生奖励获取通过；缺少第二客户端，阶段状态为WAITING_MULTIPLAYER。[草稿PR #2](https://github.com/b727031867/slay-the-spire-2-mods/pull/2)、[交接与下载](docs/handoffs/TASK-001.md)、[测试报告](docs/tests/TASK-001-PC-A-run-01.md)。完整读档及双人尚未验收。当前状态见 [STATUS](docs/STATUS.md)，工具版本见 [TECH_BASELINE](docs/TECH_BASELINE.md)，接口依据见 [API_FINDINGS](docs/API_FINDINGS.md)。
+TASK-001代码和PC-A单人范围已交付，状态为DONE_SINGLEPLAYER：21项纯规则、28项真实游戏断言、手动界面和原生奖励获取通过。当前按用户要求优先单人游戏验证，双人联机后续专项测试，不阻塞本次交付。[草稿PR #2](https://github.com/b727031867/slay-the-spire-2-mods/pull/2)、[交接与下载](docs/handoffs/TASK-001.md)、[测试报告](docs/tests/TASK-001-PC-A-run-01.md)。完整读档及双人尚未验收。当前状态见 [STATUS](docs/STATUS.md)，工具版本见 [TECH_BASELINE](docs/TECH_BASELINE.md)，接口依据见 [API_FINDINGS](docs/API_FINDINGS.md)。
 
 ## 技术栈与版本
 
