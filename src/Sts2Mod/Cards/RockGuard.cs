@@ -24,6 +24,6 @@ public sealed class RockGuard : CustomCardModel
     {
         var reservation = ComboPower.Reserve(this, choiceContext, cardPlay, Element.Rock);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
-        await ComboPower.Resolve(this, cardPlay, reservation);
+        await ComboPower.Resolve(this, choiceContext, cardPlay, reservation);
     }
 }

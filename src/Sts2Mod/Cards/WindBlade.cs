@@ -25,6 +25,6 @@ public sealed class WindBlade : CustomCardModel
         ArgumentNullException.ThrowIfNull(cardPlay.Target);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(cardPlay.Target)
             .WithHitFx("vfx/vfx_attack_slash").Execute(choiceContext);
-        await ComboPower.Resolve(this, cardPlay, reservation);
+        await ComboPower.Resolve(this, choiceContext, cardPlay, reservation);
     }
 }

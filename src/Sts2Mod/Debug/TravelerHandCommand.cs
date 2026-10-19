@@ -14,8 +14,8 @@ namespace Sts2Mod.Debug;
 public sealed class TravelerHandCommand : AbstractConsoleCmd
 {
     public override string CmdName => "tc_hand";
-    public override string Args => "[1|2|3] [upgraded]";
-    public override string Description => "TEST ONLY: replace the combat hand with Wind/Rock pairs; requires --sts2mod-debug, singleplayer Ironclad.";
+    public override string Args => "[1|2|3] [upgraded|lightning] [upgraded]";
+    public override string Description => "TEST ONLY: replace combat hand with Wind/Rock or Rock/Lightning pairs; requires --sts2mod-debug, singleplayer Ironclad.";
     public override bool DebugOnly => false;
     public override bool IsNetworked => false;
     public override CmdResult Process(Player? player, string[] args)
@@ -25,18 +25,22 @@ public sealed class TravelerHandCommand : AbstractConsoleCmd
             || player.Creature.CombatState?.Players.Count != 1 || CombatManager.Instance.PlayerActionsDisabled
             || MegaCrit.Sts2.Core.Runs.RunManager.Instance.ActionExecutor.CurrentlyRunningAction is not null)
             return new(false, "Requires a singleplayer Ironclad combat during the player phase.");
-        if (args.Length > 2 || (args.Length > 0 && (!int.TryParse(args[0], out var n) || n < 1 || n > 3))
-            || (args.Length == 2 && args[1] != "upgraded")) return new(false, "Usage: tc_hand [1|2|3] [upgraded]");
+        if (args.Length > 3 || (args.Length > 0 && (!int.TryParse(args[0], out var n) || n < 1 || n > 3))
+            || (args.Length >= 2 && args[1] is not ("upgraded" or "lightning"))
+            || (args.Length == 3 && (args[1] != "lightning" || args[2] != "upgraded")))
+            return new(false, "Usage: tc_hand [1|2|3] [upgraded|lightning] [upgraded]");
         var pairs = args.Length > 0 ? int.Parse(args[0]) : 1;
-        return new(Prepare(player, pairs, args.Length == 2), true, "Test hand prepared; the permanent deck is unchanged.");
+        return new(Prepare(player, pairs, args.Contains("upgraded"), args.Contains("lightning")), true, "Test hand prepared; the permanent deck is unchanged.");
     }
 
-    internal static async Task Prepare(Player player, int pairs, bool upgraded)
+    internal static async Task Prepare(Player player, int pairs, bool upgraded, bool lightning = false)
     {
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(player).Cards.ToArray());
         for (var i = 0; i < pairs; i++)
         {
-            foreach (var canonical in new CardModel[] { ModelDb.Card<WindBlade>(), ModelDb.Card<RockGuard>() })
+            foreach (var canonical in lightning
+                ? new CardModel[] { ModelDb.Card<RockGuard>(), ModelDb.Card<LightningThrust>() }
+                : new CardModel[] { ModelDb.Card<WindBlade>(), ModelDb.Card<RockGuard>() })
             {
                 var card = CombatManager.Instance.DebugOnlyGetState()!.CreateCard(canonical, player);
                 if (upgraded) CardCmd.Upgrade(card);

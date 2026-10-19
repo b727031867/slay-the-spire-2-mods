@@ -1,9 +1,9 @@
 {
   "id": "Sts2Mod",
-  "name": "STS2 Mod - Traveler Combo",
+  "name": "STS2 Mod - Traveler Elements",
   "author": "b727031867",
-  "description": "Traveler Wind/Rock cards for Ironclad, with a two-combo-per-turn block reward. Singleplayer preview; multiplayer validation pending.",
-  "version": "0.0.2",
+  "description": "Traveler Wind, Rock and Lightning cards for Ironclad. Wind-Rock and Rock-Lightning combos share a two-per-turn limit. Partial TASK-002 preview; multiplayer unverified.",
+  "version": "0.0.3",
   "has_pck": true,
   "has_dll": true,
   "affects_gameplay": true,

@@ -2,5 +2,7 @@
   "TC_C02.description": "获得[blue]{Block}[/blue]点[gold]格挡[/gold]。\n[gold]岩元素[/gold]：主动风→岩额外获得[blue]4[/blue]点格挡。每回合最多[blue]2[/blue]次。",
   "TC_C02.title": "岩之守护",
   "TC_C01.description": "造成[blue]{Damage}[/blue]点伤害。\n[gold]风元素[/gold]：记录本次主动打出的元素。",
-  "TC_C01.title": "风起之刃"
+  "TC_C01.title": "风起之刃",
+  "TC_C03.title": "雷光突刺",
+  "TC_C03.description": "造成[blue]{Damage}[/blue]点伤害。\n[gold]雷元素[/gold]：主动岩→雷对同一目标额外造成[blue]4[/blue]点攻击伤害。每回合连招共用[blue]2[/blue]次上限。"
 }

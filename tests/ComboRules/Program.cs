@@ -46,4 +46,24 @@ for (var used = 0; used <= 2; used++)
         Play(rock, Element.Rock); Check(encodings.Add(rock.Encoded), $"encoded Rock {used}");
     }
 }
+var lightning = new ComboState();
+Play(lightning, Element.Rock);
+Check(Play(lightning, Element.Lightning).Kind == ComboKind.RockLightning && lightning.Used == 1 && lightning.Last == Element.None, "TC-02 Rock Lightning consumes sequence");
+Play(lightning, Element.Wind); Play(lightning, Element.Rock);
+Check(lightning.Used == 2 && lightning.Last == Element.None, "Wind Rock and Rock Lightning share two-combo limit");
+Play(lightning, Element.Rock);
+Check(!Play(lightning, Element.Lightning).Triggered && lightning.Last == Element.None, "third mixed combo gives no reward");
+lightning.BeginTurn(); Play(lightning, Element.Lightning);
+Check(!Play(lightning, Element.Rock).Triggered && lightning.Last == Element.Rock, "reverse Lightning Rock gives no reward");
+Check(!lightning.Reserve(new object(), Element.Lightning, automatic: true).Advanced && lightning.Last == Element.Rock, "automatic Lightning preserves Rock");
+var lightningAction = new object();
+Check(lightning.Reserve(lightningAction, Element.Lightning).Triggered && !lightning.Reserve(lightningAction, Element.Lightning).Advanced, "Rock Lightning action deduplicated");
+for (var used = 0; used < 2; used++)
+{
+    var state = new ComboState();
+    for (var i = 0; i < used; i++) { Play(state, Element.Wind); Play(state, Element.Rock); }
+    Play(state, Element.Lightning);
+    Check(encodings.Add(state.Encoded), $"encoded Lightning does not collide {used}");
+    Check(!Play(state, Element.Wind).Triggered, "Lightning Wind reserved for later TASK-002 increment");
+}
 Console.WriteLine($"COMBO_RULES_PASS assertions={passed}");

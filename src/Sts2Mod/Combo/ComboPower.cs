@@ -16,7 +16,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Sts2Mod.Combo;
 
-public readonly record struct Reservation(bool Triggered, uint? ActionId);
+public readonly record struct Reservation(ComboKind Kind, uint? ActionId);
 
 [CustomID("TC_COMBO")]
 public sealed class ComboPower : CustomPowerModel
@@ -62,26 +62,46 @@ public sealed class ComboPower : CustomPowerModel
             return default;
         var step = power.State.Reserve(action, element, play.IsAutoPlay, play.IsFirstInSeries);
         power.Publish(step.Advanced ? "reserve" : "ignored");
-        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={action.Id} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} reward={(step.Triggered ? 4 : 0)}");
-        return new(step.Triggered, action.Id);
+        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={action.Id} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} kind={step.Kind} reward={(step.Triggered ? 4 : 0)}");
+        return new(step.Kind, action.Id);
     }
 
-    public static async Task Resolve(CardModel card, CardPlay play, Reservation reservation)
+    public static async Task Resolve(CardModel card, PlayerChoiceContext context, CardPlay play, Reservation reservation)
     {
-        if (!reservation.Triggered) return;
+        if (reservation.Kind == ComboKind.None) return;
         var creature = card.Owner.Creature;
         if (!CombatManager.Instance.IsInProgress || CombatManager.Instance.IsEnding || !creature.IsAlive)
         {
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=combat_ended_or_dead");
             return;
         }
+        if (reservation.Kind == ComboKind.RockLightning)
+        {
+            var target = play.Target;
+            if (target is null || !target.IsAlive || !creature.CombatState!.Creatures.Contains(target))
+            {
+                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=target_dead_or_removed kind=RockLightning");
+                return;
+            }
+            var hp = target.CurrentHp;
+            await DamageCmd.Attack(4m).FromCard(card).Targeting(target)
+                .WithHitFx("vfx/vfx_attack_slash").Execute(context);
+            ShowTrigger(creature, "TC_COMBO.rockLightningTrigger");
+            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} base_bonus=4");
+            return;
+        }
         var before = creature.Block;
         creature.GetPower<ComboPower>()?.Flash();
         await CreatureCmd.GainBlock(creature, 4m, ValueProp.Unpowered, play);
-        if (creature.GetCreatureNode() is not null && creature.GetVfxContainer() is { } container
-            && NThoughtBubbleVfx.Create(new LocString("powers", "TC_COMBO.trigger").GetFormattedText(), creature, 1.2) is { } bubble)
-            container.AddChild(bubble);
+        ShowTrigger(creature, "TC_COMBO.trigger");
         GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus=4");
+    }
+
+    private static void ShowTrigger(Creature creature, string key)
+    {
+        if (creature.GetCreatureNode() is not null && creature.GetVfxContainer() is { } container
+            && NThoughtBubbleVfx.Create(new LocString("powers", key).GetFormattedText(), creature, 1.2) is { } bubble)
+            container.AddChild(bubble);
     }
 
     public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)

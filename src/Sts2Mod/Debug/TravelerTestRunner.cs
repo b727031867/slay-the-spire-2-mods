@@ -165,8 +165,64 @@ public partial class TravelerTestRunner : Node
         await RunManager.Instance.EnterRoomDebug(RoomType.Monster, model: encounter);
         await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay && _player.Creature.GetPower<ComboPower>() is not null, "new combat");
         Check(Power != oldPower && Power.State.Last == Element.None && Power.State.Used == 0, "TC18_new_combat_has_fresh_state");
-        await TravelerHandCommand.Prepare(_player, 1, false);
+        await TestLightning();
+        await TravelerHandCommand.Prepare(_player, 1, false, lightning: true);
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
+    }
+
+    private async Task TestLightning()
+    {
+        _target = _player.Creature.CombatState!.Enemies.First();
+        _target.SetMaxHpInternal(2000m); _target.SetCurrentHpInternal(2000m);
+        await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
+        await PlayerCmd.SetEnergy(20m, _player);
+        var pool = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>().GetUnlockedCards(_player.UnlockState, 0);
+        Check(pool.Count(c => c is LightningThrust) == 1, "TC002_lightning_once_in_native_pool");
+        var hp = _target.CurrentHp;
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(hp - _target.CurrentHp == 11 && _player.Creature.Block == 7 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC02_rock_lightning_damage7_plus4");
+        await NextTurn(); hp = _target.CurrentHp;
+        await Play<RockGuard>(); await Play<LightningThrust>(true);
+        Check(hp - _target.CurrentHp == 14 && Power.State.Used == 1, "TC13_lightning_upgrade10_plus4");
+        await NextTurn(); hp = _target.CurrentHp;
+        await Play<WindBlade>(); await Play<RockGuard>();
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(hp - _target.CurrentHp == 24 && _player.Creature.Block == 25 && Power.State.Used == 2 && Power.State.Last == Element.None, "TC08_mixed_combos_share_cap");
+        await NextTurn(); hp = _target.CurrentHp;
+        var rock = await Play<RockGuard>();
+        var auto = await Add<LightningThrust>();
+        await CardCmd.AutoPlay(rock.PlayerChoiceContext!, auto, _target);
+        Check(hp - _target.CurrentHp == 7 && Power.State.Last == Element.Rock && Power.State.Used == 0, "TC10_auto_lightning_preserves_rock");
+        await Play<LightningThrust>();
+        Check(hp - _target.CurrentHp == 18 && Power.State.Used == 1, "TC10_manual_lightning_after_auto_triggers");
+        await NextTurn(); hp = _target.CurrentHp;
+        rock = await Play<RockGuard>();
+        await PowerCmd.Apply<DuplicationPower>(rock.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
+        await Play<LightningThrust>();
+        Check(hp - _target.CurrentHp == 18 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC11_native_duplicated_lightning_one_bonus");
+        await NextTurn(); hp = _target.CurrentHp;
+        rock = await Play<RockGuard>();
+        await PowerCmd.Apply<StrengthPower>(rock.PlayerChoiceContext!, _player.Creature, 2m, _player.Creature, null);
+        await PowerCmd.Apply<WeakPower>(rock.PlayerChoiceContext!, _player.Creature, 2m, _target, null);
+        await PowerCmd.Apply<VulnerablePower>(rock.PlayerChoiceContext!, _target, 2m, _player.Creature, null);
+        await CreatureCmd.GainBlock(_target, 3m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, null);
+        await Play<LightningThrust>();
+        Check(hp - _target.CurrentHp == 13 && _target.Block == 0, "TC24_strength_weak_vulnerable_block_native_formula");
+        await PowerCmd.Remove<StrengthPower>(_player.Creature);
+        await PowerCmd.Remove<WeakPower>(_player.Creature);
+        await PowerCmd.Remove<VulnerablePower>(_target);
+        await NextTurn();
+        var other = _player.Creature.CombatState!.Enemies.First(e => e != _target);
+        var otherHp = other.CurrentHp;
+        _target.SetCurrentHpInternal(7m);
+        await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(_target.IsDead && other.CurrentHp == otherHp && Power.State.Used == 1 && Power.State.Last == Element.None, "TC14_dead_target_no_retarget_counter_consumed");
+        var original = ModelDb.Card<LightningThrust>().ToMutable();
+        original.UpgradeInternal(); original.FinalizeUpgradeInternal();
+        var restored = CardModel.FromSerializable(original.ToSerializable());
+        Check(restored is LightningThrust && restored.CurrentUpgradeLevel == 1 && restored.DynamicVars.Damage.BaseValue == 10m, "native_card_serialization_roundtrip_TC_C03");
+        GD.Print("STS2MOD_LIGHTNING_COMPLETE multiplayer=NOT_RUN normal_acquisition=NOT_RUN");
     }
 
     private async Task ScanNormalRewards()

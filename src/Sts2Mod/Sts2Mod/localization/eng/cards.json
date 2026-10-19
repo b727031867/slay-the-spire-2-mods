@@ -2,5 +2,7 @@
   "TC_C02.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold].\n[gold]Rock[/gold]: manual Wind → Rock grants [blue]4[/blue] extra Block, up to [blue]2[/blue] times per turn.",
   "TC_C02.title": "Rock Guard",
   "TC_C01.description": "Deal [blue]{Damage}[/blue] damage.\n[gold]Wind[/gold]: records the element of this manual play.",
-  "TC_C01.title": "Wind Blade"
+  "TC_C01.title": "Wind Blade",
+  "TC_C03.title": "Lightning Thrust",
+  "TC_C03.description": "Deal [blue]{Damage}[/blue] damage.\n[gold]Lightning[/gold]: manual Rock → Lightning deals [blue]4[/blue] extra attack damage to the same target. Combos share a [blue]2[/blue]-per-turn limit."
 }
