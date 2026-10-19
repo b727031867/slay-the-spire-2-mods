@@ -54,7 +54,7 @@ Sts2Mod/
 .\scripts\Collect-ModLogs.ps1 -LogFile '<实际日志路径>'
 ```
 
-应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现ERROR的日志。当前版本为0.0.2，原生清单中显示BaseLib和STS2 Mod - Traveler Combo。
+应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现ERROR的日志。TASK-002增量A版本为0.0.3，原生清单中显示BaseLib和STS2 Mod - Traveler Elements。
 
 原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。游戏原生启动可能同步Steam云存档，部署和移除脚本本身不修改存档。
 
@@ -100,3 +100,11 @@ dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
 测试局设置 `ShouldSave=false`，不创建该run的保存快照；游戏仍可能按原生行为写入模组档案的进度及同步Steam云数据。脚本不手工读取、删除或覆盖玩家存档，测试模式不要打开自己的既有对局。
 
 双人端必须使用相同代码包、游戏和BaseLib版本，按需求书TC-16/17交换主客机验证；测试手牌通过测试新局的正常获取或双方原生支持的调试入口准备，`tc_hand`明确不适用于多人。缺少第二客户端时保留NOT_RUN/BLOCKED。
+
+## TASK-002 增量A：雷光突刺与岩雷
+
+0.0.3新增TC_C03雷光突刺：铁甲普通牌，1费7伤害，升级10，雷元素。岩→雷在基础伤害后对同一存活目标额外执行4点原生攻击伤害，受力量、虚弱、易伤和目标格挡影响；基础伤害杀死目标则不转移追加伤害，次数仍消费。风岩与岩雷共用每回合2次上限。
+
+仍未实现雷→风抽牌、TC_C04/05/06和派蒙；当前是部分TASK-002内容。正常模式不赠牌。显式测试模式下，`tc_hand 1 lightning`准备一组岩/雷，`tc_hand 1 lightning upgraded`准备升级岩/雷；原有风岩用法保留。
+
+`Start-ModGame.ps1 -TravelerTest`同时执行已有风岩回归与新增岩雷测试，完成后用`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Lightning`检查完整标记。`-Headless`可执行真实游戏进程的逻辑集成检查，但不能替代卡牌图形界面的人工验收。完整退出读档及双人测试仍未执行。
