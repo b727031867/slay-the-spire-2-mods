@@ -31,7 +31,8 @@ public static class ModEntry
         ModHelper.SubscribeForCombatStateHooks("Sts2Mod.Combo", _ => [ModelDb.Singleton<ComboLifecycle>()]);
         if (CommandLineHelper.HasArg("sts2mod-debug") && CommandLineHelper.HasArg("sts2mod-test"))
         {
-            if (CommandLineHelper.HasArg("sts2mod-rewards"))
+            TestSaveSandbox.Install();
+            if (CommandLineHelper.HasArg("sts2mod-rewards") || CommandLineHelper.HasArg("sts2mod-e2e"))
                 ModHelper.SubscribeForRunStateHooks("Sts2Mod.RewardProbe", _ => [ModelDb.Singleton<RewardProbe>()]);
             ((SceneTree)Engine.GetMainLoop()).Root.CallDeferred(Node.MethodName.AddChild, new TravelerTestRunner());
         }

@@ -1,7 +1,8 @@
-param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance)
+param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance,
+    [switch]$TravelerEndToEnd, [switch]$ResumeTask003, [string]$SandboxDirectory)
 $ErrorActionPreference = 'Stop'
 # Automated game tests must not open a window or steal focus from the user's work.
-if ($TravelerTest -or $TravelerAcceptance) { $Headless = $true }
+if ($TravelerTest -or $TravelerAcceptance -or $TravelerEndToEnd -or $ResumeTask003) { $Headless = $true }
 . (Join-Path $PSScriptRoot 'Enter-DevEnvironment.ps1')
 $projectRoot = Split-Path $PSScriptRoot -Parent
 if (Get-Process -Name SlayTheSpire2 -ErrorAction SilentlyContinue) { throw 'The game is already running.' }
@@ -13,10 +14,34 @@ $logDir = Join-Path $projectRoot '.local/logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $logPath = Join-Path $logDir ('game-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffffffZ') + '.log')
 $arguments = @('--log-file', ('"' + $logPath + '"'))
+if ($TravelerEndToEnd -or $ResumeTask003) { $TravelerTest = $true }
+if ($TravelerTest -or $TravelerAcceptance -or $TravelerRewards) {
+    $sandboxRoot = [IO.Path]::GetFullPath((Join-Path $projectRoot '.local/task003-saves'))
+    if ((Test-Path -LiteralPath $sandboxRoot) -and ((Get-Item -LiteralPath $sandboxRoot).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Refusing a redirected sandbox root.' }
+    if (!$SandboxDirectory) {
+        if ($ResumeTask003) { throw 'Resume requires the existing SandboxDirectory from the prepare launch.' }
+        $SandboxDirectory = Join-Path $sandboxRoot ([Guid]::NewGuid().ToString('N'))
+    }
+    $SandboxDirectory = [IO.Path]::GetFullPath($SandboxDirectory)
+    if ((Split-Path $SandboxDirectory -Parent) -ne $sandboxRoot) { throw 'Test sandbox must be an immediate child of .local/task003-saves.' }
+    $marker = Join-Path $SandboxDirectory '.sts2mod-test-sandbox'
+    if ($ResumeTask003) {
+        if ((Test-Path -LiteralPath $SandboxDirectory) -and ((Get-Item -LiteralPath $SandboxDirectory).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Refusing a redirected sandbox.' }
+        if (!(Test-Path -LiteralPath $marker) -or (Get-Content -Raw -LiteralPath $marker).Trim() -ne 'STS2MOD_TEST_SANDBOX_V1') { throw 'Not an owned test sandbox.' }
+    } else {
+        if (Test-Path -LiteralPath $SandboxDirectory) { throw 'Prepare requires a fresh sandbox; existing data is preserved.' }
+        New-Item -ItemType Directory -Path $SandboxDirectory -Force | Out-Null
+        Set-Content -LiteralPath $marker -Value 'STS2MOD_TEST_SANDBOX_V1' -Encoding ascii
+    }
+    $arguments += @('--sts2mod-sandbox', ('"' + $SandboxDirectory + '"'))
+    Write-Output "SandboxDirectory=$SandboxDirectory"
+}
 if ($TravelerDebug -or $TravelerTest -or $TravelerRewards -or $TravelerAcceptance) { $arguments += '--sts2mod-debug' }
 if ($TravelerTest -or $TravelerRewards -or $TravelerAcceptance) { $arguments += '--sts2mod-test' }
 if ($TravelerRewards) { $arguments += '--sts2mod-rewards' }
 if ($TravelerAcceptance) { $arguments += '--sts2mod-acceptance' }
+if ($TravelerEndToEnd) { $arguments += '--sts2mod-e2e' }
+if ($ResumeTask003) { $arguments += '--sts2mod-resume' }
 if ($Headless) { $arguments += '--headless' } else { $arguments += @('--windowed','--resolution','1280x720') }
 $oldAppId = $env:SteamAppId
 $oldGameId = $env:SteamGameId

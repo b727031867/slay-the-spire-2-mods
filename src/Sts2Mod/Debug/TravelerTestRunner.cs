@@ -116,6 +116,11 @@ public partial class TravelerTestRunner : Node
     private async Task Run()
     {
         await Until(() => NGame.Instance?.MainMenu is not null, "main menu");
+        if (CommandLineHelper.HasArg("sts2mod-e2e") || CommandLineHelper.HasArg("sts2mod-resume"))
+        {
+            await RunEndToEnd();
+            return;
+        }
         GD.Print("STS2MOD_TEST_START fixture=singleplayer shouldSave=false seed=TC001A");
         var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Ironclad>(), false,
             [ModelDb.Act<Overgrowth>(), ModelDb.Act<Hive>(), ModelDb.Act<Glory>()], [], "TC001A", GameMode.Standard);
