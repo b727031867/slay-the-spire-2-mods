@@ -14,3 +14,10 @@ The user requested on 2026-10-20 that game testing must not interfere with their
 - Do not start legacy `-TravelerRewards` flows that wait for manual card selection as an unattended test.
 - Track the process ID returned by each test launch. After collecting results, clean up only the test process you started; do not stop an existing user game or other user applications. Do not restart the game graphically after testing.
 - Headless logic results do not prove graphical rendering, manual UI, or natural playthrough correctness. Record these validation scopes separately.
+
+## TASK-003 disk acceptance
+
+- Automated test launches create a unique, marked metadata directory under `.local/task003-saves`. Native save data lives in the matching `user://sts2mod-acceptance/<id>` namespace using the real `SaveManager` and `GodotFileIo`, with no Steam cloud backend. Never copy a user's saves into it.
+- `-TravelerEndToEnd` prepares a fresh fixture and exits through the native menu/quit path. Redeploy the same package, then use `-ResumeTask003 -SandboxDirectory <the returned directory>` to resume that disk save in a new process. Both flags force headless mode.
+- Test display/audio settings use explicit fixture defaults; run/progress/prefs data uses native disk persistence. This is not a test of user graphics settings persistence.
+- Continuous-battle acceptance uses a controlled deck, high player HP and a four-turn budget per combat. Record forced cleanup separately from natural victories; do not present it as a natural full-run or balance validation.

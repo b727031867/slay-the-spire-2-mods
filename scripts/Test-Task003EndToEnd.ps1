@@ -1,11 +1,12 @@
 param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$CodeCommit,
     [Parameter(Mandatory)][ValidateSet('Prepare','Resume')][string]$Phase)
 $ErrorActionPreference='Stop'
-& (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
+& (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless -NativeShutdown
 $text=Get-Content -Raw -LiteralPath $LogFile
-$errors=& (Join-Path $PSScriptRoot 'Get-GameLogErrors.ps1') -Text $text -Headless
+$errors=& (Join-Path $PSScriptRoot 'Get-GameLogErrors.ps1') -Text $text -Headless -NativeShutdown
 if ($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]' -or $errors.Unexpected.Count) { throw 'TASK-003 end-to-end game test failed.' }
 if ($text -notmatch '(?m)^STS2MOD_SANDBOX storage=native_disk cloud=false marker=V1\r?$') { throw 'Native disk sandbox was not installed.' }
+if ($text -notmatch '(?m)^\[INFO\] NGame\.Quit called\r?$' -or $text -notmatch '(?m)^\[INFO\] Steamworks shutdown succeeded!\r?$') { throw 'Native quit/shutdown did not complete.' }
 $required=if ($Phase -eq 'Prepare') {
     @('TASK003_native_room_reward_enters_deck','TASK003_native_shop_card_purchase_cost_and_deck',
       'TASK003_sold_card_slot_not_stocked','TASK003_native_shop_paimon_purchase',

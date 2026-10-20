@@ -18,3 +18,18 @@ foreach ($case in $cases) {
     Write-Output "PASS $($case.Name)"
 }
 Write-Output "LOG_CLASSIFICATION_PASS assertions=$($cases.Count)"
+$shutdownPrefix="[INFO] NGame.Quit called`n[INFO] Steamworks shutdown succeeded!`n"
+$shutdownLine="ERROR: 27 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit."
+$shutdownCases=@(
+    @{Name='verified native shutdown type'; Text=$shutdownPrefix+$shutdownLine; Flag=$true; Unexpected=0; Shutdown=1},
+    @{Name='same type during gameplay rejected'; Text=$shutdownLine; Flag=$true; Unexpected=1; Shutdown=0},
+    @{Name='shutdown requires explicit flag'; Text=$shutdownPrefix+$shutdownLine; Flag=$false; Unexpected=1; Shutdown=0},
+    @{Name='unknown type after shutdown rejected'; Text=$shutdownPrefix+"ERROR: 1 RID allocations of type 'CustomGameplayObject' were leaked at exit."; Flag=$true; Unexpected=1; Shutdown=0},
+    @{Name='unknown error after shutdown rejected'; Text=$shutdownPrefix+'ERROR: Save failed'; Flag=$true; Unexpected=1; Shutdown=0}
+)
+foreach ($case in $shutdownCases) {
+    $result=& $classifier -Text $case.Text -Headless -NativeShutdown:$case.Flag
+    if ($result.Unexpected.Count -ne $case.Unexpected -or $result.KnownNativeShutdown.Count -ne $case.Shutdown) { throw "Shutdown classification failed: $($case.Name)" }
+    Write-Output "PASS $($case.Name)"
+}
+Write-Output "LOG_CLASSIFICATION_TOTAL_PASS assertions=$($cases.Count+$shutdownCases.Count)"
