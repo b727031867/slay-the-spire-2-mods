@@ -12,6 +12,10 @@ public partial class TravelerTestRunner
 {
     private async Task TestContinuousCombos()
     {
+        // A previous fixture can have ended combat; never target its old creature.
+        _target = _player.Creature.CombatState!.Enemies.First(enemy => enemy.IsAlive);
+        _target.SetMaxHpInternal(3000m);
+        _target.SetCurrentHpInternal(3000m);
         var doubled = ComboPresentation.HasPaimon(_player);
         var suffix = doubled ? "paimon" : "normal";
         var blockBonus = doubled ? 8 : 4;
@@ -25,6 +29,7 @@ public partial class TravelerTestRunner
             && ComboPresentation.Preview(thirdWind).LocEntryKey == "TC_PREVIEW.block",
             "CHAIN_after_pair_retains_rock_and_previews_next_block_" + suffix);
         await Queue(new PlayCardAction(thirdWind, _target));
+        GD.Print($"STS2MOD_CHAIN_DETAIL case=three_energy_{suffix} damage={hp - _target.CurrentHp} block={_player.Creature.Block} used={Power.State.Used} last={Power.State.Last} energy={_player.PlayerCombatState!.Energy}");
         Check(hp - _target.CurrentHp == 12 && _player.Creature.Block == 7 + 2 * blockBonus
             && Power.State.Used == 2 && Power.State.Last == Element.Wind && _player.PlayerCombatState!.Energy == 0,
             "CHAIN_three_energy_wind_rock_wind_two_blocks_" + suffix);
