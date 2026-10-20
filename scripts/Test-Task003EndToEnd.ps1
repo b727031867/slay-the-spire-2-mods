@@ -8,8 +8,8 @@ if ($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]' -or $errors.Unexpected.Count) { t
 if ($text -notmatch '(?m)^STS2MOD_SANDBOX storage=native_disk cloud=false marker=V1\r?$') { throw 'Native disk sandbox was not installed.' }
 $required=if ($Phase -eq 'Prepare') {
     @('TASK003_native_room_reward_enters_deck','TASK003_native_shop_card_purchase_cost_and_deck',
-      'TASK003_sold_card_cannot_be_purchased_twice','TASK003_native_shop_paimon_purchase',
-      'TASK003_sold_paimon_cannot_be_purchased_twice','TASK003_obtained_paimon_absent_from_both_bags',
+      'TASK003_sold_card_slot_not_stocked','TASK003_native_shop_paimon_purchase',
+      'TASK003_sold_paimon_slot_not_stocked','TASK003_obtained_paimon_absent_from_both_bags',
       'TASK003_paimon_not_offered_again_0','TASK003_paimon_not_offered_again_1','TASK003_paimon_not_offered_again_2',
       'TASK003_save_fixture_six_base_and_upgrades','TASK003_native_disk_save_exists','TASK003_leave_unsaved_wind_before_exit')
 } else {

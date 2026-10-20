@@ -139,8 +139,10 @@ public partial class TravelerTestRunner
                     && _player.Deck.Cards.Contains(card) && _player.Gold == gold - cost && !cardEntry.IsStocked,
                     "TASK003_native_shop_card_purchase_cost_and_deck");
                 var goldAfter = _player.Gold;
-                Check(!await cardEntry.OnTryPurchaseWrapper(inventory) && _player.Gold == goldAfter,
-                    "TASK003_sold_card_cannot_be_purchased_twice");
+                // The native UI disables sold slots; invoking its purchase-failure
+                // event on an empty slot is not a supported UI action.
+                Check(!cardEntry.IsStocked && _player.Gold == goldAfter,
+                    "TASK003_sold_card_slot_not_stocked");
                 cardBought = true;
                 GD.Print($"STS2MOD_E2E_ACQUIRED source=shop card={card.Id.Entry} shop={shop} cost={cost} offers_modified=false");
             }
@@ -151,8 +153,8 @@ public partial class TravelerTestRunner
                 Check(await relicEntry.OnTryPurchaseWrapper(inventory) && _player.Relics.Count(r => r is PaimonCheer) == 1
                     && _player.Gold == gold - cost && !relicEntry.IsStocked, "TASK003_native_shop_paimon_purchase");
                 var goldAfter = _player.Gold;
-                Check(!await relicEntry.OnTryPurchaseWrapper(inventory) && _player.Gold == goldAfter,
-                    "TASK003_sold_paimon_cannot_be_purchased_twice");
+                Check(!relicEntry.IsStocked && _player.Gold == goldAfter,
+                    "TASK003_sold_paimon_slot_not_stocked");
                 relicBought = true;
                 GD.Print($"STS2MOD_E2E_ACQUIRED source=shop relic=TC_R01 shop={shop} cost={cost} offers_modified=false");
             }

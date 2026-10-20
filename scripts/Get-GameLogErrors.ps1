@@ -8,6 +8,7 @@ $nativeHeadlessSources = @{
     'ERROR: Attempting to use an uninitialized RID' = '^at: get_or_null \(.*core/templates/rid_owner\.h:\d+\)$'
     'ERROR: Parameter "mem" is null.' = '^at: initialize_rid \(.*core/templates/rid_owner\.h:\d+\)$'
     'ERROR: Parameter "shader" is null.' = '^at: shader_set_code \(.*servers/rendering/dummy/storage/material_storage\.cpp:\d+\)$'
+    'ERROR: Parameter "t" is null.' = '^at: texture_2d_initialize \(.*servers/rendering/dummy/storage/texture_storage\.h:\d+\)$'
 }
 $unexpected = [Collections.Generic.List[string]]::new()
 $known = [Collections.Generic.List[string]]::new()

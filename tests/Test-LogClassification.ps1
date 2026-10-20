@@ -7,6 +7,8 @@ $cases = @(
     @{ Name='missing source never ignored'; Headless=$true; Text='ERROR: Parameter "shader" is null.'; Unexpected=1; Known=0 },
     @{ Name='observed native RID context'; Headless=$true; Text="ERROR: Initializing already initialized RID`n   at: get_or_null (./core/templates/rid_owner.h:246)"; Unexpected=0; Known=1 },
     @{ Name='unknown error remains failure'; Headless=$true; Text="ERROR: Card resolution failed`n   at: OnPlay (card.cs:1)"; Unexpected=1; Known=0 }
+    @{ Name='native dummy texture in headless'; Headless=$true; Text="ERROR: Parameter `"t`" is null.`n   at: texture_2d_initialize (servers/rendering/dummy/storage/texture_storage.h:84)"; Unexpected=0; Known=1 }
+    @{ Name='same texture null from gameplay rejected'; Headless=$true; Text="ERROR: Parameter `"t`" is null.`n   at: Resolve (card.cs:84)"; Unexpected=1; Known=0 }
 )
 foreach ($case in $cases) {
     $result = & $classifier -Text $case.Text -Headless:$case.Headless
