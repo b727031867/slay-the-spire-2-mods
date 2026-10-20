@@ -1,0 +1,17 @@
+STS2MOD_READY version=0.1.4+0cfa26d7cc86cf9b41ac62c85d9be7a5cc0b281f baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=0.
+Traveler singleplayer test evidence passed. UI and multiplayer require their own recorded checks.
+EXPERIENCE_PASS total=153 presentation=28 rendering=NOT_RUN
+CONTINUOUS_COMBO_PASS cases=18 rules=overlapping_pairs cap=3 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN
+STS2MOD_READY version=0.1.4+0cfa26d7cc86cf9b41ac62c85d9be7a5cc0b281f baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=0.
+NORMAL_TEST_MARKERS=0
+PASS 729 six-card sequences match independent overlapping-pair oracle
+PASS Wind Rock retains Rock and previews second block
+PASS ordinary card and duplicate action do not break retained chain
+PASS automatic and extra resolution preserve retained chain
+COMBO_RULES_PASS assertions=48
+WORKSHOP_PRIVATE=true
+DOWNLOADED_SEVEN_FILES_MATCH=true
+CDN_COVER_AND_RULES_HTTP=200
+CDN_SOURCE_HASHES_MATCH=true
