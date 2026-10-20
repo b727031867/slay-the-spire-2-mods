@@ -1,5 +1,7 @@
 # v0.107.1 接口调查
 
+0.3.4补充：按试玩反馈删除NCombatUi._Ready的自定义面板挂载与ComboHud/ComboPips类；仅保留NPower.OnDisplayAmountChanged的本Mod元素纹理刷新。原生HoverTip仍来自ElementCardModel.ExtraHoverTips的TC_PREVIEW条目，未改预览公式/文案/规则。新增验收检查整个原生战斗UI没有TravelerComboHud节点，并直接验证原生HoverTip.Description及状态栏%Icon。
+
 ## TASK-011 / PC-B / 0.3.3 补充（2026-10-21）
 
 - NPower.OnDisplayAmountChanged只刷新数值与闪烁，不重新读取Icon。按元素动态返回CustomPackedIconPath还须在该回调后刷新%Icon.Texture，补丁只作用于ComboPower，不改StackType或其他Power。

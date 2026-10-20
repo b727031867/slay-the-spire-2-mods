@@ -1,5 +1,7 @@
 # 构建、部署与最小加载检查
 
+0.3.4补充：TravelerVisuals专项已改为检查无自定义面板、原生状态图标与卡牌HoverTip以及只读性。旧0.3.3的面板节点/高亮断言不再要求；Test-ComboVisualRun.ps1要求新的panel=ABSENT完成标记，不沿用旧包的33项节点结果。
+
 0.3.3/TASK-011：`Start-ModGame.ps1 -TravelerVisuals -Headless`仅运行可视连携专项，完成后`Test-ComboVisualRun.ps1 -LogFile <日志> -CodeCommit <S>`检查；完整回归仍为TravelerTest和Test-ExpandedCardRun.ps1 -Full，也强制检查本专项。验证范围是实际原生控件属性/状态/选牌读取/资源接线与只读性，不是截图、鼠标或控制器实机验收。UI符号为刻意设计的SVG，原PNG插图不变。
 
 0.3.2/TASK-010：完整回归新增罗盘两回合间隔/额外回合/原生图标事件、20项PNG及Character.Icon头像接线、元素共鸣第2次实际奖励专项。跨PC从[最新提示词](handoffs/NEXT-PC-CONTINUE-PROMPT.md)开始，最终包身份和测试范围见[TASK-010报告](tests/TASK-010-PC-B-run-01.md)。下方为历史。
