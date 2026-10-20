@@ -19,8 +19,8 @@ public sealed class ComboState
     // Always positive: the engine removes powers whose amount reaches zero.
     public int Encoded => 1 + (int)Last + 4 * Used;
 
-    public void BeginTurn() { Last = Element.None; Used = 0; }
-    public void EndTurn() => Last = Element.None;
+    public void BeginTurn() => Used = 0;
+    public void ClearCombat() { Last = Element.None; Used = 0; }
 
     // Read-only: hovering must never reserve an action or spend a combo use.
     public ComboKind Preview(Element element) => Used >= Limit ? ComboKind.None : Pair(Last, element);

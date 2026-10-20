@@ -3,7 +3,7 @@
   "name": "STS2 Mod - Traveler Elements",
   "author": "b727031867",
   "description": "Playable Traveler character, six exclusive element cards, a ten-card starting deck, Journey Compass and an exclusive Paimon relic. Singleplayer test build; multiplayer unverified.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "has_pck": true,
   "has_dll": true,
   "affects_gameplay": true,

@@ -46,7 +46,7 @@ public sealed class ComboPower : CustomPowerModel
     public override LocString Description => WithState(DisplayAmount == 0 ? "exhaustedDescription" : "description");
 
     public void BeginTurn() { State.BeginTurn(); Publish("turn_start"); }
-    private void Clear(string reason) { State.EndTurn(); Publish(reason); }
+    private void Clear(string reason) { State.ClearCombat(); Publish(reason); }
     private void Publish(string reason)
     {
         SetAmount(State.Encoded, silent: true);
@@ -161,12 +161,10 @@ public sealed class ComboPower : CustomPowerModel
 
     public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
     {
-        if (participants.Contains(Owner)) Clear("turn_end");
         return Task.CompletedTask;
     }
     public override Task AfterDeath(PlayerChoiceContext context, Creature creature, bool prevented, float animationLength)
     {
-        if (creature == Owner && !prevented) Clear("death");
         return Task.CompletedTask;
     }
     public override Task AfterCombatEnd(CombatRoom room) { Clear("combat_end"); return Task.CompletedTask; }

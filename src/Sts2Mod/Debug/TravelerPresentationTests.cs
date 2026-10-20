@@ -62,8 +62,9 @@ public partial class TravelerTestRunner
         await Play<WindBlade>();
         Check(PileType.Hand.GetPile(_player).Cards.Count == 1 + draws && Power.State.Used == 2
             && Power.State.Last == Element.Wind, "CHAIN_can_continue_after_targetless_pair_" + suffix);
-        await NextTurn();
-        Check(Power.State.Last == Element.None && Power.State.Used == 0, "CHAIN_resets_at_turn_boundary_" + suffix);
+        await NextTurn(preserveElement: true);
+        Check(Power.State.Last == Element.Wind && Power.State.Used == 0, "CHAIN_retains_element_at_turn_boundary_" + suffix);
+        Power.State.ClearCombat();
     }
 
     private async Task TestPresentation()

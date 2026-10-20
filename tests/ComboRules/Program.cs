@@ -19,28 +19,35 @@ Check(Play(a, Element.Rock).Triggered && a.Used == 3 && a.Last == Element.Rock, 
 Play(a, Element.Wind);
 Check(!Play(a, Element.Rock).Triggered && a.Last == Element.Rock, "fourth combo is capped and retains latest element");
 
-a.BeginTurn();
+// Independent input scenario starts in a fresh combat.
+a.ClearCombat();
 Play(a, Element.Rock);
 Check(Play(a, Element.Lightning).Kind == ComboKind.RockLightning, "Rock Lightning grants attack combo");
-a.BeginTurn();
+// Independent input scenario starts in a fresh combat.
+a.ClearCombat();
 Play(a, Element.Lightning);
 Check(Play(a, Element.Rock).Kind == ComboKind.RockLightning, "Lightning Rock reverse grants attack combo");
-a.BeginTurn();
+// Independent input scenario starts in a fresh combat.
+a.ClearCombat();
 Play(a, Element.Lightning);
 Check(Play(a, Element.Wind).Kind == ComboKind.LightningWind, "Lightning Wind grants draw combo");
-a.BeginTurn();
+// Independent input scenario starts in a fresh combat.
+a.ClearCombat();
 Play(a, Element.Wind);
 Check(Play(a, Element.Lightning).Kind == ComboKind.LightningWind, "Wind Lightning reverse grants draw combo");
 
-a.BeginTurn();
+// Independent input scenario starts in a fresh combat.
+a.ClearCombat();
 Play(a, Element.Wind);
 Check(!Play(a, Element.None).Advanced && a.Last == Element.Wind, "normal cards preserve element");
 Check(!a.Reserve(new object(), Element.Rock, automatic: true).Advanced && a.Last == Element.Wind, "automatic play preserves element");
 Check(!a.Reserve(new object(), Element.Rock, firstInSeries: false).Advanced && a.Last == Element.Wind, "extra resolution preserves element");
 var action = new object();
 Check(a.Reserve(action, Element.Rock).Triggered && !a.Reserve(action, Element.Rock).Advanced && a.Used == 1, "same logical action awards once");
-a.EndTurn();
-Check(a.Last == Element.None && !Play(a, Element.Rock).Triggered, "sequence cannot cross turns");
+a.BeginTurn();
+Check(a.Last == Element.Rock && a.Used == 0 && Play(a, Element.Wind).Triggered, "sequence crosses turns and starts next combo");
+a.ClearCombat();
+Check(a.Last == Element.None && a.Used == 0 && !Play(a, Element.Rock).Triggered, "combat end clears element and counter");
 
 var playerOne = new ComboState();
 var playerTwo = new ComboState();
@@ -71,7 +78,7 @@ var limit = new ComboState();
 for (var i = 0; i < ComboState.Limit; i++) { Play(limit, Element.Lightning); Play(limit, Element.Wind); }
 Check(limit.Used == 3 && limit.Remaining == 0, "all element pairs share three-combo limit");
 limit.BeginTurn();
-Check(limit.Used == 0 && limit.Remaining == 3 && limit.Last == Element.None, "native turn reset restores three combos");
+Check(limit.Used == 0 && limit.Remaining == 3 && limit.Last == Element.Wind, "native turn reset restores three combos and retains last element");
 
 foreach (var first in new[] { Element.Wind, Element.Rock, Element.Lightning })
 foreach (var second in new[] { Element.Wind, Element.Rock, Element.Lightning })

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.Powers.Mocks;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using MegaCrit.Sts2.Core.Rooms;
@@ -93,21 +94,30 @@ public partial class TravelerTestRunner
         await SeedDraw();
         var compass = _player.GetRelic<JourneyCompass>()!;
         await Play<RockGuard>(); await Play<ThunderPrep>();
-        Check(!compass.SpentThisCombat && PileType.Hand.GetPile(_player).Cards.Count == 1,
+        Check(!compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
             "CHAR_compass_not_consumed_by_targetless_skip");
         await NextTurn();
         await Play<WindBlade>(); await Play<RockGuard>();
-        Check(compass.SpentThisCombat && PileType.Hand.GetPile(_player).Cards.Count == 1,
+        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
             "CHAR_compass_first_success_draws_one");
         await Play<WindBlade>();
         Check(Power.State.Used == 2 && PileType.Hand.GetPile(_player).Cards.Count == 1,
             "CHAR_compass_second_combo_no_extra_draw");
-        await NextTurn(); await Play<WindBlade>(); await Play<RockGuard>();
-        Check(compass.SpentThisCombat && PileType.Hand.GetPile(_player).Cards.Count == 0,
-            "CHAR_compass_does_not_reset_each_turn");
+        await NextTurn(preserveElement: true); await Play<WindBlade>(); await Play<RockGuard>();
+        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
+            "CHAR_compass_resets_and_draws_next_turn");
+
+        var extraTurnSource = await Play<WindBlade>();
+        await PowerCmd.Apply<MockExtraTurnPower>(extraTurnSource.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
+        await NextTurn(preserveElement: true);
+        Check(!compass.SpentThisTurn && Power.State.Last == Element.Wind && Power.State.Remaining == 3,
+            "CHAR_extra_turn_retains_element_and_refreshes_compass");
+        await Play<RockGuard>();
+        Check(compass.SpentThisTurn && _player.Creature.Block == 11 && PileType.Hand.GetPile(_player).Cards.Count == 1,
+            "CHAR_extra_turn_first_combo_draws_again");
 
         await StartFreshCombat(); await SeedDraw();
-        Check(!compass.SpentThisCombat, "CHAR_compass_resets_for_new_combat");
+        Check(!compass.SpentThisTurn, "CHAR_compass_resets_for_new_combat");
         await RelicCmd.Obtain<PaimonCheer>(_player);
         await Play<WindBlade>(); await Play<RockGuard>();
         Check(_player.Creature.Block == 15 && PileType.Hand.GetPile(_player).Cards.Count == 1,
@@ -117,11 +127,11 @@ public partial class TravelerTestRunner
         var source = await Play<WindBlade>();
         await PowerCmd.Apply<NoDrawPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
         await Play<LightningThrust>();
-        Check(!compass.SpentThisCombat && PileType.Hand.GetPile(_player).Cards.Count == 0,
+        Check(!compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 0,
             "CHAR_compass_not_consumed_when_combo_draws_zero");
         await PowerCmd.Remove<NoDrawPower>(_player.Creature);
         await Play<RockGuard>(); await Play<WindBlade>();
-        Check(compass.SpentThisCombat && PileType.Hand.GetPile(_player).Cards.Count == 1,
+        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
             "CHAR_compass_triggers_after_earlier_skipped_rewards");
         await RelicCmd.Remove(compass);
         await NextTurn();

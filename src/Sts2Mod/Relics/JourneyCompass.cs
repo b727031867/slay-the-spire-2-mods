@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Entities.Players;
 using Sts2Mod.Pools;
 
 namespace Sts2Mod.Relics;
@@ -14,7 +15,7 @@ namespace Sts2Mod.Relics;
 public sealed class JourneyCompass : CustomRelicModel
 {
     private bool _spent;
-    public bool SpentThisCombat => _spent;
+    public bool SpentThisTurn => _spent;
     public override RelicRarity Rarity => RelicRarity.Starter;
     public override bool IsStackable => false;
     public override string PackedIconPath => "res://Sts2Mod/art/compass.svg";
@@ -25,9 +26,14 @@ public sealed class JourneyCompass : CustomRelicModel
         _spent = false;
         return Task.CompletedTask;
     }
+    public override Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
+    {
+        if (player == Owner) _spent = false;
+        return Task.CompletedTask;
+    }
     public async Task OnComboReward(PlayerChoiceContext context)
     {
-        if (IsMelted || SpentThisCombat || !Owner.Creature.IsAlive || !CombatManager.Instance.IsInProgress || CombatManager.Instance.IsEnding) return;
+        if (IsMelted || SpentThisTurn || !Owner.Creature.IsAlive || !CombatManager.Instance.IsInProgress || CombatManager.Instance.IsEnding) return;
         // Reserve before awaiting Draw: nested native callbacks cannot award twice.
         _spent = true;
         Flash();

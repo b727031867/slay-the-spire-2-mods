@@ -18,7 +18,7 @@ if ($Acquisition) {
         throw 'The native room reward acquisition test has not completed.'
     }
 } else {
-    $required = @('TC01_damage6_block11_retains_rock','TC04_reverse_wind_rock_combo','TC05_normal_defend_preserves_sequence','TC06_same_element_then_one_combo','TC08_four_pairs_only_three_bonuses','TC09_wind_does_not_cross_turn','TC10_native_autoplay_preserves_wind','TC10_manual_rock_after_autoplay_triggers','TC11_native_burst_extra_resolution_no_second_advance','TC13_upgraded_damage9_block14','TC15_insufficient_energy_does_not_advance','TC18_new_combat_has_fresh_state')
+    $required = @('TC01_damage6_block11_retains_rock','TC04_reverse_wind_rock_combo','TC05_normal_defend_preserves_sequence','TC06_same_element_then_one_combo','TC08_four_pairs_only_three_bonuses','TC09_wind_crosses_turn_and_triggers_rock','TC10_native_autoplay_preserves_wind','TC10_manual_rock_after_autoplay_triggers','TC11_native_burst_extra_resolution_no_second_advance','TC13_upgraded_damage9_block14','TC15_insufficient_energy_does_not_advance','TC18_new_combat_has_fresh_state')
     foreach ($case in $required) {
         if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing passing case: $case" }
     }

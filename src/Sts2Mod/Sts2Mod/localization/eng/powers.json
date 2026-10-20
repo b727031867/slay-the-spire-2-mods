@@ -1,7 +1,7 @@
 {
  "TC_ELEMENT_NONE":"None", "TC_ELEMENT_WIND":"Wind", "TC_ELEMENT_ROCK":"Rock", "TC_ELEMENT_LIGHTNING":"Lightning",
  "TC_COMBO.title":"Element Combo: {Element} · {Remaining} left",
- "TC_COMBO.description":"Recorded: [gold]{Element}[/gold]. [blue]{Remaining}[/blue]/3 combos left this turn.\nWind ↔ Rock: +[blue]{BlockBonus}[/blue] Block.\nRock ↔ Lightning: [blue]{AttackBonus}[/blue] base attack to the triggering card's same living enemy target.\nLightning ↔ Wind: draw [blue]{DrawBonus}[/blue].\nA combo retains the element just played for the next combo; other cards preserve it. Turn end clears it.",
+ "TC_COMBO.description":"Recorded: [gold]{Element}[/gold]. [blue]{Remaining}[/blue]/3 combos left this turn.\nWind ↔ Rock: +[blue]{BlockBonus}[/blue] Block.\nRock ↔ Lightning: [blue]{AttackBonus}[/blue] base attack to the triggering card's same living enemy target.\nLightning ↔ Wind: draw [blue]{DrawBonus}[/blue].\nA combo retains the element just played for the next combo; other cards preserve it. The element persists between turns and clears only when combat ends.",
  "TC_COMBO.exhaustedTitle":"Element Combo: limit reached",
  "TC_COMBO.exhaustedDescription":"0/3 combos left. Recorded: {Element}. Theme cards only resolve base effects. Resets to 3 next turn.",
  "TC_COMBO.trigger":"Wind–Rock: +{Bonus} Block{Paimon}",

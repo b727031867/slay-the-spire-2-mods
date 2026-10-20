@@ -77,8 +77,9 @@ public partial class TravelerTestRunner : Node
         await Queue(action);
         return action;
     }
-    private async Task NextTurn()
+    private async Task NextTurn(bool preserveElement = false)
     {
+        var previousElement = Power.State.Last;
         _player.Creature.HealInternal(9999m);
         var turn = _player.PlayerCombatState!.TurnNumber;
         await Queue(new EndPlayerTurnAction(_player, turn));
@@ -86,7 +87,10 @@ public partial class TravelerTestRunner : Node
         _player.Creature.HealInternal(999m);
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(20m, _player);
-        Check(Power.State.Last == Element.None && Power.State.Used == 0, "native_turn_reset");
+        Check(Power.State.Last == previousElement && Power.State.Used == 0, "native_turn_reset_preserves_element");
+        // Most numerical fixtures are independent scenarios. Explicitly clear their
+        // input state only after validating the real turn transition above.
+        if (!preserveElement) Power.State.ClearCombat();
     }
     private static bool ReadyToPlay => RunManager.Instance.ActionQueueSynchronizer.CombatState == ActionSynchronizerCombatState.PlayPhase;
 
@@ -177,8 +181,8 @@ public partial class TravelerTestRunner : Node
         for (var i = 0; i < 4; i++) { await Play<WindBlade>(); await Play<RockGuard>(); }
         Check(_player.Creature.Block == 40 && Power.State.Used == 3 && Power.State.Last == Element.Rock && Power.DisplayAmount == 0, "TC08_four_pairs_only_three_bonuses");
         await NextTurn();
-        await Play<WindBlade>(); await NextTurn(); await Play<RockGuard>();
-        Check(_player.Creature.Block == 7 && Power.State.Used == 0, "TC09_wind_does_not_cross_turn");
+        await Play<WindBlade>(); await NextTurn(preserveElement: true); await Play<RockGuard>();
+        Check(_player.Creature.Block == 11 && Power.State.Used == 1, "TC09_wind_crosses_turn_and_triggers_rock");
         await NextTurn();
         var source = await Play<WindBlade>();
         var automatic = await Add<RockGuard>();
@@ -417,8 +421,8 @@ public partial class TravelerTestRunner : Node
         Check(_player.Creature.Block == 15, "TASK003_paimon_doubles_before_extra_turn");
         var source = await Play<WindBlade>();
         await PowerCmd.Apply<MockExtraTurnPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
-        await NextTurn();
-        Check(Power.State.Used == 0 && Power.State.Last == Element.None
+        await NextTurn(preserveElement: true);
+        Check(Power.State.Used == 0 && Power.State.Last == Element.Wind
             && _player.Creature.GetPower<MockExtraTurnPower>() is null, "TASK003_native_extra_turn_resets_combo_and_paimon");
         await Play<WindBlade>(); await Play<RockGuard>();
         Check(_player.Creature.Block == 15, "TASK003_paimon_doubles_on_extra_turn");

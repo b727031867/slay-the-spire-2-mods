@@ -212,10 +212,10 @@ public partial class TravelerTestRunner
         await PlayerCmd.SetEnergy(3m, _player);
         await Play<RockGuard>();
         Check(_player.Creature.Block == 7 && Power.State.Used == 0, "TASK003_first_rock_after_reload_has_no_old_wind_reward");
-        Check(_player.Character is Traveler && _player.GetRelic<JourneyCompass>() is { SpentThisCombat: false }, "CHAR_E2E_character_and_unspent_compass_after_reload");
+        Check(_player.Character is Traveler && _player.GetRelic<JourneyCompass>() is { SpentThisTurn: false }, "CHAR_E2E_character_and_unspent_compass_after_reload");
         await Play<WindBlade>();
         Check(_player.Creature.Block == 15 && Power.State.Used == 1, "TASK003_paimon_still_doubles_after_reload");
-        Check(_player.GetRelic<JourneyCompass>() is { SpentThisCombat: true }, "CHAR_E2E_compass_rewards_after_disk_reload");
+        Check(_player.GetRelic<JourneyCompass>() is { SpentThisTurn: true }, "CHAR_E2E_compass_rewards_after_disk_reload");
         await RunContinuousBattles();
         GD.Print($"STS2MOD_E2E_COMPLETE assertions={_assertions} acquisition=PASS disk_restart=PASS soak=PASS multiplayer=NOT_RUN ui=NOT_RUN");
         await ExitThroughNativeMenu();
@@ -285,7 +285,7 @@ public partial class TravelerTestRunner
                 await Until(() => !CombatManager.Instance.IsInProgress || (_player.PlayerCombatState!.TurnNumber > number && ReadyToPlay), "soak next native turn");
                 oracle.BeginTurn();
                 if (CombatManager.Instance.IsInProgress)
-                    Check(Power.State.Used == 0 && Power.State.Last == Element.None, "TASK003_soak_turn_reset_b" + battle + "_t" + turn);
+                    Check(Power.State.Used == 0 && Power.State.Last == oracle.Last, "TASK003_soak_turn_reset_b" + battle + "_t" + turn);
             }
         }
         Check(totalActions >= 30 && totalCombos >= 6 && totalTurns >= 12, "TASK003_soak_meaningful_sample");

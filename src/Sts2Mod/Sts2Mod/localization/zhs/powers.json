@@ -1,7 +1,7 @@
 {
  "TC_ELEMENT_NONE":"无", "TC_ELEMENT_WIND":"风", "TC_ELEMENT_ROCK":"岩", "TC_ELEMENT_LIGHTNING":"雷",
  "TC_COMBO.title":"元素连携：{Element} · 余{Remaining}次",
- "TC_COMBO.description":"已记录：[gold]{Element}[/gold]；本回合剩余[blue]{Remaining}[/blue]/3次。\n风↔岩：+[blue]{BlockBonus}[/blue]格挡。\n岩↔雷：[blue]{AttackBonus}[/blue]点基础攻击，需触发牌有同一存活敌方目标。\n雷↔风：额外抽[blue]{DrawBonus}[/blue]张牌。\n触发后保留本次出牌的元素，可继续连携；普通牌不打断，回合结束清空。",
+ "TC_COMBO.description":"已记录：[gold]{Element}[/gold]；本回合剩余[blue]{Remaining}[/blue]/3次。\n风↔岩：+[blue]{BlockBonus}[/blue]格挡。\n岩↔雷：[blue]{AttackBonus}[/blue]点基础攻击，需触发牌有同一存活敌方目标。\n雷↔风：额外抽[blue]{DrawBonus}[/blue]张牌。\n触发后保留本次出牌的元素，可继续连携；普通牌不打断；元素跨回合保留，仅战斗结束清空。",
  "TC_COMBO.exhaustedTitle":"元素连携：本回合已用完",
  "TC_COMBO.exhaustedDescription":"本回合剩余0/3次，已记录：{Element}。主题牌只结算基础效果，下回合恢复3次。",
  "TC_COMBO.trigger":"风岩守势：+{Bonus}格挡{Paimon}",
