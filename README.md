@@ -1,6 +1,6 @@
 # 杀戮尖塔 2 Mod 项目
 
-0.3.5已获用户试玩通过，正在按授权推送`codex/TASK-011-combo-visuals`并更新原私有工坊。使用同一已试玩核心包，不重建；最终上传/下载结果见[发布报告](docs/tests/TASK-011-PC-B-release-035.md)。另一PC从[最新接续入口](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)开始。未合并main。下方为开发阶段历史记录。
+0.3.5已获用户试玩通过，代码已推送`codex/TASK-011-combo-visuals`，并更新[原私有工坊条目](https://steamcommunity.com/sharedfiles/filedetails/?id=3823282901)。使用同一已试玩核心包，不重建；正常Steam下载7文件、页面图片和工坊加载专项核对通过，见[发布报告](docs/tests/TASK-011-PC-B-release-035.md)。另一PC从[最新接续入口](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)开始。未合并main或改为公开。下方为开发阶段历史记录。
 
 本地0.3.5：修复原生随机遗物悬停/查看说明出现巨型罗盘的问题，卡牌、遗物和药水的能量提示改用原生能量图标。49项原生专项通过，玩法不变，左上常驻面板仍移除。已部署本机，工坊仍0.3.2、未推送。见[本轮验收](docs/tests/TASK-011-PC-B-run-03.md)。
 

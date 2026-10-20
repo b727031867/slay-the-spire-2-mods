@@ -1,6 +1,6 @@
-## 当前：0.3.5 / 试玩通过，远端与工坊发布
+## 当前：0.3.5 / 试玩通过，远端与私有工坊已交付
 
-USER_PLAYTEST_PASS_RELEASE_IN_PROGRESS。用户2026-10-21明确确认0.3.5试玩通过，授权远端提交、更新交接及发布原私有工坊。核心包仍为S 628cd327cc1eeb24c7c9cbc8336491151c3a3561，不重建。交接分支codex/TASK-011-combo-visuals，见[接续入口](handoffs/NEXT-PC-CONTINUE-PROMPT.md)和[发布报告](tests/TASK-011-PC-B-release-035.md)；上传/下载最终状态以报告后续记录为准。未合并main，不扩大可见性。
+DONE_USER_PLAYTEST_REMOTE_WORKSHOP_PRIVATE。用户2026-10-21确认0.3.5试玩通过，已推送codex/TASK-011-combo-visuals并更新同一私有工坊3823282901。核心包仍为S 628cd327cc1eeb24c7c9cbc8336491151c3a3561，不重建；正常Steam下载7文件和封面/规则图CDN哈希一致。Mod从工坊加载，BaseLib保持本地锁定3.4.7；普通无GUI启动及工坊49项专项通过，未知错误0，测试进程全部结束。旧本地Mod可恢复备份，避免重复加载。见[接续入口](handoffs/NEXT-PC-CONTINUE-PROMPT.md)与[发布报告](tests/TASK-011-PC-B-release-035.md)。未合并main或扩大可见性，另一PC尚未执行接手。
 
 ## 历史本地：0.3.5 / 能量提示贴图修复
 
