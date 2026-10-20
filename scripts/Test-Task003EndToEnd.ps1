@@ -32,8 +32,8 @@ if ($Phase -eq 'Prepare') {
     foreach ($case in $required[0..5]) {
         if ([regex]::Matches($text,'(?m)^STS2MOD_TEST_PASS '+[regex]::Escape($case)+'\r?$').Count -ne 2) { throw "Expected two native reload checks: $case" }
     }
-    if ($text -notmatch '(?m)^STS2MOD_E2E_COMPLETE assertions=\d+ acquisition=PASS disk_restart=PASS soak=PASS multiplayer=NOT_RUN ui=NOT_RUN\r?$'
-        -or $text -notmatch '(?m)^STS2MOD_SOAK_COMPLETE seed=TASK003A battles=6 turns=\d+ actions=\d+ combos=\d+ natural_wins=\d+ energy_injection=false hand_injection=false bounded_turns=4\r?$') { throw 'Resume/soak phase incomplete.' }
+    if ($text -notmatch '(?m)^STS2MOD_E2E_COMPLETE assertions=\d+ acquisition=PASS disk_restart=PASS soak=PASS multiplayer=NOT_RUN ui=NOT_RUN\r?$' -or
+        $text -notmatch '(?m)^STS2MOD_SOAK_COMPLETE seed=TASK003A battles=6 turns=\d+ actions=\d+ combos=\d+ natural_wins=\d+ energy_injection=false hand_injection=false bounded_turns=4\r?$') { throw 'Resume/soak phase incomplete.' }
 }
 $count=[regex]::Matches($text,'(?m)^STS2MOD_TEST_PASS ').Count
 $marker=if ($Phase -eq 'Prepare') { 'STS2MOD_E2E_PREPARED' } else { 'STS2MOD_E2E_COMPLETE' }
