@@ -1,0 +1,68 @@
+STS2MOD_READY version=0.0.2+3c95e19441261410ed254ceada47c83c1af53b62 baselib=3.3.2 resource=ok
+STS2MOD_TEST_PASS two_cards_once_in_native_unlocked_pool
+STS2MOD_TEST_PASS theme_cards_absent_from_silent_pool
+STS2MOD_TEST_PASS normal_starting_deck_unchanged
+STS2MOD_STEP player=1 action=0 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=1 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=1 block_before=7 block_after=11 bonus=4
+STS2MOD_TEST_PASS TC01_damage6_block11_consumed
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=4 card=TC_C02 auto=False index=0 advanced=True before=None after=Rock used=0 reward=0
+STS2MOD_STEP player=1 action=5 card=TC_C01 auto=False index=0 advanced=True before=Rock after=Wind used=0 reward=0
+STS2MOD_TEST_PASS TC04_reverse_no_combo
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=8 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=10 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=10 block_before=12 block_after=16 bonus=4
+STS2MOD_TEST_PASS TC05_normal_defend_preserves_sequence
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=13 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=14 card=TC_C01 auto=False index=0 advanced=True before=Wind after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=15 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=15 block_before=7 block_after=11 bonus=4
+STS2MOD_TEST_PASS TC06_same_element_then_one_combo
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=18 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=19 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=19 block_before=7 block_after=11 bonus=4
+STS2MOD_STEP player=1 action=20 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=1 reward=0
+STS2MOD_STEP player=1 action=21 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=2 reward=4
+STS2MOD_REWARD player=1 action=21 block_before=18 block_after=22 bonus=4
+STS2MOD_STEP player=1 action=22 card=TC_C01 auto=False index=0 advanced=True before=None after=None used=2 reward=0
+STS2MOD_STEP player=1 action=23 card=TC_C02 auto=False index=0 advanced=True before=None after=None used=2 reward=0
+STS2MOD_TEST_PASS TC08_three_pairs_only_two_bonuses
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=26 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=29 card=TC_C02 auto=False index=0 advanced=True before=None after=Rock used=0 reward=0
+STS2MOD_TEST_PASS TC09_wind_does_not_cross_turn
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=32 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 card=TC_C02 auto=True index=0 advanced=False reason=automatic_or_extra_resolution
+STS2MOD_TEST_PASS TC10_native_autoplay_preserves_wind
+STS2MOD_STEP player=1 action=33 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=33 block_before=14 block_after=18 bonus=4
+STS2MOD_TEST_PASS TC10_manual_rock_after_autoplay_triggers
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=36 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=37 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=37 block_before=7 block_after=11 bonus=4
+STS2MOD_STEP player=1 card=TC_C02 auto=False index=1 advanced=False reason=automatic_or_extra_resolution
+STS2MOD_TEST_PASS TC11_native_burst_extra_resolution_no_second_advance
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=40 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=41 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=41 block_before=10 block_after=14 bonus=4
+STS2MOD_TEST_PASS TC13_upgraded_damage9_block14
+STS2MOD_TEST_PASS native_card_serialization_roundtrip_TC_C01
+STS2MOD_TEST_PASS native_card_serialization_roundtrip_TC_C02
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=44 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_TEST_PASS TC15_insufficient_energy_does_not_advance
+STS2MOD_TEST_PASS native_turn_reset
+STS2MOD_STEP player=1 action=48 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_TEST_PASS TC18_new_combat_has_fresh_state
+STS2MOD_TEST_COMPLETE assertions=28 multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave=False
+STS2MOD_STEP player=1 action=49 card=TC_C01 auto=False index=0 advanced=True before=None after=Wind used=0 reward=0
+STS2MOD_STEP player=1 action=50 card=TC_C02 auto=False index=0 advanced=True before=Wind after=None used=1 reward=4
+STS2MOD_REWARD player=1 action=50 block_before=7 block_after=11 bonus=4

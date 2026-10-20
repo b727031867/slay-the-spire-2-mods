@@ -1,0 +1,7 @@
+STS2MOD_READY version=0.0.2+3c95e19441261410ed254ceada47c83c1af53b62 baselib=3.3.2 resource=ok
+STS2MOD_NATIVE_REWARD player=1 cards=HEADBUTT,SETUP_STRIKE,INFLAME modified=false
+STS2MOD_NATIVE_REWARD player=1 cards=TC_C02,BLOODLETTING,SHRUG_IT_OFF modified=false
+STS2MOD_ACQUISITION_READY battle=2 card=TC_C02 source=unmodified_native_room_reward shouldSave=False
+[INFO] Player 1 obtained CARD.TC_C02 from card reward
+STS2MOD_TEST_PASS TC21_native_room_reward_selected_into_deck
+STS2MOD_ACQUISITION_COMPLETE shouldSave=false
