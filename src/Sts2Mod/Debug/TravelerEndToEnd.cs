@@ -57,7 +57,7 @@ public partial class TravelerTestRunner
         {
             foreach (var upgraded in new[] { false, true })
             {
-                var card = ModelDb.AllCards.First(c => c.GetType() == type).ToMutable();
+                var card = run.CreateCard(ModelDb.AllCards.First(c => c.GetType() == type), _player);
                 if (upgraded) CardCmd.Upgrade(card);
                 await CardPileCmd.Add(card, PileType.Deck);
             }
@@ -80,7 +80,8 @@ public partial class TravelerTestRunner
     private async Task EnterOrdinaryMapCombat()
     {
         var state = RunManager.Instance.DebugOnlyGetState()!;
-        var point = state.Map.GetAllMapPoints().Where(p => p.PointType == MapPointType.Monster).OrderBy(p => p.coord.row).First();
+        var point = state.Map.GetAllMapPoints().Where(p => p.PointType == MapPointType.Monster && !state.VisitedMapCoords.Contains(p.coord))
+            .OrderBy(p => p.coord.row).First();
         await RunManager.Instance.EnterMapCoord(point.coord);
         await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay && _player.Creature.GetPower<ComboPower>() is not null, "ordinary map combat");
         _target = _player.Creature.CombatState!.Enemies.First(e => e.IsAlive);

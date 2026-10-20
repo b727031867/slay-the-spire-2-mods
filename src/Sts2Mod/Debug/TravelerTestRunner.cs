@@ -116,6 +116,8 @@ public partial class TravelerTestRunner : Node
     private async Task Run()
     {
         await Until(() => NGame.Instance?.MainMenu is not null, "main menu");
+        MegaCrit.Sts2.Core.Saves.SaveManager.Instance.SetFtuesEnabled(false);
+        MegaCrit.Sts2.Core.Saves.SaveManager.Instance.PrefsSave.FastMode = MegaCrit.Sts2.Core.Settings.FastModeType.Fast;
         if (CommandLineHelper.HasArg("sts2mod-e2e") || CommandLineHelper.HasArg("sts2mod-resume"))
         {
             await RunEndToEnd();
