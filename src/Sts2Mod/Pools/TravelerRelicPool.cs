@@ -7,6 +7,5 @@ namespace Sts2Mod.Pools;
 public sealed class TravelerRelicPool : CustomRelicPoolModel
 {
     public override bool SeenByDefault => true;
-    public override string BigEnergyIconPath => "res://Sts2Mod/art/compass.png";
-    public override string TextEnergyIconPath => BigEnergyIconPath;
+    public override string EnergyColorName => "ironclad";
 }

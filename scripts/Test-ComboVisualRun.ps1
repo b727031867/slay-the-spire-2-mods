@@ -2,6 +2,14 @@ param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$Cod
 $ErrorActionPreference='Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 $text=Get-Content -Raw -LiteralPath $LogFile
+foreach($case in @('pool_TravelerCardPool','pool_TravelerRelicPool','pool_TravelerPotionPool',
+ 'native_inline_glyph_bounded','acquired_native_relic_inline','unowned_native_relic_inline',
+ 'other_native_relic_inline','owned_potion_inline','card_inline','native_hover_icon_bounded','native_hover_layout_bounded')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS ENERGY_$case")){throw "Missing energy icon case: $case"}
+}
+if(!$text.Contains('STS2MOD_ENERGY_ICONS_COMPLETE pools=PASS inline=PASS native_hover=PASS rendering=NOT_RUN')){
+ throw 'Energy icon suite incomplete'
+}
 if($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR'){throw 'Combo visual acceptance failed'}
 foreach($case in @('no_custom_panel_fresh_combat','no_custom_panel_after_plays','no_custom_panel_next_combat',
  'native_card_tip_block','native_card_tip_draw','native_card_tip_record','native_card_tip_unplayable','native_card_tip_paimon',

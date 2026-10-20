@@ -36,6 +36,7 @@ public partial class TravelerTestRunner
     {
         var start = _assertions;
         await FreshExpansion();
+        await TestEnergyIcons();
         // Give native deferred UI setup a frame: absence must hold after mounting would have occurred.
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         CheckNoComboPanel("fresh_combat");

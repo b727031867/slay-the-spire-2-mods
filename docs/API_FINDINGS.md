@@ -1,5 +1,7 @@
 # v0.107.1 接口调查
 
+0.3.5能量图标修复：三个Traveler池此前BigEnergyIconPath/TextEnergyIconPath均指向高清compass.png。BaseLib3.4.7把TextEnergyIconPath直接写成无尺寸[img]，原生EnergyIconsFormatter按图片本身尺寸排版；HoverTipFactory.ForEnergy也按本机角色卡池取大图标，导致原生随机遗物同样受影响。三个池改为EnergyColorName=ironclad，沿用原生分别用于能量提示和行内文字的资源，与现有原生能量计一致；不修改全局渲染器、不分发游戏贴图、不改罗盘自身遗物图片或效果。专项覆盖原生烛台获取后/未获取说明、提灯、能量药水、祭品卡牌说明，以及真实NHoverTipSet节点尺寸。
+
 0.3.4补充：按试玩反馈删除NCombatUi._Ready的自定义面板挂载与ComboHud/ComboPips类；仅保留NPower.OnDisplayAmountChanged的本Mod元素纹理刷新。原生HoverTip仍来自ElementCardModel.ExtraHoverTips的TC_PREVIEW条目，未改预览公式/文案/规则。新增验收检查整个原生战斗UI没有TravelerComboHud节点，并直接验证原生HoverTip.Description及状态栏%Icon。
 
 ## TASK-011 / PC-B / 0.3.3 补充（2026-10-21）
