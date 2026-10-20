@@ -7,3 +7,7 @@ TASK-001 的 `src/Sts2Mod/Sts2Mod/art/wind.svg`、`rock.svg`、`combo.svg` 是�
 后续替换正式美术时，在此逐项记录来源、作者和许可；本条记录不为未来新增素材自动授权。
 
 TASK-002新增`lightning.svg`、`tailwind.svg`、`rock_advance.svg`、`thunder_prep.svg`和`paimon.svg`，均为本项目通过SVG代码绘制的占位图，未导入外部图片；随源码分发。
+
+TASK-004：`workshop/assets/image.png`（1024×1024封面）、`rules.png`（1280×720规则说明图）由本项目 `scripts/New-WorkshopArtwork.ps1` 用几何线条、色块和本机系统字体绘制，未使用外部图片或生成式图像；不是游戏截图。脚本可在安装微软雅黑的 Windows 上重建，字体不随包分发。页面明确标注单人测试和未验收范围。
+
+作者：GitHub项目所有者 b727031867。当前仓库未选择开源许可；公开查看源码不自动授予第三方复制、修改或再分发权。主题名称及游戏名称的权利属于各自权利方；本说明不授予这些作品的使用许可。本项目不附带其官方图片、音频、字体或游戏资源。BaseLib独立从原作者取得，不打入本Mod包；官方上传器和Steamworks探针依赖只在本地工具目录使用，不随玩家包分发。

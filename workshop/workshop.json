@@ -1,0 +1,9 @@
+{
+  "title": "旅行者·元素连携 | Traveler Elements [单人测试版]",
+  "description": "由 Prepare-Workshop.ps1 从 description.bbcode.txt 填充。",
+  "visibility": "private",
+  "changeNote": "0.1.1 单人发布候选：六张铁甲战士元素牌、三类双向连携、派蒙的应援。工坊安装验收中。",
+  "tags": [],
+  "dependencies": [3737335127],
+  "contentDescriptors": []
+}
