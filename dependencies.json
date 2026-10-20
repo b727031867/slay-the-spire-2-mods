@@ -3,8 +3,8 @@
   "gameBuild": "23811903",
   "godotVersion": "4.5.1",
   "baseLib": {
-    "version": "3.3.2",
-    "url": "https://github.com/Alchyr/BaseLib-StS2/releases/download/v3.3.2/BaseLib.3.3.2.zip",
-    "sha256": "600d7ab3e4d735ec9bc97f06f1dfb03e51680d1ba2756117bcabcc5ea1d50e8a"
+    "version": "3.4.7",
+    "url": "https://github.com/Alchyr/BaseLib-StS2/releases/download/v3.4.7/BaseLib.3.4.7.zip",
+    "sha256": "D28C649A3AEA9EF4869050A06BFBADC4863016BCBD4C1740ACC4CD07809E4BD8"
   }
 }

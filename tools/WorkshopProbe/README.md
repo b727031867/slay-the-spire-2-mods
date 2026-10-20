@@ -1,6 +1,6 @@
 # Headless Steam Workshop probe
 
-Uses the Steam client and Steamworks.NET package shipped in Mega Crit's official uploader source (v0.2.0). It inspects item state, or explicitly subscribes and asks Steam to download the item. It never copies files into the Steam cache, publishes content, changes item visibility, unsubscribes, or accepts agreements. Requires Steam running and signed in.
+Uses the Steam client and Steamworks.NET package shipped in Mega Crit's official uploader source (v0.2.0). It inspects item state, explicitly subscribes and asks Steam to download the item, or explicitly unsubscribes. Use unsubscribe only for test-owned subscriptions whose prior state was recorded, or on the user's instruction. It never copies files into the Steam cache, publishes content, changes item visibility, or accepts agreements. Requires Steam running and signed in.
 
 Download the official `steam/Steamworks.NET.15.0.1.nupkg` into an ignored local NuGet feed, restore with `dotnet restore --source <feed>`, and build normally. Copy `steam_api64.dll` from the official Windows uploader alongside the executable. Set `SteamAppId` and `SteamGameId` to `2868840` for this process only. Run `WorkshopProbe.exe inspect <id>` or `subscribe <id>` hidden. A successful download does not prove game loading or dependency compatibility.
 

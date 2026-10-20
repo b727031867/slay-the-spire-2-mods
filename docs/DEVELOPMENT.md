@@ -1,6 +1,6 @@
 # 构建、部署与最小加载检查
 
-当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.1 已实现六张牌、三类双向连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
+当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.2候选已实现六张牌、三类双向连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
 
 ## 前提
 
@@ -8,7 +8,7 @@
 
 - 游戏v0.107.1、Steam构建23811903，Steam客户端已运行并登录拥有游戏的账号。
 - .NET SDK 10.0.402、Godot .NET 4.5.1、本机合法游戏引用；各设备配置自己的`local.settings.json`。
-- 唯一额外运行时框架为BaseLib 3.3.2；NuGet引用与锁文件固定版本，官方运行时下载地址和SHA256在`dependencies.json`。
+- 唯一额外运行时框架为BaseLib 3.4.7；NuGet引用与锁文件固定版本，官方运行时下载地址和SHA256在`dependencies.json`。
 - 首次运行时游戏会提示是否加载模组；允许后需要退出并重启游戏。脚本不修改该确认设置。
 
 ## 构建
@@ -45,7 +45,7 @@ Sts2Mod/
 .\scripts\Start-ModGame.ps1 -Headless
 ```
 
-`-InstallDependencies`下载并校验官方BaseLib 3.3.2，安装到`mods/BaseLib`；当前Mod安装到`mods/Sts2Mod`。已有目录先备份至`.local/backups/`，遇到未知文件、错误ID或重定向目录则拒绝覆盖。后续可省略该参数复用已匹配版本的BaseLib。不要同时安装Workshop的另一版本BaseLib；此工作流使用本地固定版本。
+`-InstallDependencies`下载并校验官方BaseLib 3.4.7，安装到`mods/BaseLib`；当前Mod安装到`mods/Sts2Mod`。已有目录先备份至`.local/backups/`，遇到未知文件、错误ID或重定向目录则拒绝覆盖。后续可省略该参数复用已匹配版本的BaseLib。不要同时安装Workshop的另一版本BaseLib；此工作流使用本地固定版本。
 
 启动脚本会输出游戏进程ID与本次日志路径。它通过子进程环境提供真实Steam App ID，Steam仍执行账号/拥有权校验；启动失败时先确认Steam登录状态。AI测试使用`-Headless`，图形界面验收保留NOT_RUN，待用户另行明确安排。
 
@@ -56,7 +56,7 @@ Sts2Mod/
 .\scripts\Collect-ModLogs.ps1 -LogFile '<实际日志路径>'
 ```
 
-应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现未知 ERROR 的日志；仅在显式 `-Headless` 时按错误文本与紧随的原生源码位置联合分类已知 Godot RID/shader 渲染错误，并输出数量。相同文本来自其他源码位置仍会失败。
+应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.4.7 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现未知 ERROR 的日志；仅在显式 `-Headless` 时按错误文本与紧随的原生源码位置联合分类已知 Godot RID/shader 渲染错误，并输出数量。相同文本来自其他源码位置仍会失败。
 
 全量单人无GUI回归使用`Start-ModGame.ps1 -Headless -TravelerTest`，完成后执行`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Task003 -Headless`。`-TravelerAcceptance`仅运行TASK-003边界子集，不能替代全量回归，也不能单独传给要求全量标记的检查器。
 

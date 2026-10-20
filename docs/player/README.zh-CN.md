@@ -1,17 +1,17 @@
 # 旅行者·元素连携 / Traveler Elements
 
-《杀戮尖塔 2》单人技术测试版，Mod 版本 0.1.1。为铁甲战士增加六张卡牌与共享罕见遗物「派蒙的应援」。不新增可选角色。支持简体中文和英文文本。
+《杀戮尖塔 2》单人技术测试版，Mod 版本 0.1.2。为铁甲战士增加六张卡牌与共享罕见遗物「派蒙的应援」。不新增可选角色。支持简体中文和英文文本。
 
 ## 兼容范围与安装
 
-当前仅验证 Windows x64、游戏 v0.107.1（Steam build 23811903）及 **BaseLib 3.3.2**。其他游戏或依赖版本尚未验证；本 Mod 会拒绝加载不同版本的 BaseLib。工坊 BaseLib 会随作者更新，订阅依赖不等于锁定 3.3.2。
+当前仅验证 Windows x64、游戏 v0.107.1（Steam build 23811903）及 **BaseLib 3.4.7**。其他游戏或依赖版本尚未验证；本 Mod 会拒绝加载不同版本的 BaseLib。工坊 BaseLib 会随作者更新，订阅依赖不等于锁定 3.4.7。
 
 目前处于发布候选验收阶段，尚未提供通过完整订阅安装验收的公开工坊版本。工坊条目可用后，需要订阅本 Mod 和前置 BaseLib，并在游戏模组管理中启用。不要同时保留本地版与工坊版，否则可能重复加载。
 
 手动安装候选包：
 
 1. 退出游戏，下载候选 ZIP，并对照同名 `.sha256` 核对 SHA256。
-2. 从 BaseLib 作者发行页下载 **v3.3.2**：https://github.com/Alchyr/BaseLib-StS2/releases/tag/v3.3.2 。将其中 BaseLib 的 DLL、JSON、PCK 放入游戏目录的 `mods/BaseLib/`。
+2. 从 BaseLib 作者发行页下载 **v3.4.7**：https://github.com/Alchyr/BaseLib-StS2/releases/tag/v3.4.7 。将其中 BaseLib 的 DLL、JSON、PCK 放入游戏目录的 `mods/BaseLib/`。
 3. 将候选包中的整个 `Sts2Mod` 文件夹放入游戏目录的 `mods/`，形成 `mods/Sts2Mod/Sts2Mod.json` 等文件。候选包不包含 BaseLib 或游戏程序集。
 4. 通过 Steam 启动游戏，在模组管理中确认 BaseLib 和 Traveler Elements 已启用，按游戏提示重启。选择铁甲战士开始新的单人游戏。
 

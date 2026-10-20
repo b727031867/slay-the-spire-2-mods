@@ -22,6 +22,12 @@ $config = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/worksh
 if ($config.visibility -ne 'private') { throw 'Acceptance preparation requires private visibility.' }
 $config.description = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/description.bbcode.txt')
 $config | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $workspace 'workshop.json') -Encoding utf8
+$itemFile = Join-Path $projectRoot 'workshop/item-id.txt'
+if (Test-Path -LiteralPath $itemFile) {
+    $itemId = (Get-Content -Raw -LiteralPath $itemFile).Trim()
+    if ($itemId -notmatch '^[0-9]+$') { throw 'Invalid workshop item identity.' }
+    Set-Content -LiteralPath (Join-Path $workspace 'mod_id.txt') -Value $itemId -Encoding ascii
+}
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/player/README.zh-CN.md'),(Join-Path $projectRoot 'docs/player/CHANGELOG.md'),(Join-Path $projectRoot 'docs/ASSETS.md') -Destination (Join-Path $workspace 'content')
 Write-Output "WorkshopDirectory=$workspace"
 Write-Output 'Prepared private workspace only. No Steam upload or subscription has been performed.'

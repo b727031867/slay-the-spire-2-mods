@@ -1,6 +1,6 @@
 # 杀戮尖塔 2 Mod 项目
 
-TASK-004 正在准备单人发布候选及私有工坊安装验收。玩家说明见 [玩家指南](docs/player/README.zh-CN.md)，工坊页面源文件见 [workshop](workshop/README.md)。当前尚未完成公开工坊订阅验收，BaseLib 仅验证3.3.2，不把自动更新的工坊依赖视为兼容。
+TASK-004 正在准备单人发布候选及私有工坊安装验收。玩家说明见 [玩家指南](docs/player/README.zh-CN.md)，工坊页面源文件见 [workshop](workshop/README.md)。当前尚未完成公开工坊订阅验收，0.1.2候选适配BaseLib 3.4.7，结果待报告确认，不把自动更新的工坊依赖视为兼容。
 
 面向《杀戮尖塔 2》（Slay the Spire 2）的 Mod 开发项目，通过新增卡牌、遗物与组合机制，拓展现有角色的构筑和出牌选择。
 
@@ -47,11 +47,11 @@ TASK-002 内容开发已完成，TASK-003 状态为DONE_SINGLEPLAYER_HEADLESS：
 | Mod 目标框架 | net9.0，与本机游戏一致 |
 | Godot .NET / Godot.NET.Sdk | 4.5.1 |
 | Mod 模板 | Alchyr.Sts2.Templates 2.5.3 |
-| 唯一运行时框架 | BaseLib 3.3.2，NuGet精确版本与锁文件固定 |
+| 唯一运行时框架 | BaseLib 3.4.7，NuGet精确版本与锁文件固定 |
 | 源码查看工具 | ILSpy CLI 11.1.0.9782 |
 | 版本管理与编辑器 | Git、VS Code + C# 扩展 |
 
-正式最小工程采用BaseLib 3.3.2，不同时引入RitsuLib；最初的`tools/EnvironmentCheck`仍作为独立工具链检查。其他游戏或基础库版本需要重新核查，尚不在已验证范围内。
+当前0.1.2候选采用BaseLib 3.4.7，不同时引入RitsuLib；最初的`tools/EnvironmentCheck`仍作为独立工具链检查。其他游戏或基础库版本需要重新核查，尚不在已验证范围内。
 
 ## Windows 开发入门
 

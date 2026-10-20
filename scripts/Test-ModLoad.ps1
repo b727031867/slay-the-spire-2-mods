@@ -16,7 +16,8 @@ if ($ExpectAbsent) {
 }
 if ($ready.Count -ne 1) { throw "Expected one Sts2Mod initialization marker, got $($ready.Count)." }
 if ($CodeCommit -and $ready[0].Value -notmatch ('\+' + [regex]::Escape($CodeCommit) + '(?=\s)')) { throw 'Loaded assembly does not match the expected source commit.' }
-if ($ready[0].Value -notmatch 'baselib=3\.3\.2 resource=ok') { throw 'Dependency/resource verification failed.' }
+$expectedBase = (Get-Content -Raw -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'dependencies.json') | ConvertFrom-Json).baseLib.version
+if ($ready[0].Value -notmatch ('baselib=' + [regex]::Escape($expectedBase) + ' resource=ok')) { throw 'Dependency/resource verification failed.' }
 if ($text -notmatch "Finished mod initialization for 'BaseLib' \(BaseLib\)" -or $text -notmatch "Finished mod initialization for '[^']*' \(Sts2Mod\)") { throw 'Game loader did not report both mods initialized.' }
 $errors = & (Join-Path $PSScriptRoot 'Get-GameLogErrors.ps1') -Text $text -Headless:$Headless -NativeShutdown:$NativeShutdown
 if ($text -match '\[ERROR\]' -or $errors.Unexpected.Count) { throw 'Game logged an unexpected error. Review it before marking the smoke test as passed.' }

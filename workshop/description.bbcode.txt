@@ -1,8 +1,8 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
 为铁甲战士增加六张风、岩、雷主题卡牌与共享罕见遗物「派蒙的应援」。通过主动出牌顺序搭配攻击、防御和抽牌。包含简体中文与英文文本。
 
-[b]单人技术测试版 0.1.1 · 当前为私有安装验收候选[/b]
-仅验证 Windows x64、游戏 v0.107.1 / build 23811903、BaseLib 3.3.2。本 Mod 严格检查 BaseLib 版本。工坊 BaseLib 自动更新，订阅前置不保证取得 3.3.2；完整订阅安装验收尚未完成。请勿将本候选直接视为一键安装或联机支持版本。
+[b]单人技术测试版 0.1.2 · 当前为私有安装验收候选[/b]
+仅验证 Windows x64、游戏 v0.107.1 / build 23811903、BaseLib 3.4.7。本 Mod 严格检查 BaseLib 版本。工坊 BaseLib 自动更新，订阅前置不保证取得 3.4.7；完整订阅安装验收尚未完成。请勿将本候选直接视为一键安装或联机支持版本。
 
 [h2]内容[/h2]
 风起之刃、岩之守护、雷光突刺、顺风整备、磐岩进击、雷鸣整备，各有一次升级。卡牌进入铁甲战士正常奖励及商店；派蒙进入共享罕见遗物池。不新增角色、不固定赠送卡牌或遗物。
@@ -26,6 +26,6 @@
 
 [h2]English[/h2]
 Six elemental cards for the Ironclad and one shared Uncommon relic, Paimon's Cheer. Wind/Rock grants block, Rock/Lightning attacks the triggering card's same living enemy target, and Lightning/Wind draws cards. Either order works. All pairs share a three-per-player-per-turn limit; each pair consumes its sequence. Paimon doubles each combo reward.
-Singleplayer technical test build. Validated baseline: Windows x64, game v0.107.1/build23811903 and BaseLib 3.3.2 ONLY. Other BaseLib versions are rejected. Workshop subscription installation is pending; the required item's automatic updates do not pin its version. Multiplayer, complete graphical review, natural full runs and balance are unverified. Preview images are explanatory artwork, not gameplay screenshots.
+Singleplayer technical test build. Validated baseline: Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7 ONLY. Other BaseLib versions are rejected. Workshop subscription installation is pending; the required item's automatic updates do not pin its version. Multiplayer, complete graphical review, natural full runs and balance are unverified. Preview images are explanatory artwork, not gameplay screenshots.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系。未附带游戏资源、主题作品图片或音频。

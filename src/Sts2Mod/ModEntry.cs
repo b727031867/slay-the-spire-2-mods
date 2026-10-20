@@ -21,8 +21,8 @@ public static class ModEntry
             return;
 
         var baseLibVersion = typeof(BaseLibMain).Assembly.GetName().Version;
-        if (baseLibVersion is null || baseLibVersion.Major != 3 || baseLibVersion.Minor != 3 || baseLibVersion.Build != 2)
-            throw new InvalidOperationException("Sts2Mod requires the validated BaseLib version 3.3.2.");
+        if (baseLibVersion is null || baseLibVersion.Major != 3 || baseLibVersion.Minor != 4 || baseLibVersion.Build != 7)
+            throw new InvalidOperationException("Sts2Mod requires the validated BaseLib version 3.4.7.");
 
         var resource = Godot.FileAccess.GetFileAsString("res://Sts2Mod/smoke.txt").Trim();
         if (resource != "STS2MOD_RESOURCE_OK")
@@ -38,6 +38,6 @@ public static class ModEntry
         }
 
         var version = typeof(ModEntry).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        GD.Print($"STS2MOD_READY version={version} baselib=3.3.2 resource=ok");
+        GD.Print($"STS2MOD_READY version={version} baselib=3.4.7 resource=ok");
     }
 }
