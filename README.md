@@ -1,5 +1,7 @@
 # 杀戮尖塔 2 Mod 项目
 
+最新私有候选 **0.1.3 / TASK-005**：新增准确奖励提示、统一中英卡牌说明、只读连携预览、七张生成式插图及短暂连携特效；数值与规则不变。PC-A同工坊包122项真实游戏断言、46项纯规则、13项日志分类及普通启动通过。图形布局和动画观感仍待人工确认。见[报告](docs/tests/TASK-005-PC-A-run-01.md)、[插图预览](docs/art/TASK-005-prompts.md)、[交接与下载](docs/handoffs/TASK-005.md)。源码在`codex/TASK-005-experience`，尚未合并main；下方0.1.2/0.1.1为此前交付记录。
+
 TASK-004 已完成0.1.2单人候选和PC-A私有工坊无GUI安装验收，详见[报告](docs/tests/TASK-004-PC-A-run-01.md)。玩家说明见 [玩家指南](docs/player/README.zh-CN.md)，工坊页面源文件见 [workshop](workshop/README.md)。当前工坊条目保持私有；0.1.2精确依赖BaseLib3.4.7，其他版本需重新验证。下方TASK-003的0.1.1内容为历史交付记录。
 
 面向《杀戮尖塔 2》（Slay the Spire 2）的 Mod 开发项目，通过新增卡牌、遗物与组合机制，拓展现有角色的构筑和出牌选择。

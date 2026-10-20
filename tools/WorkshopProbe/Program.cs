@@ -63,7 +63,7 @@ try
         if (!completed || result != EResult.k_EResultOK) return 2;
         if (!SteamUGC.DownloadItem(item, true)) { Console.WriteLine("DOWNLOAD request rejected"); return 3; }
         timer.Restart();
-        while (timer.Elapsed.TotalSeconds < 90)
+        while (timer.Elapsed.TotalSeconds < 45)
         {
             SteamAPI.RunCallbacks();
             var state = (EItemState)SteamUGC.GetItemState(item);
@@ -75,7 +75,14 @@ try
         }
     }
     var installed = SteamUGC.GetItemInstallInfo(item, out var bytes, out var folder, 4096, out var timestamp);
-    Console.WriteLine(JsonSerializer.Serialize(new { item = id, state = SteamUGC.GetItemState(item), installed, bytes, folder, timestamp }));
-    return args[0] == "subscribe" && !installed ? 4 : 0;
+    var finalState = (EItemState)SteamUGC.GetItemState(item);
+    SteamUGC.GetItemDownloadInfo(item, out var downloadedBytes, out var totalDownloadBytes);
+    Console.WriteLine(JsonSerializer.Serialize(new { item = id, state = (uint)finalState, installed, bytes, folder, timestamp, downloadedBytes, totalDownloadBytes }));
+    var current = installed && finalState.HasFlag(EItemState.k_EItemStateSubscribed)
+        && finalState.HasFlag(EItemState.k_EItemStateInstalled)
+        && !finalState.HasFlag(EItemState.k_EItemStateNeedsUpdate)
+        && !finalState.HasFlag(EItemState.k_EItemStateDownloading)
+        && !finalState.HasFlag(EItemState.k_EItemStateDownloadPending);
+    return args[0] == "subscribe" && !current ? 4 : 0;
 }
 finally { SteamAPI.Shutdown(); }

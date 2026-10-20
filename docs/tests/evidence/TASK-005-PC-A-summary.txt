@@ -1,0 +1,10 @@
+STS2MOD_READY version=0.1.3+1ec8a6a64354c40e84aa84576e12d6302b0445ef baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=0.
+Traveler singleplayer test evidence passed. UI and multiplayer require their own recorded checks.
+EXPERIENCE_PASS total=122 presentation=28 rendering=NOT_RUN
+COMBO_RULES_PASS assertions=46
+LOG_CLASSIFICATION_TOTAL_PASS assertions=13
+STS2MOD_READY version=0.1.3+1ec8a6a64354c40e84aa84576e12d6302b0445ef baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=0.
+NORMAL_TESTS_DISABLED=true final_owned_game_processes=0
+STEAM_FINAL_PRIVATE=true downloaded_seven_hashes_match_source_1ec8a6a=true

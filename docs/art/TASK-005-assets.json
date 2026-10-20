@@ -1,0 +1,51 @@
+[
+  {
+    "File": "lightning.png",
+    "Width": 1438,
+    "Height": 1093,
+    "Bytes": 3010424,
+    "SHA256": "9910B279264DE7111C1FF6553E71B34F0591F9C536A6284EE08168E41C25A788"
+  },
+  {
+    "File": "paimon.png",
+    "Width": 1412,
+    "Height": 1114,
+    "Bytes": 1435278,
+    "SHA256": "DC7BDD44769A563FEE150DB66782E8F36A98A32CD41D4B63188E50A3BCE47708"
+  },
+  {
+    "File": "rock_advance.png",
+    "Width": 1438,
+    "Height": 1093,
+    "Bytes": 3451723,
+    "SHA256": "A75DF4B1B37E8B5C523DBDDDA99C23A363F346505703FB1E3531E9C8491FAEDF"
+  },
+  {
+    "File": "rock.png",
+    "Width": 1438,
+    "Height": 1093,
+    "Bytes": 2848869,
+    "SHA256": "A39ABC412095BB9F0029DC099EBB4602C3353F93A7D569816FEC576750433611"
+  },
+  {
+    "File": "tailwind.png",
+    "Width": 1439,
+    "Height": 1093,
+    "Bytes": 2732975,
+    "SHA256": "48AAA4D8999AFC25A23462ACA81B5EB1A39371DCF0EDB50B660A73AE25E15E91"
+  },
+  {
+    "File": "thunder_prep.png",
+    "Width": 1438,
+    "Height": 1093,
+    "Bytes": 2797597,
+    "SHA256": "A8AEEF375BEEEB382BE275601792C5DFDA13F22FB442562008332D7311512478"
+  },
+  {
+    "File": "wind.png",
+    "Width": 1438,
+    "Height": 1094,
+    "Bytes": 3240717,
+    "SHA256": "051D0785C06BCD1EF0747BECDB3FA854475E847E30BCF1DE8690E63723013F9A"
+  }
+]

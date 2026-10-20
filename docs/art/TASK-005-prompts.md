@@ -1,5 +1,9 @@
 # TASK-005 生成式插图记录
 
+![七张插图联系表，非游戏截图](TASK-005-preview.png)
+
+原图在`src/Sts2Mod/Sts2Mod/art/`，逐项尺寸文件大小及SHA256见[TASK-005-assets.json](TASK-005-assets.json)。
+
 工具：内置image_gen（imagegen技能默认模式），2026-10-20。每项独立生成，无参考图。六张卡图transparent_background=false；paimon为true。原始输出直接复制为项目PNG，不覆写默认生成目录。未使用CLI/API密钥。
 
 共同提示词：
