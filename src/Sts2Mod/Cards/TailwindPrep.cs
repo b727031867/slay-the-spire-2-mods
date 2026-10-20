@@ -11,10 +11,11 @@ using Sts2Mod.Combo;
 namespace Sts2Mod.Cards;
 
 [CustomID("TC_C04"), Pool(typeof(IroncladCardPool))]
-public sealed class TailwindPrep : CustomCardModel
+public sealed class TailwindPrep : ElementCardModel
 {
     public TailwindPrep() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/tailwind.svg";
+    public override Element CardElement => Element.Wind;
+    public override string CustomPortraitPath => "res://Sts2Mod/art/tailwind.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
     protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);

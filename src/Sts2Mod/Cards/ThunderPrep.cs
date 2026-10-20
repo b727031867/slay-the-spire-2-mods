@@ -12,10 +12,11 @@ using Sts2Mod.Combo;
 namespace Sts2Mod.Cards;
 
 [CustomID("TC_C06"), Pool(typeof(IroncladCardPool))]
-public sealed class ThunderPrep : CustomCardModel
+public sealed class ThunderPrep : ElementCardModel
 {
     public ThunderPrep() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_prep.svg";
+    public override Element CardElement => Element.Lightning;
+    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_prep.png";
     public override bool GainsBlock => true;
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new BlockVar(5m, ValueProp.Move), new CardsVar(1)];

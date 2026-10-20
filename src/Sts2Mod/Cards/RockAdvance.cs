@@ -12,10 +12,11 @@ using Sts2Mod.Combo;
 namespace Sts2Mod.Cards;
 
 [CustomID("TC_C05"), Pool(typeof(IroncladCardPool))]
-public sealed class RockAdvance : CustomCardModel
+public sealed class RockAdvance : ElementCardModel
 {
     public RockAdvance() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/rock_advance.svg";
+    public override Element CardElement => Element.Rock;
+    public override string CustomPortraitPath => "res://Sts2Mod/art/rock_advance.png";
     public override bool GainsBlock => true;
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new DamageVar(5m, ValueProp.Move), new BlockVar(3m, ValueProp.Move)];

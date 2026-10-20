@@ -11,7 +11,7 @@ public sealed class PaimonCheer : CustomRelicModel
 {
     public override RelicRarity Rarity => RelicRarity.Uncommon;
     public override bool IsStackable => false;
-    public override string PackedIconPath => "res://Sts2Mod/art/paimon.svg";
+    public override string PackedIconPath => "res://Sts2Mod/art/paimon.png";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
 }

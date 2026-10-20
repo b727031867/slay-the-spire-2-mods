@@ -217,6 +217,7 @@ public partial class TravelerTestRunner : Node
         await TestFullContent();
         await TestTask003Acceptance();
         if (!CombatManager.Instance.IsInProgress) await StartFreshCombat();
+        await TestPresentation();
         await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
     }

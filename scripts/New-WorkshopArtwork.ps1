@@ -54,7 +54,7 @@ Canvas 1024 1024 (Join-Path $OutputDirectory 'image.png') {
     Label $g '雷' 36 '#BEA4EA' 775 725 $true
     Label $g '6 张卡牌  /  3 组连携  /  派蒙的应援' 28 '#F3EBDD' 80 803
     Label $g '铁甲战士扩展 · 单人技术测试版' 31 '#F3EBDD' 80 900 $true
-    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.1.2  /  非官方同人' 20 '#9AADB8' 80 960
+    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.1.3  /  非官方同人' 20 '#9AADB8' 80 960
 }
 Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     param($g)
@@ -73,6 +73,6 @@ Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     }
     Label $g '三类合计每人每回合最多 3 次 · 触发后消耗序列' 30 '#F3EBDD' 65 525 $true
     Label $g '岩雷要求触发牌有同一存活敌方目标；无目标不改选，仍占次数。' 24 '#9AADB8' 65 583
-    Label $g '单人测试 · 联机 / 自然整局 / 平衡未验收 · v0.1.2' 23 '#9AADB8' 65 645
+    Label $g '单人测试 · 联机 / 自然整局 / 平衡未验收 · v0.1.3' 23 '#9AADB8' 65 645
 }
 Get-ChildItem -LiteralPath $OutputDirectory -Filter '*.png' | Select-Object Name,Length

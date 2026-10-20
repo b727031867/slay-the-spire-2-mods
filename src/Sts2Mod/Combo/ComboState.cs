@@ -22,6 +22,17 @@ public sealed class ComboState
     public void BeginTurn() { Last = Element.None; Used = 0; }
     public void EndTurn() => Last = Element.None;
 
+    // Read-only: hovering must never reserve an action or consume a sequence.
+    public ComboKind Preview(Element element) => Used >= Limit ? ComboKind.None : Pair(Last, element);
+
+    private static ComboKind Pair(Element first, Element second) => (first, second) switch
+    {
+        (Element.Wind, Element.Rock) or (Element.Rock, Element.Wind) => ComboKind.WindRock,
+        (Element.Rock, Element.Lightning) or (Element.Lightning, Element.Rock) => ComboKind.RockLightning,
+        (Element.Lightning, Element.Wind) or (Element.Wind, Element.Lightning) => ComboKind.LightningWind,
+        _ => ComboKind.None
+    };
+
     public ComboStep Reserve(object action, Element element, bool automatic = false, bool firstInSeries = true)
     {
         var before = Last;
@@ -33,13 +44,7 @@ public sealed class ComboState
             Last = Element.None;
             return new(true, ComboKind.None, before, Last, Used);
         }
-        var kind = (Last, element) switch
-        {
-            (Element.Wind, Element.Rock) or (Element.Rock, Element.Wind) => ComboKind.WindRock,
-            (Element.Rock, Element.Lightning) or (Element.Lightning, Element.Rock) => ComboKind.RockLightning,
-            (Element.Lightning, Element.Wind) or (Element.Wind, Element.Lightning) => ComboKind.LightningWind,
-            _ => ComboKind.None
-        };
+        var kind = Preview(element);
         if (kind != ComboKind.None) { Used++; Last = Element.None; }
         else Last = element;
         return new(true, kind, before, Last, Used);

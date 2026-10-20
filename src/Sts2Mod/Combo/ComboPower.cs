@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Relics;
 
@@ -35,6 +36,10 @@ public sealed class ComboPower : CustomPowerModel
         var loc = new LocString("powers", $"{Id.Entry}.{key}");
         loc.Add("Element", new LocString("powers", "TC_ELEMENT_" + (IsMutable ? State.Last : Element.None).ToString().ToUpperInvariant()));
         loc.Add("Remaining", DisplayAmount);
+        var doubled = IsMutable && ComboPresentation.HasPaimon(Owner?.Player);
+        loc.Add("BlockBonus", doubled ? 8 : 4);
+        loc.Add("AttackBonus", doubled ? 8 : 4);
+        loc.Add("DrawBonus", doubled ? 2 : 1);
         return loc;
     }
     public override LocString Title => WithState(DisplayAmount == 0 ? "exhaustedTitle" : "title");
@@ -46,7 +51,19 @@ public sealed class ComboPower : CustomPowerModel
     {
         SetAmount(State.Encoded, silent: true);
         InvokeDisplayAmountChanged();
+        RefreshHand();
         GD.Print($"STS2MOD_COMBO player={Owner.Player?.NetId} event={reason} last={State.Last} used={State.Used} remaining={State.Remaining}");
+    }
+
+    private void RefreshHand()
+    {
+        if (DisplayServer.GetName() == "headless" || Owner?.Player is not { } player || !CombatManager.Instance.IsInProgress) return;
+        foreach (var card in PileType.Hand.GetPile(player).Cards.OfType<ElementCardModel>())
+        {
+            var node = NCard.FindOnTable(card);
+            if (node is not null && GodotObject.IsInstanceValid(node) && node.IsInsideTree())
+                node.CallDeferred(NCard.MethodName.UpdateVisuals, (int)PileType.Hand, (int)CardPreviewMode.Normal);
+        }
     }
 
     public static Reservation Reserve(CardModel card, PlayerChoiceContext context, CardPlay play, Element element)
@@ -88,11 +105,6 @@ public sealed class ComboPower : CustomPowerModel
         }
         var bonus = reservation.PaimonDoubles ? 8m : 4m;
         var draws = reservation.PaimonDoubles ? 2m : 1m;
-        if (reservation.PaimonDoubles)
-        {
-            card.Owner.Relics.OfType<PaimonCheer>().First(r => !r.IsMelted).Flash();
-            ShowTrigger(creature, "TC_COMBO.paimonTrigger");
-        }
         if (reservation.Kind == ComboKind.RockLightning)
         {
             var target = play.Target;
@@ -105,15 +117,15 @@ public sealed class ComboPower : CustomPowerModel
                 var hp = target.CurrentHp;
                 await DamageCmd.Attack(bonus).FromCard(card).Targeting(target)
                     .WithHitFx("vfx/vfx_attack_slash").Execute(context);
-                ShowTrigger(creature, "TC_COMBO.rockLightningTrigger");
+                ShowReward(creature, target, reservation);
                 GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} bonus={bonus}");
             }
         }
         else if (reservation.Kind == ComboKind.LightningWind)
         {
             var handBefore = PileType.Hand.GetPile(card.Owner).Cards.Count;
-            await CardPileCmd.Draw(context, draws, card.Owner);
-            ShowTrigger(creature, "TC_COMBO.lightningWindTrigger");
+            var drawn = (await CardPileCmd.Draw(context, draws, card.Owner)).Count();
+            ShowReward(creature, creature, reservation, drawn);
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=LightningWind hand_before={handBefore} hand_after={PileType.Hand.GetPile(card.Owner).Cards.Count} bonus_draw={draws}");
         }
         else
@@ -121,16 +133,23 @@ public sealed class ComboPower : CustomPowerModel
             var before = creature.Block;
             creature.GetPower<ComboPower>()?.Flash();
             await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
-            ShowTrigger(creature, "TC_COMBO.trigger");
+            ShowReward(creature, creature, reservation);
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
         }
     }
 
-    private static void ShowTrigger(Creature creature, string key)
+    private static void ShowReward(Creature creature, Creature effectTarget, Reservation reservation, int? actualDraw = null)
     {
+        // One bubble per actual reward. Skipped target/combat rewards never claim a success.
+        if (reservation.PaimonDoubles)
+            creature.Player?.Relics.OfType<PaimonCheer>().FirstOrDefault(r => !r.IsMelted)?.Flash();
+        var text = ComboPresentation.Trigger(reservation.Kind, reservation.PaimonDoubles, actualDraw).GetFormattedText();
+        GD.Print($"STS2MOD_FEEDBACK kind={reservation.Kind} bonus={ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles)} doubled={reservation.PaimonDoubles}");
+        if (DisplayServer.GetName() == "headless") return;
         if (creature.GetCreatureNode() is not null && creature.GetVfxContainer() is { } container
-            && NThoughtBubbleVfx.Create(new LocString("powers", key).GetFormattedText(), creature, 1.2) is { } bubble)
+            && NThoughtBubbleVfx.Create(text, creature, 1.0) is { } bubble)
             container.AddChild(bubble);
+        ElementComboVfx.Show(effectTarget, reservation.Kind, reservation.PaimonDoubles);
     }
 
     public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)

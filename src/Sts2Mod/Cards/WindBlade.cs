@@ -12,10 +12,11 @@ using Sts2Mod.Combo;
 namespace Sts2Mod.Cards;
 
 [CustomID("TC_C01"), Pool(typeof(IroncladCardPool))]
-public sealed class WindBlade : CustomCardModel
+public sealed class WindBlade : ElementCardModel
 {
     public WindBlade() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/wind.svg";
+    public override Element CardElement => Element.Wind;
+    public override string CustomPortraitPath => "res://Sts2Mod/art/wind.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6m, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
 

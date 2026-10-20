@@ -12,10 +12,11 @@ using Sts2Mod.Combo;
 namespace Sts2Mod.Cards;
 
 [CustomID("TC_C03"), Pool(typeof(IroncladCardPool))]
-public sealed class LightningThrust : CustomCardModel
+public sealed class LightningThrust : ElementCardModel
 {
     public LightningThrust() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/lightning.svg";
+    public override Element CardElement => Element.Lightning;
+    public override string CustomPortraitPath => "res://Sts2Mod/art/lightning.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(7m, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

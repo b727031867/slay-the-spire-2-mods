@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [单人测试版]",
   "description": "由 Prepare-Workshop.ps1 从 description.bbcode.txt 填充。",
   "visibility": "private",
-  "changeNote": "0.1.2 PC-A私有工坊无GUI验收通过：94项规则、12项获取保存准备、255项恢复/连续战斗，普通启动及取消/重新订阅通过。UI/自然试玩/联机/PC-B未验收。",
+  "changeNote": "0.1.3：奖励提示、统一说明、只读连携预览、七张生成式插图及非阻塞特效。私有候选待回归。",
   "tags": [],
   "dependencies": [
     3737335127

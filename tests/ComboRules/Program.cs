@@ -71,4 +71,19 @@ Check(limit.Used == 3 && limit.Remaining == 0, "all element pairs share three-co
 limit.BeginTurn();
 Check(limit.Used == 0 && limit.Remaining == 3 && limit.Last == Element.None, "native turn reset restores three combos");
 
+foreach (var first in new[] { Element.Wind, Element.Rock, Element.Lightning })
+foreach (var second in new[] { Element.Wind, Element.Rock, Element.Lightning })
+{
+    var preview = new ComboState();
+    Play(preview, first);
+    var before = preview.Encoded;
+    var predicted = preview.Preview(second);
+    for (var i = 0; i < 100; i++) preview.Preview(second);
+    Check(preview.Encoded == before && preview.Last == first && preview.Used == 0, $"100 previews do not consume {first}/{second}");
+    var played = Play(preview, second);
+    Check(played.Kind == predicted, $"preview matches next manual action {first}/{second}");
+}
+var cappedPreview = new ComboState();
+for (var i = 0; i < 3; i++) { Play(cappedPreview, Element.Wind); Play(cappedPreview, Element.Rock); }
+Check(cappedPreview.Preview(Element.Lightning) == ComboKind.None && cappedPreview.Used == 3, "exhausted preview cannot promise a combo");
 Console.WriteLine($"COMBO_RULES_PASS assertions={passed}");
