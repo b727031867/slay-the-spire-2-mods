@@ -2,15 +2,17 @@
 
 你正在接手旅行者元素连携Mod。先读取仓库AGENTS.md、docs/STATUS.md、docs/tasks/TASK-010.md、docs/tests/TASK-010-PC-B-run-01.md、docs/API_FINDINGS.md和docs/player/README.zh-CN.md。旧PC-B提示词及旧main规则仅为历史；本提示词与当前报告为最新入口。
 
+PC-B最终交付S为a3ffe66bd48dce568af2bdff6f7bdd2bb4bf0b18，0.3.2 ZIP SHA256为834612844C136AC5F66A48379F64F1F082833D8FA2E003BECCB0E39F2C487016。原私有工坊已更新、实际Steam下载及图片CDN一致，普通启动/角色专项通过；当前只是为你准备交接，不代表你这台PC已经安装或验证。
+
 ## 安全同步
 
 先检查工作区和当前分支，保留本机未提交改动。获取origin最新引用后，切换并快进同步`codex/TASK-010-balance-workshop`；分支不存在本地时从origin同名分支创建跟踪分支。不要硬重置、强推、丢弃改动、自动合并main或使用旧lightning分支。当前任务不授权新功能、公开发行或合并main。
 
-报告记录最终可执行源码S和包SHA256；后续纯文档提交H不改变S产物身份。在H重建会产生新的codeCommit，不能伪称原S包或直接沿用S验收。确认远端最新提交和报告，不复制上一台PC的绝对路径、凭据、local.settings.json、Steam登录或用户存档。
+报告记录最终可执行源码S和包SHA256；后续验收脚本/文档提交H不改变S产物身份。在H重建会产生新的codeCommit，不能伪称原S包或直接沿用S验收。S的旧日志分类器不认识本轮新增dummy纹理清理诊断；用最新严格分类器核对原始日志，不改游戏断言。确认远端最新提交和报告，不复制上一台PC的绝对路径、凭据、local.settings.json、Steam登录或用户存档。
 
 ## 环境与安装
 
-游戏固定v0.107.1 / Steam build23811903，BaseLib精确3.4.7。按global.json使用.NET SDK10.0.402（目标net9.0，运行时9.0.21）、Godot.NET4.5.1及本机PowerShell7；按仓库环境文档配置本机local.settings.json，再运行环境检查。若游戏自动升级导致版本不同，先报告，不静默改锁定依赖。不要提交游戏DLL、构建二进制、工具缓存、日志或用户数据。
+游戏固定v0.107.1 / Steam build23811903，BaseLib精确3.4.7。按global.json使用.NET SDK10.0.402（目标net9.0，运行时9.0.21）、Godot.NET4.5.1及本机PowerShell7；按README.md、docs/COLLABORATION.md、docs/DEVELOPMENT.md配置本机local.settings.json，再运行环境检查。若游戏自动升级导致版本不同，先报告，不静默改锁定依赖。不要提交游戏DLL、构建二进制、工具缓存、日志或用户数据。
 
 工坊仍为私有条目3823282901，依赖3737335127。同Steam账号才保证可访问；不要创建重复条目、改为公开或代接受法律条款。通过正常Steam下载后检查本地版本、build-info及报告里的7文件哈希，不手工写Steam缓存。避免mods/Sts2Mod和工坊同ID重复加载，BaseLib也不能重复/偷偷升级。最新PC-B上传和下载实测状态以本轮报告为准。
 

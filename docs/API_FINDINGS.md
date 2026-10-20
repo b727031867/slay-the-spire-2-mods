@@ -6,6 +6,7 @@
 
 - 左上角`NTopBarPortrait.Initialize(Player)`实际装入`player.Character.Icon`。仅修改CustomIconTexturePath不能证明该入口换图；本次同时修改`character/icon.tscn`的TextureRect资源为head_icon.png，并实例化原生Character.Icon检查资源路径。
 - 原生遗物支持ShowCounter、DisplayAmount、InvokeDisplayAmountChanged以及RelicStatus.Active/Disabled/Normal。罗盘在可用时1/Active，已用或冷却时0/Disabled，战斗外0/Normal；用原生事件同步，不新增覆盖原生UI的计时节点。动态Title使用本地化LocString参数。
+- 另核对NRelicInventoryHolder：运行中ShowCounter为true就显示数值（包括0），DisplayAmountChanged刷新文本；Active/Normal图标白色，Disabled为#808080变暗。本次“亮”指原生正常亮度对比冷却暗色，不承诺新增持续发光特效。此为接口静态核查，非人工UI验收。
 - 自己的AfterPlayerTurnStartEarly计入额外回合；BeforeCombatStart及AfterCombatEnd清理战斗内冷却。战斗入口原生保存恢复重新开始战斗，不声称支持任意动作中途保存当前冷却。
 
 以下保留历史调查。

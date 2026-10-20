@@ -12,6 +12,9 @@ $nativeHeadlessSources = @{
     'ERROR: Parameter "shader" is null.' = '^at: shader_set_code \(.*servers/rendering/dummy/storage/material_storage\.cpp:\d+\)$'
     'ERROR: Parameter "material" is null.' = '^at: material_set_shader \(.*servers/rendering/dummy/storage/material_storage\.cpp:\d+\)$'
     'ERROR: Parameter "t" is null.' = '^at: texture_2d_initialize \(.*servers/rendering/dummy/storage/texture_storage\.h:\d+\)$'
+    # Godot dummy renderer texture cleanup cascade; additionally require the
+    # immediately preceding native texture_2d_initialize failure below.
+    'ERROR: Parameter "texture" is null.' = '^at: texture_free \(.*servers/rendering/dummy/storage/texture_storage\.h:\d+\)$'
 }
 $unexpected = [Collections.Generic.List[string]]::new()
 $known = [Collections.Generic.List[string]]::new()
@@ -33,6 +36,10 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($line -notmatch '^ERROR:') { continue }
     $source = if ($i + 1 -lt $lines.Count) { $lines[$i + 1].Trim() } else { '' }
     $contextAllowed = $true
+    if ($line -eq 'ERROR: Parameter "texture" is null.') {
+        $contextAllowed = $i -ge 2 -and $lines[$i - 2] -eq 'ERROR: Parameter "t" is null.' -and
+            $lines[$i - 1].Trim() -match $nativeHeadlessSources['ERROR: Parameter "t" is null.']
+    }
     if ($line -eq 'ERROR: Attempting to initialize the wrong RID') {
         $following = $lines[$i..([Math]::Min($i + 9, $lines.Count - 1))] -join "`n"
         $contextAllowed = $following -match 'ERROR: Parameter "shader" is null\.\n\s*at: shader_set_code \(servers/rendering/dummy/storage/material_storage\.cpp:\d+\)' -or
