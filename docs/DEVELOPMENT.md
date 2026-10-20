@@ -1,6 +1,6 @@
 # 构建、部署与最小加载检查
 
-当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.0 已实现六张牌、三条连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
+当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.1 已实现六张牌、三类双向连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
 
 ## 前提
 
@@ -42,21 +42,23 @@ Sts2Mod/
 
 ```powershell
 .\scripts\Deploy-Mod.ps1 -PackageDirectory '<实际包目录>/Sts2Mod' -InstallDependencies
-.\scripts\Start-ModGame.ps1
+.\scripts\Start-ModGame.ps1 -Headless
 ```
 
 `-InstallDependencies`下载并校验官方BaseLib 3.3.2，安装到`mods/BaseLib`；当前Mod安装到`mods/Sts2Mod`。已有目录先备份至`.local/backups/`，遇到未知文件、错误ID或重定向目录则拒绝覆盖。后续可省略该参数复用已匹配版本的BaseLib。不要同时安装Workshop的另一版本BaseLib；此工作流使用本地固定版本。
 
-启动脚本会输出游戏进程ID与本次日志路径。它通过子进程环境提供真实Steam App ID，Steam仍执行账号/拥有权校验；启动失败时先确认Steam登录状态。脚本支持`-Headless`作为开发选项，但本任务验收采用真实图形界面启动，不将无界面启动当成界面验收。
+启动脚本会输出游戏进程ID与本次日志路径。它通过子进程环境提供真实Steam App ID，Steam仍执行账号/拥有权校验；启动失败时先确认Steam登录状态。AI测试使用`-Headless`，图形界面验收保留NOT_RUN，待用户另行明确安排。
 
 进入主菜单后检查（用实际日志路径和完整代码提交替换占位符）：
 
 ```powershell
-.\scripts\Test-ModLoad.ps1 -LogFile '<实际日志路径>' -CodeCommit '<完整代码提交S>'
+.\scripts\Test-ModLoad.ps1 -LogFile '<实际日志路径>' -CodeCommit '<完整代码提交S>' -Headless
 .\scripts\Collect-ModLogs.ps1 -LogFile '<实际日志路径>'
 ```
 
-应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现未知 ERROR 的日志；仅在显式 `-Headless` 时可精确过滤已知 Godot RID/shader 渲染噪声。原生清单中显示BaseLib和STS2 Mod - Traveler Elements。
+应看到一次`STS2MOD_READY version=<Mod版本>+<S> baselib=3.3.2 resource=ok`，游戏加载器完成两个Mod初始化并进入主菜单。`Test-ModLoad`还会拒绝出现未知 ERROR 的日志；仅在显式 `-Headless` 时按错误文本与紧随的原生源码位置联合分类已知 Godot RID/shader 渲染错误，并输出数量。相同文本来自其他源码位置仍会失败。
+
+全量单人无GUI回归使用`Start-ModGame.ps1 -Headless -TravelerTest`，完成后执行`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Task003 -Headless`。`-TravelerAcceptance`仅运行TASK-003边界子集，不能替代全量回归，也不能单独传给要求全量标记的检查器。
 
 原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。游戏原生启动可能同步Steam云存档，部署和移除脚本本身不修改存档。
 

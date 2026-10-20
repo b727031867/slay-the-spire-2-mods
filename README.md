@@ -2,7 +2,7 @@
 
 面向《杀戮尖塔 2》（Slay the Spire 2）的 Mod 开发项目，通过新增卡牌、遗物与组合机制，拓展现有角色的构筑和出牌选择。
 
-首版内容已实现为 Mod 0.1.0：六张铁甲战士主题牌、风→岩、岩→雷、雷→风三条连招，以及遗物「派蒙的应援」。PC-B 已完成单人自动化集成，当前进入 TASK-003 用户试玩阶段；双人另行专项测试。
+首版内容已实现为 Mod 0.1.1：六张铁甲战士主题牌、风↔岩、岩↔雷、雷↔风三类双向连招，以及共享罕见遗物「派蒙的应援」。每人每回合共享 3 次连招，派蒙使每次连招奖励翻倍。当前进行 TASK-003 单人集成验收，AI游戏测试均使用无GUI模式；双人另行专项测试。
 
 ## 项目方向
 
@@ -27,12 +27,12 @@ TASK-001已确认「旅行者」风/岩主题、铁甲战士宿主：风起之�
 | 最小 Mod 的真实加载与原生模组列表 | PC-A已通过；干净提交包完成重复部署、移除与恢复 |
 | Mod 框架与游戏接口调查 | 固定 BaseLib 3.3.2；风岩基础命令与回合时序已用于真实测试 |
 | 卡牌、遗物与连招实现 | 六张牌、三条连招、派蒙遗物、状态及中英文本已完成 |
-| 正式玩法的单人及双人联机验收 | PC-B单人自动化通过并待用户试玩；完整读档与双人NOT_RUN |
-| 开发包 | 0.1.0 PC-B干净包已构建部署，具体身份见TASK-003交接 |
+| 正式玩法的单人及双人联机验收 | 0.1.1单人无GUI回归见PC-A报告；完整读档与双人NOT_RUN |
+| 开发包 | 0.1.1 PC-A干净包，具体提交和SHA256见TASK-003交接 |
 
 TASK-001代码和PC-A单人范围已交付，状态为DONE_SINGLEPLAYER：21项纯规则、28项真实游戏断言、手动界面和原生奖励获取通过。当前按用户要求优先单人游戏验证，双人联机后续专项测试，不阻塞本次交付。[草稿PR #2](https://github.com/b727031867/slay-the-spire-2-mods/pull/2)、[交接与下载](docs/handoffs/TASK-001.md)、[测试报告](docs/tests/TASK-001-PC-A-run-01.md)。完整读档及双人尚未验收。当前状态见 [STATUS](docs/STATUS.md)，工具版本见 [TECH_BASELINE](docs/TECH_BASELINE.md)，接口依据见 [API_FINDINGS](docs/API_FINDINGS.md)。
 
-TASK-002 已完成；TASK-003 单人自动化累计 91 项断言通过。当前等待用户在正常图形界面进行获取、手感与自然整局试玩。详见[任务](docs/tasks/TASK-003.md)、[交接](docs/handoffs/TASK-003.md)和[PC-B报告](docs/tests/TASK-003-PC-B-run-01.md)。
+TASK-002 的内容开发已完成，TASK-003 继续补齐正常获取、完整退出读档与持续战斗等验收。0.1.1 的被测提交、实际回归结果及限制见[PC-A报告](docs/tests/TASK-003-PC-A-run-02.md)、[任务](docs/tasks/TASK-003.md)和[交接](docs/handoffs/TASK-003.md)。历史0.1.0的91项结果保留在[PC-B报告](docs/tests/TASK-003-PC-B-run-01.md)，不代替新版验证；图形界面按DEC-005延期。
 
 ## 技术栈与版本
 
@@ -84,7 +84,7 @@ TASK-002 已完成；TASK-003 单人自动化累计 91 项断言通过。当前�
 .\scripts\Build-Mod.ps1 -DeviceId PC-A
 ```
 
-构建要求干净提交，并输出可部署目录、ZIP和SHA256。使用实际输出目录运行`Deploy-Mod.ps1 -PackageDirectory '<目录>/Sts2Mod' -InstallDependencies`，再运行`Start-ModGame.ps1`。首次原生模组确认、加载日志检查、移除与恢复步骤见 [开发操作说明](docs/DEVELOPMENT.md)。
+构建要求干净提交，并输出可部署目录、ZIP和SHA256。使用实际输出目录运行`Deploy-Mod.ps1 -PackageDirectory '<目录>/Sts2Mod' -InstallDependencies`，再运行`Start-ModGame.ps1 -Headless`。全量回归加`-TravelerTest`，完成后用`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<提交>' -Task003 -Headless`检查。首次原生模组确认、加载日志检查、移除与恢复步骤见 [开发操作说明](docs/DEVELOPMENT.md)。
 
 本地配置与构建产物由 `.gitignore` 排除。PC-A 和 PC-B 均可开发、构建和测试，通过同一个 GitHub 仓库接续工作；开发和测试不绑定某一台设备。两台 Windows 设备均已完成独立工具链核查。
 
@@ -96,7 +96,7 @@ TASK-002 已完成；TASK-003 单人自动化累计 91 项断言通过。当前�
 - **本地环境**：两台 PC 各自安装工具和游戏、配置 `local.settings.json`，不共享绝对路径、游戏程序集或存档。PC-A 的验证结果不代表 PC-B 已通过。
 - **游戏测试**：两台 PC 均可做单人测试；双人联机需两端客户端、账号及操作者条件满足，并交换主客机验收。
 
-目前已有本地构建、打包和检查脚本；当前0.0.2 ZIP与SHA256已上传草稿附件，获取方式及被测提交见 [TASK-001交接](docs/handoffs/TASK-001.md)，实测结果见 [PC-A报告](docs/tests/TASK-001-PC-A-run-01.md)。历史最小工程记录保留在 [TASK-000交接](docs/handoffs/TASK-000.md)。尚未启用自动构建上传或公开发布。详细接入与切换步骤见 [双 PC 协作说明](docs/COLLABORATION.md)，调整依据见 [决策记录](docs/DECISIONS.md)。
+目前已有本地构建、打包和检查脚本；当前开发包身份及构建方式见 [TASK-003交接](docs/handoffs/TASK-003.md)。历史草稿附件和实测结果保留在 [TASK-001交接](docs/handoffs/TASK-001.md)及[PC-A首轮报告](docs/tests/TASK-001-PC-A-run-01.md)，历史最小工程记录见 [TASK-000交接](docs/handoffs/TASK-000.md)。尚未启用自动构建上传或公开发布。详细接入与切换步骤见 [双 PC 协作说明](docs/COLLABORATION.md)，调整依据见 [决策记录](docs/DECISIONS.md)。
 
 ## 仓库结构
 
