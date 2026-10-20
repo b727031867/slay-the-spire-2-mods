@@ -10,6 +10,57 @@ namespace Sts2Mod.Debug;
 
 public partial class TravelerTestRunner
 {
+    private async Task TestContinuousCombos()
+    {
+        var doubled = ComboPresentation.HasPaimon(_player);
+        var suffix = doubled ? "paimon" : "normal";
+        var blockBonus = doubled ? 8 : 4;
+        var draws = doubled ? 2 : 1;
+        await NextTurn();
+        await PlayerCmd.SetEnergy(3m, _player);
+        var hp = _target.CurrentHp;
+        await Play<WindBlade>(); await Play<RockGuard>();
+        var thirdWind = (WindBlade)await Add<WindBlade>();
+        Check(Power.State.Last == Element.Rock && Power.State.Used == 1
+            && ComboPresentation.Preview(thirdWind).LocEntryKey == "TC_PREVIEW.block",
+            "CHAIN_after_pair_retains_rock_and_previews_next_block_" + suffix);
+        await Queue(new PlayCardAction(thirdWind, _target));
+        Check(hp - _target.CurrentHp == 12 && _player.Creature.Block == 7 + 2 * blockBonus
+            && Power.State.Used == 2 && Power.State.Last == Element.Wind && _player.PlayerCombatState!.Energy == 0,
+            "CHAIN_three_energy_wind_rock_wind_two_blocks_" + suffix);
+
+        await NextTurn(); await PlayerCmd.SetEnergy(3m, _player); hp = _target.CurrentHp;
+        await Play<WindBlade>(); await Play<RockGuard>(); await Play<LightningThrust>();
+        Check(hp - _target.CurrentHp == 13 + blockBonus && _player.Creature.Block == 7 + blockBonus
+            && Power.State.Used == 2 && Power.State.Last == Element.Lightning,
+            "CHAIN_three_energy_wind_rock_lightning_block_and_attack_" + suffix);
+
+        await NextTurn(); await SeedDraw();
+        await Play<WindBlade>(); await Play<LightningThrust>(); await Play<WindBlade>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 2 * draws && Power.State.Used == 2
+            && Power.State.Last == Element.Wind, "CHAIN_wind_lightning_wind_two_draw_rewards_" + suffix);
+
+        await NextTurn();
+        await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>(); await Play<RockGuard>();
+        Check(_player.Creature.Block == 14 + 3 * blockBonus && Power.State.Used == 3
+            && Power.State.Last == Element.Rock && Power.DisplayAmount == 0,
+            "CHAIN_four_cards_reach_shared_three_cap_" + suffix);
+        await Play<WindBlade>();
+        Check(_player.Creature.Block == 14 + 3 * blockBonus && Power.State.Used == 3
+            && Power.State.Last == Element.Wind && Power.State.Preview(Element.Rock) == ComboKind.None,
+            "CHAIN_fifth_card_no_fourth_bonus_" + suffix);
+
+        await NextTurn(); await SeedDraw(); hp = _target.CurrentHp;
+        await Play<RockGuard>(); await Play<ThunderPrep>();
+        Check(_target.CurrentHp == hp && Power.State.Last == Element.Lightning && Power.State.Used == 1,
+            "CHAIN_skipped_targetless_reward_still_retains_lightning_" + suffix);
+        await Play<WindBlade>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 1 + draws && Power.State.Used == 2
+            && Power.State.Last == Element.Wind, "CHAIN_can_continue_after_targetless_pair_" + suffix);
+        await NextTurn();
+        Check(Power.State.Last == Element.None && Power.State.Used == 0, "CHAIN_resets_at_turn_boundary_" + suffix);
+    }
+
     private async Task TestPresentation()
     {
         var startCount = _assertions;

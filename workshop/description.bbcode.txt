@@ -1,7 +1,7 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
 为铁甲战士增加六张风、岩、雷主题卡牌与共享罕见遗物「派蒙的应援」。通过主动出牌顺序搭配攻击、防御和抽牌。包含简体中文与英文文本。
 
-[b]单人技术测试版 0.1.3 · 游玩反馈与画面优化候选[/b]
+[b]单人技术测试版 0.1.4 · 连续元素连携候选[/b]
 仅验证 Windows x64、游戏 v0.107.1 / build 23811903、BaseLib 3.4.7。本 Mod 严格检查 BaseLib 版本。工坊 BaseLib 自动更新，订阅前置不保证取得 3.4.7；0.1.2已通过PC-A纯订阅无GUI启动、规则与磁盘恢复验收；0.1.3已通过122项机制/展示无GUI断言，详见最新回归报告；PC-B独立安装和图形操作仍未验收。BaseLib其他版本及联机支持尚未验证。
 
 [h2]内容[/h2]
@@ -12,7 +12,7 @@
 [*]风 ↔ 岩：额外获得 4 点格挡。
 [*]岩 ↔ 雷：对触发牌的同一存活敌方目标进行 4 点基础攻击。
 [*]雷 ↔ 风：额外抽 1 张牌。
-[*]每人每回合三种连携合计最多 3 次，触发后消耗序列；普通牌不打断。自动出牌或额外重复结算不推进。
+[*]每人每回合三种连携合计最多 3 次，触发后保留刚打出的元素，可继续连携：风→岩→风触发两次风岩，风→岩→雷触发风岩和岩雷；普通牌不打断。自动出牌或额外重复结算不推进。
 [*]派蒙使每次连携奖励翻倍为格挡 8、基础攻击 8、抽牌 2，不提供额外固定格挡。
 [/list]
 岩雷遇到无目标、目标死亡或移除时不改选目标，该次仍占次数。基础效果结束战斗时跳过战斗内奖励。攻击受原生伤害规则影响。
@@ -25,7 +25,7 @@
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Six elemental cards for the Ironclad and one shared Uncommon relic, Paimon's Cheer. Wind/Rock grants block, Rock/Lightning attacks the triggering card's same living enemy target, and Lightning/Wind draws cards. Either order works. All pairs share a three-per-player-per-turn limit; each pair consumes its sequence. Paimon doubles each combo reward.
+Six elemental cards for the Ironclad and one shared Uncommon relic, Paimon's Cheer. Wind/Rock grants block, Rock/Lightning attacks the triggering card's same living enemy target, and Lightning/Wind draws cards. Either order works. All pairs share a three-per-player-per-turn limit; each pair retains the element just played so the next adjacent pair can trigger. Wind/Rock/Wind grants two Block rewards; Wind/Rock/Lightning grants Block then an attack. Paimon doubles each combo reward.
 Singleplayer technical test build. Validated baseline: Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7 ONLY. Other BaseLib versions are rejected. Version 0.1.2 passed PC-A headless Workshop installation and reload acceptance; see the latest report for 0.1.3; PC-B independent installation and graphical interaction remain unverified; the required item's automatic updates do not pin its version. Multiplayer, complete graphical review, natural full runs and balance are unverified. Preview images are explanatory artwork, not gameplay screenshots.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系。未附带游戏资源、主题作品图片或音频。

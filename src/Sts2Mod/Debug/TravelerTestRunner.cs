@@ -154,10 +154,10 @@ public partial class TravelerTestRunner : Node
 
         var hp = _target.CurrentHp;
         await Play<WindBlade>(); await Play<RockGuard>();
-        Check(hp - _target.CurrentHp == 6 && _player.Creature.Block == 11 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC01_damage6_block11_consumed");
+        Check(hp - _target.CurrentHp == 6 && _player.Creature.Block == 11 && Power.State.Used == 1 && Power.State.Last == Element.Rock, "TC01_damage6_block11_retains_rock");
         await NextTurn();
         await Play<RockGuard>(); await Play<WindBlade>();
-        Check(_player.Creature.Block == 11 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC04_reverse_wind_rock_combo");
+        Check(_player.Creature.Block == 11 && Power.State.Used == 1 && Power.State.Last == Element.Wind, "TC04_reverse_wind_rock_combo");
         await NextTurn();
         await Play<WindBlade>(); await Play<DefendIronclad>(); await Play<RockGuard>();
         Check(_player.Creature.Block == 16 && Power.State.Used == 1, "TC05_normal_defend_preserves_sequence");
@@ -166,7 +166,7 @@ public partial class TravelerTestRunner : Node
         Check(_player.Creature.Block == 11 && Power.State.Used == 1, "TC06_same_element_then_one_combo");
         await NextTurn();
         for (var i = 0; i < 4; i++) { await Play<WindBlade>(); await Play<RockGuard>(); }
-        Check(_player.Creature.Block == 40 && Power.State.Used == 3 && Power.State.Last == Element.None && Power.DisplayAmount == 0, "TC08_four_pairs_only_three_bonuses");
+        Check(_player.Creature.Block == 40 && Power.State.Used == 3 && Power.State.Last == Element.Rock && Power.DisplayAmount == 0, "TC08_four_pairs_only_three_bonuses");
         await NextTurn();
         await Play<WindBlade>(); await NextTurn(); await Play<RockGuard>();
         Check(_player.Creature.Block == 7 && Power.State.Used == 0, "TC09_wind_does_not_cross_turn");
@@ -181,7 +181,7 @@ public partial class TravelerTestRunner : Node
         source = await Play<WindBlade>();
         await PowerCmd.Apply<BurstPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
         await Play<RockGuard>();
-        Check(_player.Creature.Block == 18 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC11_native_burst_extra_resolution_no_second_advance");
+        Check(_player.Creature.Block == 18 && Power.State.Used == 1 && Power.State.Last == Element.Rock, "TC11_native_burst_extra_resolution_no_second_advance");
         await NextTurn();
         hp = _target.CurrentHp;
         await Play<WindBlade>(true); await Play<RockGuard>(true);
@@ -212,12 +212,15 @@ public partial class TravelerTestRunner : Node
         await RunManager.Instance.EnterRoomDebug(RoomType.Monster, model: encounter);
         await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay && _player.Creature.GetPower<ComboPower>() is not null, "new combat");
         Check(Power != oldPower && Power.State.Last == Element.None && Power.State.Used == 0, "TC18_new_combat_has_fresh_state");
+        await TestContinuousCombos();
+        await NextTurn();
         await TestLightning();
         await StartFreshCombat();
         await TestFullContent();
         await TestTask003Acceptance();
         if (!CombatManager.Instance.IsInProgress) await StartFreshCombat();
         await TestPresentation();
+        await TestContinuousCombos();
         await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
     }
@@ -232,7 +235,7 @@ public partial class TravelerTestRunner : Node
         Check(pool.Count(c => c is LightningThrust) == 1, "TC002_lightning_once_in_native_pool");
         var hp = _target.CurrentHp;
         await Play<RockGuard>(); await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 11 && _player.Creature.Block == 7 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC02_rock_lightning_damage7_plus4");
+        Check(hp - _target.CurrentHp == 11 && _player.Creature.Block == 7 && Power.State.Used == 1 && Power.State.Last == Element.Lightning, "TC02_rock_lightning_damage7_plus4");
         await NextTurn(); hp = _target.CurrentHp;
         await Play<RockGuard>(); await Play<LightningThrust>(true);
         Check(hp - _target.CurrentHp == 14 && Power.State.Used == 1, "TC13_lightning_upgrade10_plus4");
@@ -240,7 +243,7 @@ public partial class TravelerTestRunner : Node
         await Play<WindBlade>(); await Play<RockGuard>();
         await Play<RockGuard>(); await Play<LightningThrust>();
         await Play<RockGuard>(); await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 28 && _player.Creature.Block == 25 && Power.State.Used == 3 && Power.State.Last == Element.None, "TC08_mixed_combos_share_three_cap");
+        Check(hp - _target.CurrentHp == 24 && _player.Creature.Block == 25 && Power.State.Used == 3 && Power.State.Last == Element.Lightning, "TC08_mixed_combos_share_three_cap");
         await NextTurn(); hp = _target.CurrentHp;
         var rock = await Play<RockGuard>();
         var auto = await Add<LightningThrust>();
@@ -252,7 +255,7 @@ public partial class TravelerTestRunner : Node
         rock = await Play<RockGuard>();
         await PowerCmd.Apply<DuplicationPower>(rock.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
         await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 18 && Power.State.Used == 1 && Power.State.Last == Element.None, "TC11_native_duplicated_lightning_one_bonus");
+        Check(hp - _target.CurrentHp == 18 && Power.State.Used == 1 && Power.State.Last == Element.Lightning, "TC11_native_duplicated_lightning_one_bonus");
         await NextTurn(); hp = _target.CurrentHp;
         rock = await Play<RockGuard>();
         await PowerCmd.Apply<StrengthPower>(rock.PlayerChoiceContext!, _player.Creature, 2m, _player.Creature, null);
@@ -269,7 +272,7 @@ public partial class TravelerTestRunner : Node
         var otherHp = other.CurrentHp;
         _target.SetCurrentHpInternal(7m);
         await Play<RockGuard>(); await Play<LightningThrust>();
-        Check(_target.IsDead && other.CurrentHp == otherHp && Power.State.Used == 1 && Power.State.Last == Element.None, "TC14_dead_target_no_retarget_counter_consumed");
+        Check(_target.IsDead && other.CurrentHp == otherHp && Power.State.Used == 1 && Power.State.Last == Element.Lightning, "TC14_dead_target_no_retarget_counter_consumed");
         var original = ModelDb.Card<LightningThrust>().ToMutable();
         original.UpgradeInternal(); original.FinalizeUpgradeInternal();
         var restored = CardModel.FromSerializable(original.ToSerializable());
@@ -309,14 +312,14 @@ public partial class TravelerTestRunner : Node
         await NextTurn(); await SeedDraw();
         await Play<LightningThrust>();
         await Play<TailwindPrep>();
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 2 && Power.State.Used == 1 && Power.State.Last == Element.None,
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 2 && Power.State.Used == 1 && Power.State.Last == Element.Wind,
             "TC03_lightning_wind_base_draw1_bonus_draw1");
 
         await NextTurn(); await SeedDraw();
         var lightning = await Play<LightningThrust>();
         await PowerCmd.Apply<BurstPower>(lightning.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
         await Play<TailwindPrep>();
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1 && Power.State.Last == Element.None,
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1 && Power.State.Last == Element.Wind,
             "TC11_burst_tailwind_two_base_resolutions_one_combo_draw");
 
         await NextTurn();
@@ -339,7 +342,7 @@ public partial class TravelerTestRunner : Node
 
         await NextTurn(); await SeedDraw(); hp = _target.CurrentHp;
         await Play<RockAdvance>(); await Play<ThunderPrep>();
-        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 8 && Power.State.Used == 1 && Power.State.Last == Element.None,
+        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 8 && Power.State.Used == 1 && Power.State.Last == Element.Lightning,
             "rock_to_targetless_thunder_consumes_combo_without_retarget");
         await NextTurn(); await SeedDraw();
         await Play<ThunderPrep>(); await Play<TailwindPrep>();
@@ -397,7 +400,7 @@ public partial class TravelerTestRunner : Node
         Check(PileType.Hand.GetPile(_player).Cards.Count == 1 && Power.State.Last == Element.Lightning && Power.State.Used == 0,
             "TASK003_auto_tailwind_draws_base_only_and_preserves_lightning");
         await Play<TailwindPrep>();
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 4 && Power.State.Used == 1 && Power.State.Last == Element.None,
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 4 && Power.State.Used == 1 && Power.State.Last == Element.Wind,
             "TASK003_manual_tailwind_after_auto_triggers_paimon_double_draw");
 
         await NextTurn();
