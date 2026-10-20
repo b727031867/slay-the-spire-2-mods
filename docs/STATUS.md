@@ -1,8 +1,8 @@
 ## 当前：0.3.1 / TASK-009 随机追击与正式图片
 
-用户确认：防御技能岩雷追加攻击随机敌人，全部项目自绘占位图片换正式资源；Boss数值先提案后评审。已实现并完成静态检查，后台回归进行中。19项素材及4透明图检查通过，C#/TSCN无SVG引用；费用、攻击、格挡与能力数值不变。源码在`codex/TASK-009-combo-art`，未合并main或上传工坊。见[任务](tasks/TASK-009.md)、[待评审提案](design/TRAVELER-LONG-COMBAT-REVIEW.md)及[美术记录](art/TASK-009-prompts.md)。下方0.3.0及更早为历史。
+DONE_SINGLEPLAYER_HEADLESS_MANUAL_PLAY_PENDING（2026-10-21）。防御技能岩雷追加攻击随机敌人，19项项目占位图片换正式生成式资源；Boss数值保持、方案待用户评审。49纯规则、20日志分类及S1全量358项通过；只改版本元数据后的最终S2 `68c8cf864e70896e69b0a7958c8dae9ac37cc191`专项205项、原生保存13项、恢复/受控六场269项通过。六场24回合90次出牌52次连携，1自然胜利，非自然整局/Boss验证；未知错误0，原生退出诊断单列。清单/程序集均0.3.1，相同干净包已部署；C#/TSCN无SVG引用。分支`codex/TASK-009-combo-art`，未合并main或上传工坊。见[报告](tests/TASK-009-PC-B-run-01.md)、[交接](handoffs/TASK-009.md)、[待评审提案](design/TRAVELER-LONG-COMBAT-REVIEW.md)及[美术记录](art/TASK-009-prompts.md)。图形交互、自然Boss平衡、多人和用户旧档迁移仍待验证。
 
-## 当前：0.3.0 / TASK-008 卡池扩充
+## 历史：0.3.0 / TASK-008 卡池扩充
 
 DONE_SINGLEPLAYER_HEADLESS_MANUAL_PLAY_PENDING。用户已评审并授权实现12张新牌。代码固定为干净提交`217257a4a0a4fb263779d63e0006410c5867a2a2`，当前分支`codex/TASK-008-card-pool`。18张奖励牌含4张能力，中英文本、升级、正常奖励/商店及原创矢量占位牌图齐备；起始10张牌保持。49纯规则、20日志分类、327全量（含129新卡）、13原生获取保存、275恢复/受控连续战斗通过；六场24回合93次出牌54次连携，0自然胜利，未知错误0。本机已部署相同0.3.0包，未合并main、未上传工坊。图形交互、自然整局平衡、多人和用户旧局迁移待验收。见[报告](tests/TASK-008-PC-B-run-01.md)与[交接](handoffs/TASK-008.md)。以下为历史记录。
 
