@@ -99,7 +99,7 @@ Use case: stylized-concept. Production landscape card art for a fantasy deckbuil
 以下四项共同前缀：
 
 ```text
-Use case: stylized-concept. Finished original hand-painted storybook fantasy game asset, textured brushwork, strong readable silhouette, ivory edge highlights and deep midnight blue shading. No text, no UI, no watermark, no border, not geometric placeholder art. 
+Use case: stylized-concept. Finished original hand-painted storybook fantasy game asset, textured brushwork, strong readable silhouette, ivory edge highlights and deep midnight blue shading. No text, no UI, no watermark, no border, not geometric placeholder art.
 ```
 
 ### compass.png

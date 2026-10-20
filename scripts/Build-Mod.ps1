@@ -20,6 +20,10 @@ try {
     $actualBuild = [regex]::Match($appManifest, '"buildid"\s+"(\d+)"').Groups[1].Value
     if ($actualBuild -ne $dependencies.gameBuild) { throw "Expected Steam build $($dependencies.gameBuild), found $actualBuild." }
     $manifest = Get-Content -Raw src/Sts2Mod/Sts2Mod.json | ConvertFrom-Json
+    [xml]$projectMetadata = Get-Content -Raw src/Sts2Mod/Sts2Mod.csproj
+    if ([string]$projectMetadata.Project.PropertyGroup.Version -ne [string]$manifest.version) {
+        throw 'Assembly and mod manifest versions differ. Update both before building.'
+    }
     $sourceIdentity = $commit + $(if ($dirty) { '-dirty' } else { '' })
     $packageName = "Sts2Mod-$($manifest.version)-$($dependencies.gameVersion)-$($sourceIdentity.Substring(0,12))" + $(if ($dirty) { '-dirty' } else { '' })
     $output = Join-Path $projectRoot "artifacts/$packageName"

@@ -1,5 +1,7 @@
 # 构建、部署与最小加载检查
 
+0.3.1/TASK-009：当前`-TravelerCards`也覆盖19项正式PNG、312px战斗配置及11项防御牌原生随机追击；`Test-ExpandedCardRun.ps1`要求这些证据。完整回归仍用`-TravelerTest -Headless`及检查器`-Full`。随机技能使用原生CombatTargets；测试动作的Self牌显式目标必须为null。图片联系表可由`New-Task009ArtCatalog.ps1`重建（只组合QA预览，不改变运行时PNG），生成记录在`docs/art/TASK-009-prompts.md`。以下为早期版本记录。
+
 0.3.0/TASK-008新增12张牌，奖励池18张。新卡专项：`Start-ModGame.ps1 -TravelerCards -Headless`，完成后运行`Test-ExpandedCardRun.ps1 -LogFile '<日志>' -CodeCommit '<S>'`。全量使用`-TravelerTest -Headless`，检查器加`-Full`。磁盘夹具已改为18种牌的基础/升级，依旧使用下方原生隔离存储的准备和恢复步骤。以下六牌/早期版本说明为历史；正常模式没有自动测试或自动选牌。
 
 当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.2候选已实现六张牌、三类双向连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
