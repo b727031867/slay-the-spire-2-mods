@@ -7,9 +7,10 @@ if ($Full) {
 }
 $text = Get-Content -Raw -LiteralPath $LogFile
 if ($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR') { throw 'Expanded card acceptance failed.' }
+if (!$text.Contains('STS2MOD_TEST_PASS ART_topbar_uses_face_closeup_scene')) { throw 'Native top-bar portrait is not wired to the face close-up.' }
 foreach ($asset in @('wind_guidance','rock_heart','thunder_echo','element_resonance','gale_sweep','shattering_rock',
  'thunder_mark','triphase_finale','wind_shelter','patient_rampart','charge_thunder','journey_plans',
- 'strike','defend','compass','combo','body','icon','select_background')) {
+ 'strike','defend','compass','combo','body','icon','select_background','head_icon')) {
     if (!$text.Contains("STS2MOD_TEST_PASS ART_final_png_$asset")) { throw "Missing final art: $asset" }
 }
 foreach ($up in @('False','True')) {
@@ -33,9 +34,9 @@ foreach ($case in @('pool_18_types_7_7_4','rarity_8_7_3','all_ids_once','boss_na
  'paimon_combo2_guidance1_compass1','echo_stacks_3_plus_5_and_hits_all','echo_repeats_on_second_rock_lightning',
  'echo_unaffected_by_paimon_or_strength','random_defensive_attack_triggers_echo_and_actual_reward','base_kill_does_not_trigger_echo',
  'zero_attack_damage_does_not_trigger_echo',
- 'resonance_third_reward_grants_one_per_copy','resonance_cap_does_not_repeat',
+ 'resonance_second_reward_grants_one_per_copy','resonance_third_reward_does_not_repeat','resonance_second_actual_after_skip_gains_energy','resonance_cap_does_not_repeat',
  'extra_turn_resets_actual_reward_counter','resonance_can_trigger_on_extra_turn',
- 'resonance_skipped_reward_is_not_third','resonance_no_energy_after_skipped_reward',
+ 'resonance_skipped_reward_is_not_second','resonance_no_energy_after_skipped_reward',
  'final_combo_kill_skips_followup_abilities_and_compass','new_combat_clears_ability_and_combo_state')) {
     if ($text -notmatch ('(?m)^STS2MOD_TEST_PASS EXP_' + [regex]::Escape($case) + '\r?$')) { throw "Missing expansion case: $case" }
 }

@@ -1,39 +1,36 @@
-[b]0.2.0：新增可选旅行者。初始75生命、3能量、99金币；10张起始卡组，旅途罗盘每场战斗首次实际连携奖励时额外抽1张。六张牌和派蒙转为旅行者专属。角色使用简化原创形象，部分营地/商人/能量演出暂复用原生占位。0.2.0已通过42项角色专项、含专项的195项全量断言、13项获取保存和281项恢复/受控连续战斗断言；普通无测试启动通过。当前验证见TASK-007报告。[/b]
-
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-新增可选角色「旅行者」，拥有六张风、岩、雷专属卡牌、罕见专属遗物「派蒙的应援」和起始遗物「旅途罗盘」。通过主动出牌顺序搭配攻击、防御和抽牌。包含简体中文与英文文本。
+[b]0.3.2 · 单人技术测试版[/b]
+可选角色「旅行者」拥有18张专属奖励牌（7攻击/7技能/4能力）、10张起始牌、旅途罗盘和专属罕见遗物「派蒙的应援」。支持简体中文/英文。通过风、岩、雷出牌顺序组合防御、过牌和追击。
 
-[b]单人技术测试版 0.2.0 · 旅行者角色框架候选[/b]
-仅验证 Windows x64、游戏 v0.107.1 / build 23811903、BaseLib 3.4.7。本 Mod 严格检查 BaseLib 版本。工坊 BaseLib 自动更新，订阅前置不保证取得 3.4.7；0.1.2已通过PC-A纯订阅无GUI启动、规则与磁盘恢复验收；0.2.0已通过角色/连携回归与隔离磁盘恢复，图形和玩法平衡待自然试玩，详见TASK-007回归报告；PC-B独立安装和图形操作仍未验收。BaseLib其他版本及联机支持尚未验证。
-
-[h2]内容[/h2]
-风起之刃、岩之守护、雷光突刺、顺风整备、磐岩进击、雷鸣整备，各有一次升级。卡牌进入铁甲战士正常奖励及商店；派蒙进入共享罕见遗物池。不新增角色、不固定赠送卡牌或遗物。
+[h2]本次更新[/h2]
+[list]
+[*]元素共鸣采纳方案A：每回合第2次实际连携奖励后回1能量，多份相加，费用仍2（升级1）；每份每回合只触发一次。
+[*]旅途罗盘：实际连携奖励后额外抽1；每两回合最多触发一次。触发后下一回合冷却，再下一回合恢复；未用保留机会，额外回合计入，每场战斗重置可用。
+[*]罗盘图标亮且显示1=可触发；变暗且显示0=已用或冷却。悬停标题显示当前状态。
+[*]左上角头像改为面部特写；战斗立绘保持。
+[*]已包含12张新牌、4张能力与19项正式插图；无目标岩/雷防御技能触发连携时随机追击一名存活敌人。
+[/list]
 
 [h2]连携规则[/h2]
 [list]
-[*]风 ↔ 岩：额外获得 4 点格挡。
-[*]岩 ↔ 雷：对触发牌的同一存活敌方目标进行 4 点基础攻击。
-[*]雷 ↔ 风：额外抽 1 张牌。
-[*]每人每回合三种连携合计最多 3 次，触发后保留刚打出的元素，可继续连携：风→岩→风触发两次风岩，风→岩→雷触发风岩和岩雷；普通牌不打断。自动出牌或额外重复结算不推进。
-[*]派蒙使每次连携奖励翻倍为格挡 8、基础攻击 8、抽牌 2，不提供额外固定格挡。
+[*]风↔岩：额外4格挡；岩↔雷：额外4基础攻击；雷↔风：额外抽1。
+[*]两种出牌方向均可；三类每人每回合合计最多3次。连携后保留刚打出的元素，可连续衔接；元素跨回合保留，仅战斗结束清空。
+[*]单体攻击追击同一存活敌人，原目标死亡不转火；无敌方目标的技能随机追击。无目标群攻不自动选择单体追击目标。
+[*]派蒙只翻倍三种基础连携，不翻倍罗盘/能力；不会正常重复获得。能力牌不带元素，不推进序列。
+[*]自动打出与额外重复结算不推进；战斗结束跳过奖励，零伤害/抽0等未发放奖励不计入能力的实际连携次数。
 [/list]
-岩雷遇到无目标、目标死亡或移除时不改选目标，该次仍占次数。基础效果结束战斗时跳过战斗内奖励。攻击受原生伤害规则影响。
 
-[h2]安装与已知限制[/h2]
-需要 BaseLib。当前可验证的手动安装方法及完整玩法说明见仓库玩家指南。本条目保持私有，等待公开发布审阅。不要同时安装本地和工坊两份相同 Mod。
-更新或卸载前备份存档，并结束包含本 Mod 内容的局。当前未完成六牌版本完整 UI、自然整局、平衡和多人验收；其他系统和 Mod 组合未验证。六张牌和派蒙插图由生成式图像工具创作，页面规则图是说明设计图，并非游戏截图。
+[h2]安装与验证边界[/h2]
+仅固定 Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7；其他BaseLib版本会被拒绝。工坊依赖无法锁定版本，Steam更新后请核查。不要同时保留本地和工坊重复副本。更新前结束旧局并备份存档；自动化测试不使用你的正常档案。
+本条目保持私有，不扩大可见性。后台无GUI测试不等于图形交互、自然Boss平衡或多人已验收；具体结果见仓库最新TASK-010报告。画面使用生成式插图，非官方素材；营地/商人等部分原生共用演出仍保留。页面封面/规则图为原创说明设计，不是游戏截图。
 
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/codex/TASK-007-traveler/docs/player/README.zh-CN.md]玩家指南[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/codex/TASK-010-balance-workshop/docs/player/README.zh-CN.md]玩家指南[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-A playable Traveler character with six exclusive elemental cards, the exclusive Uncommon relic Paimon's Cheer, and Journey Compass as its starting relic. Wind/Rock grants block, Rock/Lightning attacks the triggering card's same living enemy target, and Lightning/Wind draws cards. Either order works. All pairs share a three-per-player-per-turn limit; each pair retains the element just played so the next adjacent pair can trigger. Wind/Rock/Wind grants two Block rewards; Wind/Rock/Lightning grants Block then an attack. Paimon doubles each combo reward.
-Singleplayer technical test build. Validated baseline: Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7 ONLY. Other BaseLib versions are rejected. Version 0.1.2 passed PC-A headless Workshop installation and reload acceptance; version 0.2.0 passed character and combo regression, native disk reload and normal headless startup; natural-run balance needs playtesting; PC-B independent installation and graphical interaction remain unverified; the required item's automatic updates do not pin its version. Multiplayer, complete graphical review, natural full runs and balance are unverified. Preview images are explanatory artwork, not gameplay screenshots.
+Version 0.3.2: a playable Traveler with 18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer.
+Element Resonance now grants Energy on the SECOND actual combo reward each turn, once per copy per turn. Journey Compass draws one after an actual reward, then skips the next owner turn and becomes ready again; unused opportunities stay ready, extra turns count, and combat start resets it. Its glowing 1 means ready; dim 0 means spent/cooling down. The top-left portrait is now a face close-up.
+All three element pairs work in either order and share a three-use cap per player per turn. Elements persist across turns. Defensive Rock/Lightning skills hit one random living enemy; targeted attacks follow up on the original living target, never replacing a dead target. Paimon doubles only base combo rewards, not Powers or Compass.
+Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. No multiplayer support claim; natural full-run/Boss balance and manual graphics need separate validation. AI-generated illustrations are used; previews are explanatory graphics, not gameplay screenshots. Keep only one installed copy of each mod. Private visibility is preserved.
 
-非官方同人项目，与游戏及主题作品权利方无隶属关系。未附带游戏资源、主题作品图片或音频。
-
-
-0.1.3：卡牌说明与悬停预览统一，派蒙奖励提示翻倍，新增短暂连携特效及生成式卡图/遗物图标。卡牌与连携数值未变。
-AI-generated illustrations are used for the six card portraits and relic icon. Preview graphics are explanatory artwork, not gameplay screenshots.
-
-0.1.4：配对后保留刚打出的元素，可连续衔接；每回合仍最多三次，连携奖励值不变。
+非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。

@@ -32,5 +32,5 @@
   "TC_THUNDER_ECHO.title": "Thunder Echo",
   "TC_THUNDER_ECHO.description": "After each actual Rock–Lightning extra hit, deal {Amount} non-attack damage to all living enemies. Not increased by Strength or Paimon.",
   "TC_ELEMENT_RESONANCE.title": "Element Resonance",
-  "TC_ELEMENT_RESONANCE.description": "After your third actual combo reward each turn, gain {Amount} Energy. Skipped follow-ups, zero damage, and drawing zero do not count."
+  "TC_ELEMENT_RESONANCE.description": "After your second actual combo reward each turn, gain {Amount} Energy. Skipped follow-ups, zero damage, and drawing zero do not count."
 }

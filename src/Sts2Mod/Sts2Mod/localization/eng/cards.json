@@ -22,7 +22,7 @@
   "TC_C09.title": "Thunder Echo",
   "TC_C09.description": "After each Rock–Lightning combo deals extra damage, deal [blue]{PowerAmount}[/blue] non-attack damage to all living enemies. Unaffected by Strength or Paimon.",
   "TC_C10.title": "Element Resonance",
-  "TC_C10.description": "After your third actual element combo reward each turn, gain [blue]{PowerAmount}[/blue] Energy. Paimon does not double this effect.",
+  "TC_C10.description": "After your second actual element combo reward each turn, gain [blue]{PowerAmount}[/blue] Energy. Paimon does not double this effect.",
   "TC_C11.title": "Gale Sweep",
   "TC_C11.description": "Deal [blue]{Damage}[/blue] damage to all enemies.\n[gold]Wind[/gold].{ComboPreview}",
   "TC_C12.title": "Shattering Rock",

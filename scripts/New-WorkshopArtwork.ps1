@@ -52,9 +52,9 @@ Canvas 1024 1024 (Join-Path $OutputDirectory 'image.png') {
     Label $g '风' 36 '#7DDBC8' 211 725 $true
     Label $g '岩' 36 '#EAC27C' 493 725 $true
     Label $g '雷' 36 '#BEA4EA' 775 725 $true
-    Label $g '6 张卡牌  /  3 组连携  /  派蒙的应援' 28 '#F3EBDD' 80 803
+    Label $g '18 张奖励牌  /  4 张能力  /  元素跨回合保留' 28 '#F3EBDD' 80 803
     Label $g '旅行者独立角色 · 单人技术测试版' 31 '#F3EBDD' 80 900 $true
-    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.2.0  /  非官方同人' 20 '#9AADB8' 80 960
+    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.3.2  /  非官方同人' 20 '#9AADB8' 80 960
 }
 Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     param($g)
@@ -72,7 +72,7 @@ Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
         Label $g $doubles[$i] 25 '#9AADB8' $x 430
     }
     Label $g '三类合计每人每回合最多 3 次 · 触发后保留最新元素' 30 '#F3EBDD' 65 525 $true
-    Label $g '岩雷要求触发牌有同一存活敌方目标；无目标不改选，仍占次数。' 24 '#9AADB8' 65 583
-    Label $g '单人测试 · 联机 / 自然整局 / 平衡未验收 · v0.2.0' 23 '#9AADB8' 65 645
+    Label $g '岩雷：防御技能随机追击；单体攻击追击原目标，死亡不转火。' 24 '#9AADB8' 65 583
+    Label $g '单人测试 · 罗盘隔回合触发 · 共鸣第2次回能 · v0.3.2' 23 '#9AADB8' 65 645
 }
 Get-ChildItem -LiteralPath $OutputDirectory -Filter '*.png' | Select-Object Name,Length

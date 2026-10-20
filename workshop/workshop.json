@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [单人测试版]",
   "description": "由 Prepare-Workshop.ps1 从 description.bbcode.txt 填充。",
   "visibility": "private",
-  "changeNote": "0.2.0：新增可选旅行者、六牌及派蒙专属池、10张起始牌和旅途罗盘。42项角色专项、含专项的195项全量断言、13项获取保存、281项恢复/受控战斗及普通无GUI启动通过；画面和平衡待试玩。",
+  "changeNote": "0.3.2：元素共鸣改为第2次实际连携回能；旅途罗盘触发后隔一回合恢复，图标1亮表示可用、0暗表示已用/冷却；左上角改面部特写。包含18张奖励牌、4张能力、正式插图和防御技能随机岩雷追击。保持私有，联机未验收。",
   "tags": [],
   "dependencies": [
     3737335127

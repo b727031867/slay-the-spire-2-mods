@@ -3,6 +3,10 @@
   "TC_R01.description": "Double element combo rewards. Exclusive to the Traveler; duplicate copies do not stack.",
   "TC_R01.flavor": "The best travel companion makes every elemental flourish count twice.",
   "TC_R02.title": "Journey Compass",
-  "TC_R02.description": "The first time you actually receive an element combo reward each turn, draw [blue]1[/blue] extra card.",
-  "TC_R02.flavor": "Every journey starts with the next step."
+  "TC_R02.description": "After an actual element combo reward, draw [blue]1[/blue] extra card. At most once every two turns: the next turn is on cooldown, then it becomes ready again. Unused opportunities remain ready; extra turns count. Ready at each combat start. A glowing [blue]1[/blue] means ready; a dim [blue]0[/blue] means spent or cooling down.",
+  "TC_R02.flavor": "Every journey starts with the next step.",
+  "TC_R02.stateTitle": "Journey Compass: {State}",
+  "TC_R02.ready": "Ready",
+  "TC_R02.spent": "Spent this turn",
+  "TC_R02.cooldown": "On cooldown"
 }

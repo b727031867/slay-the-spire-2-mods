@@ -27,8 +27,8 @@ public sealed class Traveler : PlaceholderCharacterModel
     public override string CustomCharacterSelectBg => "res://Sts2Mod/character/select.tscn";
     public override string CustomCharacterSelectIconPath => "res://Sts2Mod/character/icon.png";
     public override string CustomCharacterSelectLockedIconPath => CustomCharacterSelectIconPath;
-    public override string CustomIconTexturePath => CustomCharacterSelectIconPath;
-    public override string CustomIconOutlineTexturePath => CustomCharacterSelectIconPath;
+    public override string CustomIconTexturePath => "res://Sts2Mod/character/head_icon.png";
+    public override string CustomIconOutlineTexturePath => CustomIconTexturePath;
     public override string CustomMapMarkerPath => CustomCharacterSelectIconPath;
     public override string CustomIconPath => "res://Sts2Mod/character/icon.tscn";
     public override Color MapDrawingColor => NameColor;

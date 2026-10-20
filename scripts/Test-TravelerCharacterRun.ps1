@@ -10,10 +10,14 @@ if($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR'){throw 'Character tes
 foreach($case in @('registered_once','native_selection_button_unlocked','native_selection_loads_background_and_starter_info',
 'exact_ten_card_starter','compass_only_starting_relic','twenty_models_eighteen_reward_cards_in_exclusive_pool',
 'ironclad_and_silent_no_theme_cards','paimon_and_compass_exclusive_not_shared','basic_transform_stays_in_exclusive_pool',
-'compass_triggers_after_random_defensive_attack','compass_first_success_draws_one','compass_second_combo_no_extra_draw',
-'compass_resets_and_draws_next_turn','extra_turn_retains_element_and_refreshes_compass','extra_turn_first_combo_draws_again',
+'compass_triggers_after_random_defensive_attack','compass_cooldown_turn_no_draw','compass_second_combo_no_extra_draw',
+'compass_draws_again_two_turns_after_trigger','extra_turn_counts_as_compass_cooldown_turn','extra_turn_cooldown_does_not_draw',
 'compass_resets_for_new_combat','paimon_doubles_combo_not_compass',
-'compass_not_consumed_when_combo_draws_zero','compass_triggers_after_earlier_skipped_rewards')) {
+'compass_not_consumed_when_combo_draws_zero','compass_triggers_after_earlier_skipped_rewards',
+'compass_ready_icon_1_active','compass_spent_icon_0_disabled','compass_next_turn_cooldown_indicator',
+'compass_ready_after_one_gap_turn','compass_ready_after_extra_turn_gap','compass_unused_ready_turn_is_not_consumed',
+'compass_own_draw_zero_still_starts_cooldown','compass_zero_draw_cooldown_survives_turn',
+'compass_combat_end_clears_cooldown_and_icon','compass_indicator_publishes_native_counter_changes')) {
     if($text -notmatch ('(?m)^STS2MOD_TEST_PASS CHAR_'+[regex]::Escape($case)+'\r?$')){throw "Missing character case: $case"}
 }
 foreach($kind in @('Monster','Elite','Boss')) {

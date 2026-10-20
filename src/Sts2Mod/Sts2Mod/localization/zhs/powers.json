@@ -32,5 +32,5 @@
   "TC_THUNDER_ECHO.title": "雷霆余响",
   "TC_THUNDER_ECHO.description": "每次岩雷连携实际追加伤害后，对所有存活敌人造成{Amount}点非攻击伤害。力量和派蒙不放大此伤害。",
   "TC_ELEMENT_RESONANCE.title": "元素共鸣",
-  "TC_ELEMENT_RESONANCE.description": "每回合第三次实际获得连携奖励后，获得{Amount}点能量。没有有效追击目标、零伤害或抽0不计入实际奖励。"
+  "TC_ELEMENT_RESONANCE.description": "每回合第二次实际获得连携奖励后，获得{Amount}点能量。没有有效追击目标、零伤害或抽0不计入实际奖励。"
 }

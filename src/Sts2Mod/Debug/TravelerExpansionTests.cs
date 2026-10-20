@@ -57,9 +57,9 @@ public partial class TravelerTestRunner
         var start = _assertions;
         foreach (var asset in new[] { "wind_guidance", "rock_heart", "thunder_echo", "element_resonance", "gale_sweep",
             "shattering_rock", "thunder_mark", "triphase_finale", "wind_shelter", "patient_rampart", "charge_thunder",
-            "journey_plans", "strike", "defend", "compass", "combo", "body", "icon", "select_background" })
+            "journey_plans", "strike", "defend", "compass", "combo", "body", "icon", "select_background", "head_icon" })
         {
-            var folder = asset is "body" or "icon" or "select_background" ? "character" : "art";
+            var folder = asset is "body" or "icon" or "select_background" or "head_icon" ? "character" : "art";
             var image = ResourceLoader.Load<Texture2D>($"res://Sts2Mod/{folder}/{asset}.png");
             Check(image is not null && image.GetWidth() >= 512 && image.GetHeight() >= 512, "ART_final_png_" + asset);
         }
@@ -68,6 +68,10 @@ public partial class TravelerTestRunner
         Check(body.Texture.ResourcePath.EndsWith("body.png") && body.Texture.GetHeight() * body.Scale.Y is >= 310 and <= 314,
             "ART_character_native_battle_scale_312px");
         visual.Free();
+        var topBarIcon = _player.Character.Icon;
+        Check(topBarIcon is TextureRect topTexture && topTexture.Texture.ResourcePath.EndsWith("head_icon.png"),
+            "ART_topbar_uses_face_closeup_scene");
+        topBarIcon.Free();
         await TestDefensiveRandomCombos();
         await FreshExpansion();
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Where(c => c.Rarity != CardRarity.Basic).ToArray();
@@ -385,11 +389,15 @@ public partial class TravelerTestRunner
 
         await FreshExpansion(); await SeedDraw();
         await Play<ElementResonance>(); await Play<ElementResonance>(true);
-        await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>();
+        await Play<WindBlade>(); await Play<RockGuard>();
         var energy = _player.PlayerCombatState!.Energy;
+        await Play<WindBlade>();
+        Check(_player.PlayerCombatState.Energy == energy + 1 && Power.State.RewardsThisTurn == 2 && Power.State.Used == 2,
+            "EXP_resonance_second_reward_grants_one_per_copy");
+        energy = _player.PlayerCombatState.Energy;
         await Play<RockGuard>();
-        Check(_player.PlayerCombatState.Energy == energy + 1 && Power.State.RewardsThisTurn == 3 && Power.State.Used == 3,
-            "EXP_resonance_third_reward_grants_one_per_copy");
+        Check(_player.PlayerCombatState.Energy == energy - 1 && Power.State.RewardsThisTurn == 3,
+            "EXP_resonance_third_reward_does_not_repeat");
         energy = _player.PlayerCombatState.Energy;
         await Play<WindBlade>();
         Check(_player.PlayerCombatState.Energy == energy - 1, "EXP_resonance_cap_does_not_repeat");
@@ -397,9 +405,9 @@ public partial class TravelerTestRunner
         await PowerCmd.Apply<MockExtraTurnPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
         await NextTurn(preserveElement: true);
         Check(Power.State.RewardsThisTurn == 0 && Power.State.Last == Element.Wind, "EXP_extra_turn_resets_actual_reward_counter");
-        await Play<RockGuard>(); await Play<WindBlade>();
-        energy = _player.PlayerCombatState.Energy;
         await Play<RockGuard>();
+        energy = _player.PlayerCombatState.Energy;
+        await Play<WindBlade>();
         Check(_player.PlayerCombatState.Energy == energy + 1, "EXP_resonance_can_trigger_on_extra_turn");
 
         await FreshExpansion();
@@ -408,11 +416,16 @@ public partial class TravelerTestRunner
         // A deliberately blocked draw still consumes a combo but grants no actual reward.
         source = await Play<WindBlade>();
         await PowerCmd.Apply<NoDrawPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
-        await Play<LightningThrust>();
-        await PowerCmd.Remove<NoDrawPower>(_player.Creature);
-        await Play<RockGuard>();
         energy = _player.PlayerCombatState!.Energy;
-        Check(Power.State.Used == 3 && Power.State.RewardsThisTurn == 2, "EXP_resonance_skipped_reward_is_not_third");
+        await Play<LightningThrust>();
+        Check(Power.State.RewardsThisTurn == 1 && _player.PlayerCombatState.Energy == energy - 1,
+            "EXP_resonance_skipped_reward_is_not_second");
+        await PowerCmd.Remove<NoDrawPower>(_player.Creature);
+        energy = _player.PlayerCombatState.Energy;
+        await Play<RockGuard>();
+        Check(Power.State.Used == 3 && Power.State.RewardsThisTurn == 2 && _player.PlayerCombatState.Energy == energy,
+            "EXP_resonance_second_actual_after_skip_gains_energy");
+        energy = _player.PlayerCombatState.Energy;
         await Play<WindBlade>();
         Check(_player.PlayerCombatState.Energy == energy - 1, "EXP_resonance_no_energy_after_skipped_reward");
 

@@ -93,28 +93,44 @@ public partial class TravelerTestRunner
 
         await SeedDraw();
         var compass = _player.GetRelic<JourneyCompass>()!;
+        var indicatorNotifications = 0;
+        Action indicatorListener = () => indicatorNotifications++;
+        compass.DisplayAmountChanged += indicatorListener;
+        Check(compass.CanTriggerThisTurn && compass.DisplayAmount == 1
+            && compass.Status == MegaCrit.Sts2.Core.Entities.Relics.RelicStatus.Active, "CHAR_compass_ready_icon_1_active");
         await Play<RockGuard>(); await Play<ThunderPrep>();
         Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 2,
             "CHAR_compass_triggers_after_random_defensive_attack");
+        Check(!compass.CanTriggerThisTurn && compass.DisplayAmount == 0
+            && compass.Status == MegaCrit.Sts2.Core.Entities.Relics.RelicStatus.Disabled
+            && !compass.Title.GetFormattedText().Contains('{'), "CHAR_compass_spent_icon_0_disabled");
         await NextTurn();
+        Check(!compass.CanTriggerThisTurn && compass.TurnsUntilReady == 1 && compass.DisplayAmount == 0,
+            "CHAR_compass_next_turn_cooldown_indicator");
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(!compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 0,
+            "CHAR_compass_cooldown_turn_no_draw");
+        await Play<WindBlade>();
+        Check(Power.State.Used == 2 && PileType.Hand.GetPile(_player).Cards.Count == 0,
+            "CHAR_compass_second_combo_no_extra_draw");
+        await NextTurn(preserveElement: true); await SeedDraw();
+        Check(compass.CanTriggerThisTurn && compass.DisplayAmount == 1, "CHAR_compass_ready_after_one_gap_turn");
         await Play<WindBlade>(); await Play<RockGuard>();
         Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_compass_first_success_draws_one");
-        await Play<WindBlade>();
-        Check(Power.State.Used == 2 && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_compass_second_combo_no_extra_draw");
-        await NextTurn(preserveElement: true); await Play<WindBlade>(); await Play<RockGuard>();
-        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_compass_resets_and_draws_next_turn");
+            "CHAR_compass_draws_again_two_turns_after_trigger");
 
         var extraTurnSource = await Play<WindBlade>();
         await PowerCmd.Apply<MockExtraTurnPower>(extraTurnSource.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
         await NextTurn(preserveElement: true);
-        Check(!compass.SpentThisTurn && Power.State.Last == Element.Wind && Power.State.Remaining == 3,
-            "CHAR_extra_turn_retains_element_and_refreshes_compass");
+        Check(!compass.CanTriggerThisTurn && compass.TurnsUntilReady == 1 && Power.State.Last == Element.Wind && Power.State.Remaining == 3,
+            "CHAR_extra_turn_counts_as_compass_cooldown_turn");
         await Play<RockGuard>();
-        Check(compass.SpentThisTurn && _player.Creature.Block == 11 && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_extra_turn_first_combo_draws_again");
+        Check(!compass.SpentThisTurn && _player.Creature.Block == 11 && PileType.Hand.GetPile(_player).Cards.Count == 0,
+            "CHAR_extra_turn_cooldown_does_not_draw");
+        await NextTurn(preserveElement: true);
+        Check(compass.CanTriggerThisTurn, "CHAR_compass_ready_after_extra_turn_gap");
+        await NextTurn(preserveElement: true);
+        Check(compass.CanTriggerThisTurn && compass.DisplayAmount == 1, "CHAR_compass_unused_ready_turn_is_not_consumed");
 
         await StartFreshCombat(); await SeedDraw();
         Check(!compass.SpentThisTurn, "CHAR_compass_resets_for_new_combat");
@@ -133,6 +149,25 @@ public partial class TravelerTestRunner
         await Play<RockGuard>(); await Play<WindBlade>();
         Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
             "CHAR_compass_triggers_after_earlier_skipped_rewards");
+        await StartFreshCombat(); await SeedDraw();
+        source = await Play<WindBlade>();
+        await PowerCmd.Apply<NoDrawPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
+        await Play<RockGuard>();
+        Check(compass.SpentThisTurn && !compass.CanTriggerThisTurn && compass.DisplayAmount == 0,
+            "CHAR_compass_own_draw_zero_still_starts_cooldown");
+        await NextTurn();
+        Check(!compass.CanTriggerThisTurn && compass.TurnsUntilReady == 1,
+            "CHAR_compass_zero_draw_cooldown_survives_turn");
+        var sawOutsideReset = false;
+        Action resetListener = () => { if (compass.Status == MegaCrit.Sts2.Core.Entities.Relics.RelicStatus.Normal
+            && compass.DisplayAmount == 0) sawOutsideReset = true; };
+        compass.StatusChanged += resetListener;
+        await StartFreshCombat();
+        Check(sawOutsideReset && compass.CanTriggerThisTurn && compass.DisplayAmount == 1,
+            "CHAR_compass_combat_end_clears_cooldown_and_icon");
+        Check(indicatorNotifications >= 3, "CHAR_compass_indicator_publishes_native_counter_changes");
+        compass.StatusChanged -= resetListener;
+        compass.DisplayAmountChanged -= indicatorListener;
         await RelicCmd.Remove(compass);
         await NextTurn();
         GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=18 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");

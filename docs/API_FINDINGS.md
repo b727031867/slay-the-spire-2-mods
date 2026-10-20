@@ -1,5 +1,15 @@
 # v0.107.1 接口调查
 
+## TASK-010 / PC-B / 0.3.2 补充（2026-10-21）
+
+本段覆盖下方旧依赖描述：当前精确BaseLib3.4.7，游戏仍v0.107.1/build23811903。只记录接口结论，不提交原生反编译源码。
+
+- 左上角`NTopBarPortrait.Initialize(Player)`实际装入`player.Character.Icon`。仅修改CustomIconTexturePath不能证明该入口换图；本次同时修改`character/icon.tscn`的TextureRect资源为head_icon.png，并实例化原生Character.Icon检查资源路径。
+- 原生遗物支持ShowCounter、DisplayAmount、InvokeDisplayAmountChanged以及RelicStatus.Active/Disabled/Normal。罗盘在可用时1/Active，已用或冷却时0/Disabled，战斗外0/Normal；用原生事件同步，不新增覆盖原生UI的计时节点。动态Title使用本地化LocString参数。
+- 自己的AfterPlayerTurnStartEarly计入额外回合；BeforeCombatStart及AfterCombatEnd清理战斗内冷却。战斗入口原生保存恢复重新开始战斗，不声称支持任意动作中途保存当前冷却。
+
+以下保留历史调查。
+
 设备：PC-A；游戏提交59260271，Steam构建23811903。本表来自对本机合法安装程序集的静态检查，原始反编译结果仅保存在被Git忽略的`.local/investigation/`。仓库只保留接口签名和结论，不公开游戏源码或程序集。
 
 ## 加载与依赖

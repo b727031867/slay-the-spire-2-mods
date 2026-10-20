@@ -11,7 +11,7 @@ public sealed class ElementResonancePower : TravelerAbilityPower
     public override string CustomPackedIconPath => "res://Sts2Mod/art/element_resonance.png";
     public override async Task OnComboReward(PlayerChoiceContext context, ComboKind kind, int actualRewardNumber)
     {
-        if (!CanReward || actualRewardNumber != 3) return;
+        if (!CanReward || actualRewardNumber != 2) return;
         Flash();
         await PlayerCmd.GainEnergy(Amount, Owner.Player!);
     }

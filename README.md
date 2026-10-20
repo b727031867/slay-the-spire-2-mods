@@ -1,5 +1,7 @@
 # 杀戮尖塔 2 Mod 项目
 
+0.3.2 / TASK-010：用户已批准方案A，元素共鸣第2次实际连携回能；罗盘触发后隔一回合恢复，原生1/0与明暗提示可用状态；左上角改面部特写。分支`codex/TASK-010-balance-workshop`，工坊仍更新同一私有条目3823282901。另一台PC从[接续提示词](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)开始，以[TASK-010报告](docs/tests/TASK-010-PC-B-run-01.md)记录的最终包/工坊验收为准。下方为历史。
+
 0.3.1 / TASK-009：无敌方目标的防御技能触发岩雷时随机追击一名存活敌人，单体攻击仍追击原目标；19项正式PNG替换本项目运行时SVG占位。卡牌数值不变，Boss长战斗[调整方案](docs/design/TRAVELER-LONG-COMBAT-REVIEW.md)待用户评审。分支`codex/TASK-009-combo-art`，[素材预览](docs/art/TASK-009-prompts.md)。以下版本为历史。
 
 0.3.0 / TASK-008：按已评审方案实现12张新牌，旅行者奖励池扩为18张（7攻击/7技能/4能力，8普通/7罕见/3稀有）。起始10张牌保持；四类能力围绕实际连携奖励触发，派蒙只翻倍基础连携。新增原创矢量占位牌图与中英文本。当前分支`codex/TASK-008-card-pool`；[玩家指南](docs/player/README.zh-CN.md)、[任务](docs/tasks/TASK-008.md)。以下版本记录为历史。

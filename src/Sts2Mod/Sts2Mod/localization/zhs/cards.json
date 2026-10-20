@@ -22,7 +22,7 @@
   "TC_C09.title": "雷霆余响",
   "TC_C09.description": "每次岩雷连携实际造成追加伤害后，对所有存活敌人造成[blue]{PowerAmount}[/blue]点非攻击伤害。不受力量或派蒙影响。",
   "TC_C10.title": "元素共鸣",
-  "TC_C10.description": "每回合第三次实际获得元素连携奖励后，获得[blue]{PowerAmount}[/blue]点能量。派蒙不翻倍此效果。",
+  "TC_C10.description": "每回合第二次实际获得元素连携奖励后，获得[blue]{PowerAmount}[/blue]点能量。派蒙不翻倍此效果。",
   "TC_C11.title": "裂风横扫",
   "TC_C11.description": "对所有敌人造成[blue]{Damage}[/blue]点伤害。\n[gold]风元素[/gold]。{ComboPreview}",
   "TC_C12.title": "碎岩重击",

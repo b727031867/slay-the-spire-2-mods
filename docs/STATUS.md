@@ -1,4 +1,8 @@
-## 当前：0.3.1 / TASK-009 随机追击与正式图片
+## 当前：0.3.2 / TASK-010 方案A、罗盘间隔与工坊交接
+
+2026-10-21用户批准：采纳方案A、左上角面部特写、罗盘每两回合最多一次并显示状态、更新同一私有工坊和远端并交接另一PC。已实现，待最终干净包验收及工坊实际下载核对。方案B保持未实现；原生图标逻辑检查不等同于人工图形验收。分支`codex/TASK-010-balance-workshop`，禁止擅自合并main或公开工坊。见[任务](tasks/TASK-010.md)、[报告](tests/TASK-010-PC-B-run-01.md)及[接续提示词](handoffs/NEXT-PC-CONTINUE-PROMPT.md)。下方为历史。
+
+## 历史：0.3.1 / TASK-009 随机追击与正式图片
 
 DONE_SINGLEPLAYER_HEADLESS_MANUAL_PLAY_PENDING（2026-10-21）。防御技能岩雷追加攻击随机敌人，19项项目占位图片换正式生成式资源；Boss数值保持、方案待用户评审。49纯规则、20日志分类及S1全量358项通过；只改版本元数据后的最终S2 `68c8cf864e70896e69b0a7958c8dae9ac37cc191`专项205项、原生保存13项、恢复/受控六场269项通过。六场24回合90次出牌52次连携，1自然胜利，非自然整局/Boss验证；未知错误0，原生退出诊断单列。清单/程序集均0.3.1，相同干净包已部署；C#/TSCN无SVG引用。分支`codex/TASK-009-combo-art`，未合并main或上传工坊。见[报告](tests/TASK-009-PC-B-run-01.md)、[交接](handoffs/TASK-009.md)、[待评审提案](design/TRAVELER-LONG-COMBAT-REVIEW.md)及[美术记录](art/TASK-009-prompts.md)。图形交互、自然Boss平衡、多人和用户旧档迁移仍待验证。
 
