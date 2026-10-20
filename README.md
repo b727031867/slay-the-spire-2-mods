@@ -1,6 +1,6 @@
 # 杀戮尖塔 2 Mod 项目
 
-TASK-004 正在准备单人发布候选及私有工坊安装验收。玩家说明见 [玩家指南](docs/player/README.zh-CN.md)，工坊页面源文件见 [workshop](workshop/README.md)。当前尚未完成公开工坊订阅验收，0.1.2候选适配BaseLib 3.4.7，结果待报告确认，不把自动更新的工坊依赖视为兼容。
+TASK-004 已完成0.1.2单人候选和PC-A私有工坊无GUI安装验收，详见[报告](docs/tests/TASK-004-PC-A-run-01.md)。玩家说明见 [玩家指南](docs/player/README.zh-CN.md)，工坊页面源文件见 [workshop](workshop/README.md)。当前工坊条目保持私有；0.1.2精确依赖BaseLib3.4.7，其他版本需重新验证。下方TASK-003的0.1.1内容为历史交付记录。
 
 面向《杀戮尖塔 2》（Slay the Spire 2）的 Mod 开发项目，通过新增卡牌、遗物与组合机制，拓展现有角色的构筑和出牌选择。
 

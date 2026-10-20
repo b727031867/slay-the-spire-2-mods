@@ -1,5 +1,7 @@
 # Windows 开发环境基线
 
+2026-10-20 TASK-004更新：当前0.1.2候选将唯一运行时框架精确更新为BaseLib3.4.7（NuGet和锁文件同步），以适配Steam工坊实际分发版本。官方ZIP SHA256 `D28C649A3AEA9EF4869050A06BFBADC4863016BCBD4C1740ACC4CD07809E4BD8`；Steam下载的DLL/JSON/PCK与官方包一致。游戏及工具链基线不变。下列3.3.2记录为此前任务历史，当前依赖以dependencies.json和TASK-004报告为准。
+
 核查日期：2026-10-19。PC-A 与 PC-B 均按需求书第 8 节完成 Windows 开发与测试工具核查。需求原文仍为根目录 `STS2-Mod-Requirements-v0.1.md`。
 
 协作基线：PC-A 和后续接入的 PC-B 均可开发、构建与测试，通过 GitHub 同步代码、文档和构建产物。操作约定见 [COLLABORATION](COLLABORATION.md)，本次决定见 [DECISIONS](DECISIONS.md)。以下版本与 PASS 记录均只属于 PC-A，不代表 PC-B 已安装或验证。

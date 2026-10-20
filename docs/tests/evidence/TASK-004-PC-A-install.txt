@@ -1,0 +1,31 @@
+TASK004_PRIVATE_WORKSHOP item=3823282901 app=2868840 visibility=private
+BASELIB_SUBSCRIBED version=3.4.7 state=5 official_zip_sha256=D28C649A3AEA9EF4869050A06BFBADC4863016BCBD4C1740ACC4CD07809E4BD8
+INITIAL_0.1.1_EXPECTED_FAIL reason=requires_validated_BaseLib_3.3.2
+UPDATE_0.1.2_PASS source=77e8f5e610b799b38281a421b7343223a8cf453d
+WORKSHOP_FILE_MATCH ASSETS.md sha256=3E6B52BC5F56FD11D2FD60A36386C58F31D87722FF6A4A73E370AC0BF8EF141A
+WORKSHOP_FILE_MATCH build-info.txt sha256=F1158C00DB258A182D60E66572DE0227E4E041631AFC2F618A5425895EBA6516
+WORKSHOP_FILE_MATCH CHANGELOG.md sha256=1D9A40D71B2AE5B68599756B25E4B406D53211C0CF84D8319A6A321EC264C2CD
+WORKSHOP_FILE_MATCH README.zh-CN.md sha256=CE78B6E56BE8BF97499696B20D08BD450622AA88AB95D34413A0F1C3DD3BF1D2
+WORKSHOP_FILE_MATCH Sts2Mod.dll sha256=FC97BFC1C3C40EF0A4AA0BD11FC1F5B9C417388C0D21FBB002A7431847E8AF7F
+WORKSHOP_FILE_MATCH Sts2Mod.json sha256=A0FA2CFE193F63A7327F22A1602AAB98CE98D7C163C8739132375F7886C83464
+WORKSHOP_FILE_MATCH Sts2Mod.pck sha256=38B082294C189B8EDEE87DF20E006AC8686D974868CE3BD222F22A53EE95B2DF
+BASELIB_FILE_MATCH BaseLib.dll sha256=55863CA6ADC30A61A7544874E157A519FFE148CCF2B18025947609C4BFF813CE
+BASELIB_FILE_MATCH BaseLib.json sha256=8B0D470C1C624EED9F7BEBF79FA7985ED7F8F4965154713546890A910A61D6F8
+BASELIB_FILE_MATCH BaseLib.pck sha256=95E653B9AEA9A3DCBC45971B8933C854E314B897488643DB71DF1E14A76B808D
+LOCAL_DUPLICATES_ABSENT Sts2Mod=true BaseLib=true
+STS2MOD_READY version=0.1.2+77e8f5e610b799b38281a421b7343223a8cf453d baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=2, native shutdown diagnostics=0.
+Traveler singleplayer test evidence passed. UI and multiplayer require their own recorded checks.
+STS2MOD_READY version=0.1.2+77e8f5e610b799b38281a421b7343223a8cf453d baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=1, native shutdown diagnostics=9.
+TASK003_END_TO_END_PASS phase=Prepare assertions=12
+UNSUBSCRIBE result=k_EResultOK completed=True state=4
+PASS: game reached main menu without loading Sts2Mod.
+RESUBSCRIBE_PASS same_seven_hashes=true
+STS2MOD_READY version=0.1.2+77e8f5e610b799b38281a421b7343223a8cf453d baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=9.
+TASK003_END_TO_END_PASS phase=Resume assertions=255
+STS2MOD_READY version=0.1.2+77e8f5e610b799b38281a421b7343223a8cf453d baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=0.
+NORMAL_TEST_FEATURES_DISABLED=true final_owned_game_processes=0
+FINAL_PAGE_UPDATE_PASS visibility=private content_seven_hashes_unchanged=true
