@@ -452,7 +452,8 @@ public partial class TravelerTestRunner : Node
         // Native Player.AfterCombatEnd clears block. Observe every change during
         // the killing action so cleanup timing cannot hide an unwanted award.
         GD.Print($"STS2MOD_TEST_DETAIL case=final_base_kill player={_player.NetId} action={finalAction.Id} block_before={blockBeforeKill} block_peak={peakBlock} block_after={_player.Creature.Block}");
-        Check(_target.IsDead && finalTurnState.Used == 1 && blockBeforeKill == 7 && peakBlock == 7,
+        Check(_target.IsDead && finalTurnState.Used == 0 && finalTurnState.Last == Element.None
+            && blockBeforeKill == 7 && peakBlock == 7,
             "TASK003_base_kill_ending_combat_skips_combo_reward");
         await Until(() => !CombatManager.Instance.IsInProgress, "TASK003 combat ending after final base kill");
         GD.Print($"STS2MOD_TASK003_AUTOMATION_COMPLETE assertions={_assertions} singleplayer=PASS multiplayer=NOT_RUN ui=READY_FOR_USER_PLAYTEST");
