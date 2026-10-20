@@ -1,9 +1,12 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.2 · 单人技术测试版[/b]
+[b]0.3.5 · 单人技术测试版[/b]
 可选角色「旅行者」拥有18张专属奖励牌（7攻击/7技能/4能力）、10张起始牌、旅途罗盘和专属罕见遗物「派蒙的应援」。支持简体中文/英文。通过风、岩、雷出牌顺序组合防御、过牌和追击。
 
 [h2]本次更新[/h2]
 [list]
+[*]修复随机能量遗物悬停/查看说明时出现巨型罗盘、提示框溢出的问题；卡牌、遗物和药水统一使用原生能量图标。0.3.5已获用户试玩通过。
+[*]当前元素在角色状态栏中显示为无/风/岩/雷四种图标，不需悬停才知道元素；卡牌旁的原生悬停预览说明本次出牌将触发的奖励。
+[*]按试玩反馈移除左上常驻连携面板，不遮挡战斗画面。规则与数值不变。
 [*]元素共鸣采纳方案A：每回合第2次实际连携奖励后回1能量，多份相加，费用仍2（升级1）；每份每回合只触发一次。
 [*]旅途罗盘：实际连携奖励后额外抽1；每两回合最多触发一次。触发后下一回合冷却，再下一回合恢复；未用保留机会，额外回合计入，每场战斗重置可用。
 [*]罗盘图标亮且显示1=可触发；变暗且显示0=已用或冷却。悬停标题显示当前状态。
@@ -22,15 +25,16 @@
 
 [h2]安装与验证边界[/h2]
 仅固定 Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7；其他BaseLib版本会被拒绝。工坊依赖无法锁定版本，Steam更新后请核查。不要同时保留本地和工坊重复副本。更新前结束旧局并备份存档；自动化测试不使用你的正常档案。
-本条目保持私有，不扩大可见性。后台无GUI测试不等于图形交互、自然Boss平衡或多人已验收；具体结果见仓库最新TASK-010报告。画面使用生成式插图，非官方素材；营地/商人等部分原生共用演出仍保留。页面封面/规则图为原创说明设计，不是游戏截图。
+本条目保持私有，不扩大可见性。用户已确认0.3.5试玩通过；这不等于所有自然Boss平衡、多人或旧档迁移已验收。后台无GUI检查与人工试玩分别记录，具体结果见仓库最新0.3.5报告。画面使用生成式插图，非官方素材；营地/商人等部分原生共用演出仍保留。页面封面/规则图为原创说明设计，不是游戏截图。
 
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/codex/TASK-010-balance-workshop/docs/player/README.zh-CN.md]玩家指南[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/codex/TASK-011-combo-visuals/docs/player/README.zh-CN.md]玩家指南[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.2: a playable Traveler with 18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer.
+Version 0.3.5: a playable Traveler with 18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer.
+Fixed oversized Compass artwork overflowing native energy-relic tooltips by using native energy glyphs for cards, relics and potions. Current element uses distinct status icons; native card-hover combo previews remain. The persistent top-left combo panel was removed following playtest feedback. Version 0.3.5 passed the user's playtest; gameplay rules are unchanged.
 Element Resonance now grants Energy on the SECOND actual combo reward each turn, once per copy per turn. Journey Compass draws one after an actual reward, then skips the next owner turn and becomes ready again; unused opportunities stay ready, extra turns count, and combat start resets it. Its glowing 1 means ready; dim 0 means spent/cooling down. The top-left portrait is now a face close-up.
 All three element pairs work in either order and share a three-use cap per player per turn. Elements persist across turns. Defensive Rock/Lightning skills hit one random living enemy; targeted attacks follow up on the original living target, never replacing a dead target. Paimon doubles only base combo rewards, not Powers or Compass.
-Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. No multiplayer support claim; natural full-run/Boss balance and manual graphics need separate validation. AI-generated illustrations are used; previews are explanatory graphics, not gameplay screenshots. Keep only one installed copy of each mod. Private visibility is preserved.
+Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. No multiplayer support claim; natural full-run/Boss balance and old-save migration need separate validation. AI-generated illustrations are used; previews are explanatory graphics, not gameplay screenshots. Keep only one installed copy of each mod. Private visibility is preserved.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。
