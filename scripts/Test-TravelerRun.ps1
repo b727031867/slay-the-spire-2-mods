@@ -23,15 +23,15 @@ if ($Acquisition) {
         if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing passing case: $case" }
     }
     if ($Lightning -or $Task002 -or $Task003) {
-        foreach ($case in @('TC002_lightning_once_in_native_pool','TC02_rock_lightning_damage7_plus4','TC13_lightning_upgrade10_plus4','TC08_mixed_combos_share_three_cap','TC10_auto_lightning_preserves_rock','TC10_manual_lightning_after_auto_triggers','TC11_native_duplicated_lightning_one_bonus','TC24_strength_weak_vulnerable_block_native_formula','TC14_dead_target_no_retarget_counter_consumed','native_card_serialization_roundtrip_TC_C03')) {
+        foreach ($case in @('TC007_lightning_once_in_traveler_pool','TC02_rock_lightning_damage7_plus4','TC13_lightning_upgrade10_plus4','TC08_mixed_combos_share_three_cap','TC10_auto_lightning_preserves_rock','TC10_manual_lightning_after_auto_triggers','TC11_native_duplicated_lightning_one_bonus','TC24_strength_weak_vulnerable_block_native_formula','TC14_dead_target_no_retarget_counter_consumed','native_card_serialization_roundtrip_TC_C03')) {
             if (!$content.Contains("STS2MOD_TEST_PASS $case")) { throw "Missing Lightning case: $case" }
         }
         if (!$content.Contains('STS2MOD_LIGHTNING_COMPLETE')) { throw 'Lightning tests have not completed.' }
     }
     if ($Task002 -or $Task003) {
         foreach ($case in @(
-            'TASK002_six_cards_once_in_ironclad_pool','TASK002_theme_cards_absent_from_silent_pool','TASK002_normal_starting_deck_unchanged',
-            'TASK002_paimon_once_in_shared_uncommon_relic_pool','TASK002_paimon_nonstackable_and_absent_from_ironclad_pool',
+            'TASK007_six_cards_once_in_traveler_pool','TASK002_theme_cards_absent_from_silent_pool','TASK007_ten_card_starter_four_elements',
+            'TASK007_paimon_once_in_exclusive_uncommon_pool','TASK002_paimon_nonstackable_and_absent_from_ironclad_pool',
             'TC23_tailwind_draw1_exhaust_wind','TC13_tailwind_upgrade_draw2','TC03_lightning_wind_base_draw1_bonus_draw1',
             'TC11_burst_tailwind_two_base_resolutions_one_combo_draw','TC13_rock_advance_damage5_then_block3',
             'TC13_rock_advance_upgrade_damage7_block5','TC13_thunder_prep_block5_then_draw1',

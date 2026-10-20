@@ -1,3 +1,5 @@
+using Sts2Mod.Characters;
+using Sts2Mod.Pools;
 using System.IO;
 using System.Text.Json;
 using Godot;
@@ -42,9 +44,10 @@ public partial class TravelerTestRunner
     {
         if (CommandLineHelper.HasArg("sts2mod-resume")) { await ResumeAndSoak(); return; }
         GD.Print("STS2MOD_E2E_START phase=prepare seed=TASK003A storage=native_disk");
-        var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Ironclad>(), true,
+        var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Traveler>(), true,
             [ModelDb.Act<Overgrowth>(), ModelDb.Act<Hive>(), ModelDb.Act<Glory>()], [], "TASK003A", GameMode.Standard);
         _player = run.Players[0];
+        Check(_player.Character is Traveler && _player.GetRelic<JourneyCompass>() is not null, "CHAR_E2E_traveler_and_compass_native_start");
         // Controlled durability and budget are fixture setup; acquisition itself uses unchanged native offers/prices.
         _player.Creature.SetMaxHpInternal(5000m); _player.Creature.SetCurrentHpInternal(5000m);
         _player.Gold = 10000;
@@ -109,7 +112,7 @@ public partial class TravelerTestRunner
                 await Until(() => selection.IsCompleted, "native reward acquisition completion");
                 Check(await selection && reward.SuccessfullySelected && _player.Deck.Cards.Count == before + 1
                     && _player.Deck.Cards.Any(c => ReferenceEquals(c, card)), "TASK003_native_room_reward_enters_deck");
-                GD.Print($"STS2MOD_E2E_ACQUIRED source=room card={card.Id.Entry} battle={battle} offers_modified=false");
+                GD.Print($"STS2MOD_E2E_ACQUIRED source=room card={card.Id.Entry} battle={battle} offers=runtime_rules");
                 RunManager.Instance.RewardsSetSynchronizer.SkipLocalRewardsSet();
                 return;
             }
@@ -143,7 +146,7 @@ public partial class TravelerTestRunner
                 Check(!cardEntry.IsStocked,
                     "TASK003_sold_card_slot_not_stocked");
                 cardBought = true;
-                GD.Print($"STS2MOD_E2E_ACQUIRED source=shop card={card.Id.Entry} shop={shop} cost={cost} offers_modified=false");
+                GD.Print($"STS2MOD_E2E_ACQUIRED source=shop card={card.Id.Entry} shop={shop} cost={cost} offers=runtime_rules");
             }
             var relicEntry = inventory.RelicEntries.FirstOrDefault(e => e.Model is PaimonCheer);
             if (!relicBought && relicEntry is not null)
@@ -154,7 +157,7 @@ public partial class TravelerTestRunner
                 Check(!relicEntry.IsStocked,
                     "TASK003_sold_paimon_slot_not_stocked");
                 relicBought = true;
-                GD.Print($"STS2MOD_E2E_ACQUIRED source=shop relic=TC_R01 shop={shop} cost={cost} offers_modified=false");
+                GD.Print($"STS2MOD_E2E_ACQUIRED source=shop relic=TC_R01 shop={shop} cost={cost} offers=runtime_rules");
             }
             if (cardBought && relicBought)
             {
@@ -191,7 +194,7 @@ public partial class TravelerTestRunner
         Check(_player.Relics.Count(r => r is PaimonCheer) == 1 && Power.State.Last == Element.None && Power.State.Used == 0,
             "TASK003_reload_no_duplicate_relic_or_stale_combo");
         Check(ThemeTypes.All(t => _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Count(c => c.GetType() == t) == 1)
-            && ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(_player.UnlockState).Count(r => r is PaimonCheer) == 1,
+            && ModelDb.RelicPool<TravelerRelicPool>().GetUnlockedRelics(_player.UnlockState).Count(r => r is PaimonCheer) == 1,
             "TASK003_reload_no_duplicate_registration");
         Check(!state.SharedRelicGrabBag.Contains(ModelDb.Relic<PaimonCheer>()) && !_player.RelicGrabBag.Contains(ModelDb.Relic<PaimonCheer>()),
             "TASK003_reload_paimon_stays_removed_from_bags");
@@ -209,8 +212,10 @@ public partial class TravelerTestRunner
         await PlayerCmd.SetEnergy(3m, _player);
         await Play<RockGuard>();
         Check(_player.Creature.Block == 7 && Power.State.Used == 0, "TASK003_first_rock_after_reload_has_no_old_wind_reward");
+        Check(_player.Character is Traveler && _player.GetRelic<JourneyCompass>() is { SpentThisCombat: false }, "CHAR_E2E_character_and_unspent_compass_after_reload");
         await Play<WindBlade>();
         Check(_player.Creature.Block == 15 && Power.State.Used == 1, "TASK003_paimon_still_doubles_after_reload");
+        Check(_player.GetRelic<JourneyCompass>() is { SpentThisCombat: true }, "CHAR_E2E_compass_rewards_after_disk_reload");
         await RunContinuousBattles();
         GD.Print($"STS2MOD_E2E_COMPLETE assertions={_assertions} acquisition=PASS disk_restart=PASS soak=PASS multiplayer=NOT_RUN ui=NOT_RUN");
         await ExitThroughNativeMenu();

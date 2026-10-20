@@ -105,6 +105,7 @@ public sealed class ComboPower : CustomPowerModel
         }
         var bonus = reservation.PaimonDoubles ? 8m : 4m;
         var draws = reservation.PaimonDoubles ? 2m : 1m;
+        var awarded = false;
         if (reservation.Kind == ComboKind.RockLightning)
         {
             var target = play.Target;
@@ -118,6 +119,7 @@ public sealed class ComboPower : CustomPowerModel
                 await DamageCmd.Attack(bonus).FromCard(card).Targeting(target)
                     .WithHitFx("vfx/vfx_attack_slash").Execute(context);
                 ShowReward(creature, target, reservation);
+                awarded = true;
                 GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} bonus={bonus}");
             }
         }
@@ -126,6 +128,7 @@ public sealed class ComboPower : CustomPowerModel
             var handBefore = PileType.Hand.GetPile(card.Owner).Cards.Count;
             var drawn = (await CardPileCmd.Draw(context, draws, card.Owner)).Count();
             ShowReward(creature, creature, reservation, drawn);
+            awarded = drawn > 0;
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=LightningWind hand_before={handBefore} hand_after={PileType.Hand.GetPile(card.Owner).Cards.Count} bonus_draw={draws}");
         }
         else
@@ -134,8 +137,12 @@ public sealed class ComboPower : CustomPowerModel
             creature.GetPower<ComboPower>()?.Flash();
             await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
             ShowReward(creature, creature, reservation);
+            awarded = true;
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
         }
+        if (awarded)
+            foreach (var compass in card.Owner.Relics.OfType<JourneyCompass>().ToArray())
+                await compass.OnComboReward(context);
     }
 
     private static void ShowReward(Creature creature, Creature effectTarget, Reservation reservation, int? actualDraw = null)

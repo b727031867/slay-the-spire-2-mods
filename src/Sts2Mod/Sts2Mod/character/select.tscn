@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Texture2D" path="res://Sts2Mod/character/body.svg" id="1"]
+[node name="TravelerSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+[node name="Sky" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.055, 0.12, 0.17, 1)
+[node name="Trail" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(400, 1080, 1100, 300, 1920, 860, 1920, 1080)
+color = Color(0.12, 0.25, 0.28, 1)
+[node name="Sun" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(1300, 120, 1440, 200, 1440, 360, 1300, 440, 1160, 360, 1160, 200)
+color = Color(0.38, 0.32, 0.24, 1)
+[node name="Traveler" type="TextureRect" parent="."]
+offset_left = 980.0
+offset_top = 110.0
+offset_right = 1530.0
+offset_bottom = 980.0
+mouse_filter = 2
+texture = ExtResource("1")
+expand_mode = 1
+stretch_mode = 5

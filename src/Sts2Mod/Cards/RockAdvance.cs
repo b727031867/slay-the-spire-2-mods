@@ -5,13 +5,13 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.CardPools;
+using Sts2Mod.Pools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Combo;
 
 namespace Sts2Mod.Cards;
 
-[CustomID("TC_C05"), Pool(typeof(IroncladCardPool))]
+[CustomID("TC_C05"), Pool(typeof(TravelerCardPool))]
 public sealed class RockAdvance : ElementCardModel
 {
     public RockAdvance() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }

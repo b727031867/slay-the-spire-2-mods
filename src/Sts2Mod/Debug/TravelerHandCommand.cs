@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Characters;
+using Sts2Mod.Characters;
 using Sts2Mod.Cards;
 using Sts2Mod.Relics;
 
@@ -16,16 +16,16 @@ public sealed class TravelerHandCommand : AbstractConsoleCmd
 {
     public override string CmdName => "tc_hand";
     public override string Args => "[1|2|3] [lightning|full] [upgraded] [paimon]";
-    public override string Description => "TEST ONLY: prepare Traveler cards and optional Paimon relic; requires --sts2mod-debug, singleplayer Ironclad.";
+    public override string Description => "TEST ONLY: prepare Traveler cards and optional Paimon relic; requires --sts2mod-debug, singleplayer Traveler.";
     public override bool DebugOnly => false;
     public override bool IsNetworked => false;
     public override CmdResult Process(Player? player, string[] args)
     {
         if (!CommandLineHelper.HasArg("sts2mod-debug")) return new(false, "Restart with --sts2mod-debug to enable test commands.");
-        if (player?.Character is not Ironclad || !CombatManager.Instance.IsInProgress
+        if (player?.Character is not Traveler || !CombatManager.Instance.IsInProgress
             || player.Creature.CombatState?.Players.Count != 1 || CombatManager.Instance.PlayerActionsDisabled
             || MegaCrit.Sts2.Core.Runs.RunManager.Instance.ActionExecutor.CurrentlyRunningAction is not null)
-            return new(false, "Requires a singleplayer Ironclad combat during the player phase.");
+            return new(false, "Requires a singleplayer Traveler combat during the player phase.");
         if (args.Length > 4 || (args.Length > 0 && (!int.TryParse(args[0], out var n) || n < 1 || n > 3))
             || args.Skip(1).Any(a => a is not ("upgraded" or "lightning" or "full" or "paimon"))
             || args.Skip(1).Distinct().Count() != args.Skip(1).Count()

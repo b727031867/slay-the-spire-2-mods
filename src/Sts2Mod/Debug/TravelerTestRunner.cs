@@ -1,3 +1,5 @@
+using Sts2Mod.Characters;
+using Sts2Mod.Pools;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -123,8 +125,9 @@ public partial class TravelerTestRunner : Node
             await RunEndToEnd();
             return;
         }
+        await TestTravelerSelection();
         GD.Print("STS2MOD_TEST_START fixture=singleplayer shouldSave=false seed=TC001A");
-        var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Ironclad>(), false,
+        var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Traveler>(), false,
             [ModelDb.Act<Overgrowth>(), ModelDb.Act<Hive>(), ModelDb.Act<Glory>()], [], "TC001A", GameMode.Standard);
         _player = run.Players[0];
         var encounter = ModelDb.Encounter<CultistsNormal>().ToMutable();
@@ -138,6 +141,12 @@ public partial class TravelerTestRunner : Node
         _target.SetMaxHpInternal(2000m); _target.SetCurrentHpInternal(2000m);
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(20m, _player);
+        await TestTravelerCharacter();
+        if (CommandLineHelper.HasArg("sts2mod-character"))
+        {
+            GD.Print($"STS2MOD_CHARACTER_COMPLETE assertions={_assertions} singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave={RunManager.Instance.ShouldSave}");
+            return;
+        }
         if (CommandLineHelper.HasArg("sts2mod-acceptance"))
         {
             await RelicCmd.Obtain<PaimonCheer>(_player);
@@ -147,10 +156,10 @@ public partial class TravelerTestRunner : Node
             GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
             return;
         }
-        var pool = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>().GetUnlockedCards(_player.UnlockState, 0).ToArray();
-        Check(pool.Count(c => c is WindBlade) == 1 && pool.Count(c => c is RockGuard) == 1, "two_cards_once_in_native_unlocked_pool");
+        var pool = ModelDb.CardPool<TravelerCardPool>().GetUnlockedCards(_player.UnlockState, 0).ToArray();
+        Check(pool.Count(c => c is WindBlade) == 1 && pool.Count(c => c is RockGuard) == 1, "two_cards_once_in_traveler_unlocked_pool");
         Check(!ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.SilentCardPool>().GetUnlockedCards(_player.UnlockState, 0).Any(c => c is WindBlade or RockGuard), "theme_cards_absent_from_silent_pool");
-        Check(!_player.Deck.Cards.Any(c => c is WindBlade or RockGuard), "normal_starting_deck_unchanged");
+        Check(_player.Deck.Cards.Count == 10 && _player.Deck.Cards.OfType<WindBlade>().Count() == 1, "TASK007_starting_deck_preserved");
 
         var hp = _target.CurrentHp;
         await Play<WindBlade>(); await Play<RockGuard>();
@@ -231,8 +240,8 @@ public partial class TravelerTestRunner : Node
         _target.SetMaxHpInternal(2000m); _target.SetCurrentHpInternal(2000m);
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(20m, _player);
-        var pool = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>().GetUnlockedCards(_player.UnlockState, 0);
-        Check(pool.Count(c => c is LightningThrust) == 1, "TC002_lightning_once_in_native_pool");
+        var pool = ModelDb.CardPool<TravelerCardPool>().GetUnlockedCards(_player.UnlockState, 0);
+        Check(pool.Count(c => c is LightningThrust) == 1, "TC007_lightning_once_in_traveler_pool");
         var hp = _target.CurrentHp;
         await Play<RockGuard>(); await Play<LightningThrust>();
         Check(hp - _target.CurrentHp == 11 && _player.Creature.Block == 7 && Power.State.Used == 1 && Power.State.Last == Element.Lightning, "TC02_rock_lightning_damage7_plus4");
@@ -287,15 +296,15 @@ public partial class TravelerTestRunner : Node
             typeof(WindBlade), typeof(RockGuard), typeof(LightningThrust),
             typeof(TailwindPrep), typeof(RockAdvance), typeof(ThunderPrep)
         };
-        var pool = ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.IroncladCardPool>().GetUnlockedCards(_player.UnlockState, 0).ToArray();
-        Check(themeTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "TASK002_six_cards_once_in_ironclad_pool");
+        var pool = ModelDb.CardPool<TravelerCardPool>().GetUnlockedCards(_player.UnlockState, 0).ToArray();
+        Check(themeTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "TASK007_six_cards_once_in_traveler_pool");
         Check(!ModelDb.CardPool<MegaCrit.Sts2.Core.Models.CardPools.SilentCardPool>().GetUnlockedCards(_player.UnlockState, 0)
             .Any(c => themeTypes.Contains(c.GetType())), "TASK002_theme_cards_absent_from_silent_pool");
-        Check(!_player.Deck.Cards.Any(c => themeTypes.Contains(c.GetType())), "TASK002_normal_starting_deck_unchanged");
+        Check(_player.Deck.Cards.Count == 10 && _player.Deck.Cards.Count(c => themeTypes.Contains(c.GetType())) == 4, "TASK007_ten_card_starter_four_elements");
 
-        var relicPool = ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(_player.UnlockState).ToArray();
+        var relicPool = ModelDb.RelicPool<TravelerRelicPool>().GetUnlockedRelics(_player.UnlockState).ToArray();
         Check(relicPool.Count(r => r is PaimonCheer) == 1 && ModelDb.Relic<PaimonCheer>().Rarity == RelicRarity.Uncommon,
-            "TASK002_paimon_once_in_shared_uncommon_relic_pool");
+            "TASK007_paimon_once_in_exclusive_uncommon_pool");
         Check(!ModelDb.Relic<PaimonCheer>().IsStackable && !ModelDb.RelicPool<IroncladRelicPool>().GetUnlockedRelics(_player.UnlockState).Any(r => r is PaimonCheer),
             "TASK002_paimon_nonstackable_and_absent_from_ironclad_pool");
 

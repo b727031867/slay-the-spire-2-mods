@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [单人测试版]",
   "description": "由 Prepare-Workshop.ps1 从 description.bbcode.txt 填充。",
   "visibility": "private",
-  "changeNote": "0.1.4：配对后保留刚打出的元素，可连续衔接。风岩风触发两次格挡，风岩雷触发格挡与追击；仍共享每回合3次。153项游戏内断言、48项纯规则及普通无GUI启动通过；平衡待试玩。",
+  "changeNote": "0.2.0候选：新增可选旅行者、迁移六张专属牌和派蒙，10张起始卡组与旅途罗盘，待单人无GUI验收。",
   "tags": [],
   "dependencies": [
     3737335127

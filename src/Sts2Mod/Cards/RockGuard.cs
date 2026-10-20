@@ -5,13 +5,13 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.CardPools;
+using Sts2Mod.Pools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Combo;
 
 namespace Sts2Mod.Cards;
 
-[CustomID("TC_C02"), Pool(typeof(IroncladCardPool))]
+[CustomID("TC_C02"), Pool(typeof(TravelerCardPool))]
 public sealed class RockGuard : ElementCardModel
 {
     public RockGuard() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }

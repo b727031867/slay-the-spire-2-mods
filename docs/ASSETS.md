@@ -15,3 +15,7 @@ TASK-004：`workshop/assets/image.png`（1024×1024封面）、`rules.png`（128
 TASK-005 / 0.1.3：运行时改用`src/Sts2Mod/Sts2Mod/art/`下wind.png、rock.png、lightning.png、tailwind.png、rock_advance.png、thunder_prep.png及透明paimon.png。七张图由OpenAI内置image_gen工具按本项目提示生成，未输入外部作品图片；不是手绘或游戏原生美术。提示词及用途见[生成记录](art/TASK-005-prompts.md)。原SVG及其历史归属保留，但不再作为这七项运行时插图。
 
 三种连携特效由本项目ElementComboVfx.cs用Godot基本线条绘制，无外部纹理或音频。系统字体与游戏原生卡框不随本Mod重新分发。生成式插图的披露应保留在发布说明和平台要求的相应字段中；本记录不代替平台申报流程。
+
+## 0.2.0 角色框架素材
+
+`Sts2Mod/character/body.svg`、`icon.svg`、选人背景场景、战斗动画场景，以及 `art/compass.svg`、`strike.svg`、`defend.svg` 为本项目代码绘制的原创简化矢量素材，不是生成式图片或实机截图。角色为通用旅行者概念，不使用主题作品立绘。动画为Godot属性动画。原生能量、拖尾、手势、营地/商人及音效通过游戏已有资源路径引用，不打包复制游戏素材；属于临时演出占位，后续可替换。既有六张卡图和派蒙图标继续使用TASK-005记录的生成式插图。

@@ -12,6 +12,8 @@ public sealed class ComboLifecycle : SingletonModel
     public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
     {
         if (!player.Creature.IsAlive) return;
+        // Preserve existing Ironclad saves containing these cards, without adding a status to other new characters.
+        if (player.Character is not Sts2Mod.Characters.Traveler && !player.Deck.Cards.OfType<ElementCardModel>().Any()) return;
         var power = player.Creature.GetPower<ComboPower>()
             ?? await PowerCmd.Apply<ComboPower>(context, player.Creature, 1m, player.Creature, null, silent: true);
         power?.BeginTurn();

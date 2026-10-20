@@ -5,12 +5,12 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.CardPools;
+using Sts2Mod.Pools;
 using Sts2Mod.Combo;
 
 namespace Sts2Mod.Cards;
 
-[CustomID("TC_C04"), Pool(typeof(IroncladCardPool))]
+[CustomID("TC_C04"), Pool(typeof(TravelerCardPool))]
 public sealed class TailwindPrep : ElementCardModel
 {
     public TailwindPrep() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }

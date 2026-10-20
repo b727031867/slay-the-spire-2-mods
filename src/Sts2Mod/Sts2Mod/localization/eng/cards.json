@@ -10,5 +10,9 @@
   "TC_C05.title": "Rock Advance",
   "TC_C05.description": "Deal [blue]{Damage}[/blue] damage. Gain [blue]{Block}[/blue] [gold]Block[/gold].\n[gold]Rock element[/gold].{ComboPreview}",
   "TC_C06.title": "Thunder Prep",
-  "TC_C06.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold]. Draw [blue]{Cards}[/blue] card.\n[gold]Lightning element[/gold].{ComboPreview}"
+  "TC_C06.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold]. Draw [blue]{Cards}[/blue] card.\n[gold]Lightning element[/gold].{ComboPreview}",
+  "TC_STRIKE.title": "Strike",
+  "TC_STRIKE.description": "Deal [blue]{Damage}[/blue] damage.",
+  "TC_DEFEND.title": "Defend",
+  "TC_DEFEND.description": "Gain [blue]{Block}[/blue] [gold]Block[/gold]."
 }

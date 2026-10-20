@@ -1,7 +1,7 @@
 <Project Sdk="Godot.NET.Sdk/4.5.1">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Version>0.1.4</Version>
+    <Version>0.2.0</Version>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Deterministic>true</Deterministic>
@@ -14,6 +14,10 @@
   <ItemGroup>
     <Reference Include="sts2">
       <HintPath>$(GameDir)/data_sts2_windows_x86_64/sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(GameDir)/data_sts2_windows_x86_64/0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <PackageReference Include="Alchyr.Sts2.BaseLib" Version="[3.4.7]" PrivateAssets="all" ExcludeAssets="build;buildTransitive;contentFiles" />

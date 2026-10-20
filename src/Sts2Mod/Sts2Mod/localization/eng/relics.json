@@ -1,5 +1,8 @@
 {
   "TC_R01.title": "Paimon's Cheer",
-  "TC_R01.description": "Element combo rewards are doubled. This shared relic can be obtained only once per run.",
-  "TC_R01.flavor": "The best travel companion makes every elemental flourish count twice."
+  "TC_R01.description": "Double element combo rewards. Exclusive to the Traveler; duplicate copies do not stack.",
+  "TC_R01.flavor": "The best travel companion makes every elemental flourish count twice.",
+  "TC_R02.title": "Journey Compass",
+  "TC_R02.description": "The first time you actually receive an element combo reward each combat, draw [blue]1[/blue] extra card.",
+  "TC_R02.flavor": "Every journey starts with the next step."
 }
