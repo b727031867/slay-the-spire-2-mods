@@ -27,7 +27,7 @@ public sealed class ComboPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Single;
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/combo.png";
+    public override string CustomPackedIconPath => ComboIcons.ElementPath(IsMutable ? State.Last : Element.None);
     public override string CustomBigIconPath => CustomPackedIconPath;
     protected override object InitInternalData() => new ComboState();
     public ComboState State => GetInternalData<ComboState>();

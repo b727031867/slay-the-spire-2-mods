@@ -1,5 +1,6 @@
 param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$CodeCommit, [switch]$Full)
 $ErrorActionPreference = 'Stop'
+& (Join-Path $PSScriptRoot 'Test-ComboVisualRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -WithinExpansion
 if ($Full) {
     & (Join-Path $PSScriptRoot 'Test-TravelerCharacterRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit
 } else {

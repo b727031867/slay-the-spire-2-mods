@@ -1,5 +1,7 @@
 # 构建、部署与最小加载检查
 
+0.3.3/TASK-011：`Start-ModGame.ps1 -TravelerVisuals -Headless`仅运行可视连携专项，完成后`Test-ComboVisualRun.ps1 -LogFile <日志> -CodeCommit <S>`检查；完整回归仍为TravelerTest和Test-ExpandedCardRun.ps1 -Full，也强制检查本专项。验证范围是实际原生控件属性/状态/选牌读取/资源接线与只读性，不是截图、鼠标或控制器实机验收。UI符号为刻意设计的SVG，原PNG插图不变。
+
 0.3.2/TASK-010：完整回归新增罗盘两回合间隔/额外回合/原生图标事件、20项PNG及Character.Icon头像接线、元素共鸣第2次实际奖励专项。跨PC从[最新提示词](handoffs/NEXT-PC-CONTINUE-PROMPT.md)开始，最终包身份和测试范围见[TASK-010报告](tests/TASK-010-PC-B-run-01.md)。下方为历史。
 
 0.3.1/TASK-009：当前`-TravelerCards`也覆盖19项正式PNG、312px战斗配置及11项防御牌原生随机追击；`Test-ExpandedCardRun.ps1`要求这些证据。完整回归仍用`-TravelerTest -Headless`及检查器`-Full`。随机技能使用原生CombatTargets；测试动作的Self牌显式目标必须为null。图片联系表可由`New-Task009ArtCatalog.ps1`重建（只组合QA预览，不改变运行时PNG），生成记录在`docs/art/TASK-009-prompts.md`。以下为早期版本记录。

@@ -39,6 +39,10 @@ internal static class TestSaveSandbox
         saves.SettingsSave.Language = launchSettings.Language;
         saves.SettingsSave.VolumeMaster = 0;
         saves.SettingsSave.SkipIntroLogo = true;
+        // Fixture default only: the first-run informational modal would otherwise
+        // remain above a programmatically started combat. No user settings or
+        // platform/mod-loading consent is modified or accepted.
+        saves.SettingsSave.SeenEaDisclaimer = true;
         saves.SaveSettings();
         GD.Print("STS2MOD_SANDBOX storage=native_disk cloud=false marker=V1");
     }

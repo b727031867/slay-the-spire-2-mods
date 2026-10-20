@@ -1,5 +1,14 @@
 # v0.107.1 接口调查
 
+## TASK-011 / PC-B / 0.3.3 补充（2026-10-21）
+
+- NPower.OnDisplayAmountChanged只刷新数值与闪烁，不重新读取Icon。按元素动态返回CustomPackedIconPath还须在该回调后刷新%Icon.Texture，补丁只作用于ComboPower，不改StackType或其他Power。
+- NCombatUi._Ready挂载本地只读Control，随原生战斗UI释放。LocalContext从NCombatRoom.CreatureNodes识别本机玩家，不反射RunManager私有State，也不在生产代码调用DebugOnlyGetState。
+- 原生HoveredModelTracker.GetHoveredModel(NetId)已统一鼠标、快捷键和控制器的手牌悬停/选中：选中优先，取消后回退到悬停。HUD仅读取，不调用同步或选择方法；测试才在隔离档案调用原生tracker验证优先级，无新网络消息。
+- ActiveScreenContext用于隐藏模态/地图/奖励等覆盖界面；原生NPlayerHand.Mode过滤弃牌等选择模式。预览复用同一只读VisualPreview，排除非本机/非手牌/非元素牌/不可操作阶段。
+- 原生FontManager.GetSubstituteFont用于区域字体，未复制字体资产。首次隔离测试档的抢先体验信息弹窗会正确挡住HUD；只为测试命名空间明确设置SeenEaDisclaimer默认值，不触碰正常档案或模组/平台同意设置。
+
+
 ## TASK-010 / PC-B / 0.3.2 补充（2026-10-21）
 
 本段覆盖下方旧依赖描述：当前精确BaseLib3.4.7，游戏仍v0.107.1/build23811903。只记录接口结论，不提交原生反编译源码。

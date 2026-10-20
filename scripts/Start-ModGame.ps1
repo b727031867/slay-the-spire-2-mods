@@ -1,9 +1,10 @@
 param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance,
-    [switch]$TravelerCharacter, [switch]$TravelerCards, [switch]$TravelerEndToEnd, [switch]$ResumeTask003, [string]$SandboxDirectory)
+    [switch]$TravelerCharacter, [switch]$TravelerCards, [switch]$TravelerVisuals, [switch]$TravelerEndToEnd, [switch]$ResumeTask003, [string]$SandboxDirectory)
 $ErrorActionPreference = 'Stop'
 # Automated game tests must not open a window or steal focus from the user's work.
 if ($TravelerCharacter) { $TravelerTest = $true }
 if ($TravelerCards) { $TravelerTest = $true }
+if ($TravelerVisuals) { $TravelerTest = $true }
 if ($TravelerTest -or $TravelerAcceptance -or $TravelerEndToEnd -or $ResumeTask003) { $Headless = $true }
 . (Join-Path $PSScriptRoot 'Enter-DevEnvironment.ps1')
 $projectRoot = Split-Path $PSScriptRoot -Parent
@@ -44,6 +45,7 @@ if ($TravelerRewards) { $arguments += '--sts2mod-rewards' }
 if ($TravelerAcceptance) { $arguments += '--sts2mod-acceptance' }
 if ($TravelerCharacter) { $arguments += '--sts2mod-character' }
 if ($TravelerCards) { $arguments += '--sts2mod-cards' }
+if ($TravelerVisuals) { $arguments += '--sts2mod-visuals' }
 if ($TravelerEndToEnd) { $arguments += '--sts2mod-e2e' }
 if ($ResumeTask003) { $arguments += '--sts2mod-resume' }
 if ($Headless) { $arguments += '--headless' } else { $arguments += @('--windowed','--resolution','1280x720') }

@@ -53,6 +53,7 @@ public partial class TravelerTestRunner
 
     private async Task TestExpandedCards()
     {
+        await TestComboHud();
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
         foreach (var asset in new[] { "wind_guidance", "rock_heart", "thunder_echo", "element_resonance", "gale_sweep",

@@ -8,6 +8,11 @@ using Sts2Mod.Relics;
 
 namespace Sts2Mod.Combo;
 
+public readonly record struct ComboVisualPreview(string Key, ComboKind Kind, Element Element, int Remaining, int Bonus)
+{
+    public bool HighlightsReward => Key is "block" or "draw" or "attack" or "randomAttack";
+}
+
 public static class ComboPresentation
 {
     public static bool HasPaimon(Player? player) => player?.Relics.Any(r => r is PaimonCheer { IsMelted: false }) == true;
@@ -16,13 +21,14 @@ public static class ComboPresentation
     public static bool InHand(ElementCardModel card) => card.IsMutable && card.Pile?.Type == PileType.Hand
         && card.Owner?.PlayerCombatState is not null && CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsEnding;
 
-    public static LocString Preview(ElementCardModel card)
+    public static ComboVisualPreview VisualPreview(ElementCardModel card)
     {
         string key;
         var power = InHand(card) ? card.Owner.Creature.GetPower<ComboPower>() : null;
         var kind = power?.State.Preview(card.CardElement) ?? ComboKind.None;
         if (power is null) key = "generic";
-        else if (RunManager.Instance.ActionQueueSynchronizer.CombatState != ActionSynchronizerCombatState.PlayPhase) key = "waiting";
+        else if (RunManager.Instance.ActionQueueSynchronizer.CombatState != ActionSynchronizerCombatState.PlayPhase
+            || CombatManager.Instance.PlayerActionsDisabled || !CombatManager.Instance.IsPartOfPlayerTurn(card.Owner)) key = "waiting";
         else if (!card.CanPlay()) key = "unplayable";
         else if (power.State.Remaining == 0) key = "exhausted";
         else if (kind == ComboKind.None) key = "record";
@@ -33,10 +39,17 @@ public static class ComboPresentation
             ComboKind.RockLightning when card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy => "randomAttack",
             _ => "attack"
         };
-        var text = new LocString("powers", "TC_PREVIEW." + key);
-        text.Add("Element", new LocString("powers", "TC_ELEMENT_" + card.CardElement.ToString().ToUpperInvariant()));
-        text.Add("Remaining", power?.State.Remaining ?? ComboState.Limit);
-        text.Add("Bonus", Reward(kind, card.IsMutable && HasPaimon(card.Owner)));
+        return new(key, kind, card.CardElement, power?.State.Remaining ?? ComboState.Limit,
+            Reward(kind, card.IsMutable && HasPaimon(card.Owner)));
+    }
+
+    public static LocString Preview(ElementCardModel card)
+    {
+        var preview = VisualPreview(card);
+        var text = new LocString("powers", "TC_PREVIEW." + preview.Key);
+        text.Add("Element", new LocString("powers", "TC_ELEMENT_" + preview.Element.ToString().ToUpperInvariant()));
+        text.Add("Remaining", preview.Remaining);
+        text.Add("Bonus", preview.Bonus);
         return text;
     }
 

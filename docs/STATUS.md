@@ -1,4 +1,8 @@
-## 当前：0.3.2 / TASK-010 方案A、罗盘间隔与工坊交接
+## 当前本地开发：0.3.3 / TASK-011 可视元素与选牌高亮
+
+用户要求无需悬停识别当前元素，并直观高亮选中牌将触发的连携。已实现四种状态图标、常驻元素/次数面板和只读奖励图标高亮，待最终干净包验收。分支codex/TASK-011-combo-visuals，目前仅本地开发，工坊和远端交接基线仍0.3.2。游戏规则和数值不变；无GUI节点测试不等同于图形观感/真实鼠标手柄通过。见[任务](tasks/TASK-011.md)与[报告](tests/TASK-011-PC-B-run-01.md)。
+
+## 已交付远端/工坊：0.3.2 / TASK-010 方案A、罗盘间隔与工坊交接
 
 DONE_SINGLEPLAYER_HEADLESS_WORKSHOP_PRIVATE_MANUAL_PENDING（2026-10-21）。获批方案A、面部特写及罗盘两回合间隔/原生状态提示已交付0.3.2。源码S `a3ffe66bd48dce568af2bdff6f7bdd2bb4bf0b18`，49纯规则、26日志分类、376完整回归、13原生保存、250恢复/受控六场通过；六场23回合82次出牌48连携，1自然胜利，不是自然Boss验证。工坊3823282901保持private，正常Steam下载7文件与S包一致，BaseLib3.4.7三文件一致，封面/相册HTTP200且哈希一致；纯工坊普通无GUI启动及角色专项59项通过，所有AI游戏进程已结束。本地重复副本可恢复备份，当前以工坊生效。方案B未实现；新UI观感、自然Boss和多人仍待单列验证。交接分支`codex/TASK-010-balance-workshop`，未合并main或公开发行；下一PC尚未运行。见[任务](tasks/TASK-010.md)、[报告](tests/TASK-010-PC-B-run-01.md)及[接续提示词](handoffs/NEXT-PC-CONTINUE-PROMPT.md)。下方为历史。
 
