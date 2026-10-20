@@ -4,6 +4,8 @@
 
 ## 前提
 
+2026-10-20用户要求：后续由AI执行的游戏测试一律使用无GUI模式，避免影响其他工作。加载检查使用`Start-ModGame.ps1 -Headless`；回归和验收分别使用`-TravelerTest -Headless`或`-TravelerAcceptance -Headless`，日志检查按支持情况加`-Headless`。自动测试参数也会在启动脚本中强制启用无GUI。仅在用户明确要求图形测试时再安排人工界面验证；下文历史人工选牌流程不作为后台自动测试运行。测试结束只清理本次启动的进程，不启动图形窗口。
+
 - 游戏v0.107.1、Steam构建23811903，Steam客户端已运行并登录拥有游戏的账号。
 - .NET SDK 10.0.402、Godot .NET 4.5.1、本机合法游戏引用；各设备配置自己的`local.settings.json`。
 - 唯一额外运行时框架为BaseLib 3.3.2；NuGet引用与锁文件固定版本，官方运行时下载地址和SHA256在`dependencies.json`。
@@ -88,7 +90,7 @@ dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
 退出游戏后，以明确参数启动不保存run快照的单人测试局：
 
 ```powershell
-.\scripts\Start-ModGame.ps1 -TravelerTest
+.\scripts\Start-ModGame.ps1 -TravelerTest -Headless
 ```
 
 等待日志出现 `STS2MOD_TEST_COMPLETE`，再运行 `Test-TravelerRun.ps1 -LogFile '<本次日志>' -CodeCommit '<S>'`。测试用原生出牌动作和回合转换验证规则；仅在测试夹具中补能量、清手牌、治疗玩家及提高靶子生命。结束后留下风岩手牌供手动检查。测试角色/seed固定，正常模式无这些处理。

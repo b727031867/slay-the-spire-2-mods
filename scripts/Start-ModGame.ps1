@@ -1,5 +1,7 @@
 param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance)
 $ErrorActionPreference = 'Stop'
+# Automated game tests must not open a window or steal focus from the user's work.
+if ($TravelerTest -or $TravelerAcceptance) { $Headless = $true }
 . (Join-Path $PSScriptRoot 'Enter-DevEnvironment.ps1')
 $projectRoot = Split-Path $PSScriptRoot -Parent
 if (Get-Process -Name SlayTheSpire2 -ErrorAction SilentlyContinue) { throw 'The game is already running.' }
