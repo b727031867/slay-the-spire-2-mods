@@ -28,10 +28,18 @@ internal static class TestSaveSandbox
         var nativeRoot = "user://sts2mod-acceptance/" + id;
         if (!CommandLineHelper.HasArg("sts2mod-resume") && DirAccess.DirExistsAbsolute(nativeRoot))
             throw new InvalidOperationException("Preserving an existing native test sandbox.");
+        var launchSettings = SaveManager.Instance.SettingsSave;
         var saves = new SaveManager(new GodotFileIo(nativeRoot));
         SaveManager.MockInstanceForTesting(saves);
-        saves.InitSettingsData();
+        // Mod initialization is inside the native settings load. Initialize test
+        // display/audio defaults without recursively loading that settings schema.
+        // Run, progress and prefs still use the real disk managers on restart.
+        saves.InitSettingsDataForTest();
+        saves.SettingsSave.ModSettings = launchSettings.ModSettings;
+        saves.SettingsSave.Language = launchSettings.Language;
+        saves.SettingsSave.VolumeMaster = 0;
         saves.SettingsSave.SkipIntroLogo = true;
+        saves.SaveSettings();
         GD.Print("STS2MOD_SANDBOX storage=native_disk cloud=false marker=V1");
     }
 }
