@@ -74,7 +74,7 @@ public partial class TravelerTestRunner
         Check(Power.State.Last == Element.Wind, "TASK003_leave_unsaved_wind_before_exit");
         // Native combat-entry rollback is the supported boundary, not arbitrary mid-action continuation.
         GD.Print($"STS2MOD_E2E_PREPARED assertions={_assertions} cards=6 upgrades=6 paimon=1 shouldSave={RunManager.Instance.ShouldSave} boundary=combat_entry");
-        GetTree().Quit();
+        await ExitThroughNativeMenu();
     }
 
     private async Task EnterOrdinaryMapCombat()
@@ -215,7 +215,14 @@ public partial class TravelerTestRunner
         Check(_player.Creature.Block == 15 && Power.State.Used == 1, "TASK003_paimon_still_doubles_after_reload");
         await RunContinuousBattles();
         GD.Print($"STS2MOD_E2E_COMPLETE assertions={_assertions} acquisition=PASS disk_restart=PASS soak=PASS multiplayer=NOT_RUN ui=NOT_RUN");
-        GetTree().Quit();
+        await ExitThroughNativeMenu();
+    }
+
+    private async Task ExitThroughNativeMenu()
+    {
+        await NGame.Instance!.ReturnToMainMenu();
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        NGame.Instance.Quit();
     }
 
     private static Element CardElement(CardModel c) => c switch
