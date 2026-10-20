@@ -1,6 +1,6 @@
 # PC-B 接续开发提示词
 
-2026-10-20更新：下文保留首次跨机交接历史。当前分支已经是`codex/TASK-002-continue`，Mod为0.1.1；不要重新从lightning分支开工或覆盖现有分支。先读取[STATUS](../STATUS.md)、[TASK-003任务](../tasks/TASK-003.md)、[当前交接](TASK-003.md)和[PC-A新版回归报告](../tests/TASK-003-PC-A-run-02.md)。AI游戏测试一律`-Headless`，不启动等待人工选牌的旧流程；下文任何旧版规则、包身份及图形测试安排均以这些最新记录和DEC-005为准。
+2026-10-20更新：下文保留首次跨机交接历史。TASK-003单人无GUI范围已完成，本轮按用户明确授权将`codex/TASK-002-continue`成果交付main，Mod为0.1.1；先fetch并在保留本地改动的前提下同步main，不从旧lightning分支重新开工。先读取[STATUS](../STATUS.md)、[TASK-003任务](../tasks/TASK-003.md)、[当前交接](TASK-003.md)和[报告03](../tests/TASK-003-PC-A-run-03.md)。AI游戏测试一律`-Headless`，不启动等待人工选牌的旧流程；下文任何旧版规则、包身份、禁止合并及图形安排均以最新记录、DEC-005/006和本轮用户指令为准。没有公开发布Release，UI/人工自然试玩及双人专项仍NOT_RUN。
 
 将以下内容作为新电脑上开发AI的完整指令。电脑可自行选择工作目录；无需复制PC-A的个人配置、工具缓存或存档。以远端最新任务记录为准。
 

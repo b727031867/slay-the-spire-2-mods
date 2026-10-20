@@ -60,6 +60,26 @@ Sts2Mod/
 
 全量单人无GUI回归使用`Start-ModGame.ps1 -Headless -TravelerTest`，完成后执行`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Task003 -Headless`。`-TravelerAcceptance`仅运行TASK-003边界子集，不能替代全量回归，也不能单独传给要求全量标记的检查器。
 
+### TASK-003 正常获取和磁盘恢复
+
+使用main中的最新检查器；当前被测包来源S及SHA256见[TASK-003交接](handoffs/TASK-003.md)。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
+
+```powershell
+.\scripts\Start-ModGame.ps1 -TravelerEndToEnd -Headless
+# 记录输出SandboxDirectory、GameProcessId、LogFile，等待该进程原生退出后检查：
+.\scripts\Test-Task003EndToEnd.ps1 -Phase Prepare -LogFile '<准备日志>' -CodeCommit '<包S>'
+# 再次部署相同包，验证部署后恢复；然后：
+.\scripts\Start-ModGame.ps1 -ResumeTask003 -SandboxDirectory '<准备阶段返回目录>' -Headless
+# 等待新进程原生退出：
+.\scripts\Test-Task003EndToEnd.ps1 -Phase Resume -LogFile '<恢复日志>' -CodeCommit '<同一包S>'
+```
+
+自动测试使用唯一的本地隔离存储：`.local/task003-saves/<id>`存元数据，真实原生存档写入`user://sts2mod-acceptance/<id>`。没有Steam云后端，不拷贝用户档案；启动时仍读取本机原生模组启用设置。测试显示/音频设置使用默认值且静音，run/progress/prefs保留真实磁盘路径。首次准备拒绝已存在的目录，恢复要求所属标记；不会删除或覆盖用户profile。
+
+准备阶段领取未修改的原生战斗奖励、按原价购买普通商店的主题牌和派蒙，再保存六种牌的基础/升级覆盖夹具。恢复阶段使用原生主菜单同一路径加载磁盘run，核对牌组、遗物、金币、重复注册/发奖和战斗入口状态；连续场景不补手牌/能量，每场最多4回合，不等于自然整局或平衡性通过。
+
+原生退出存在不依赖本Mod的headless资源清理诊断，见[对照及验收报告](tests/TASK-003-PC-A-run-03.md)。E2E检查器单独统计经过对照的精确引擎类型，且必须位于NGame.Quit和Steam shutdown成功之后；其他错误仍失败。普通全量回归不启用这项退出分类。不要用泛化过滤规则隐藏未知错误，也不要把该限制写成“退出没有任何ERROR”。
+
 原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。游戏原生启动可能同步Steam云存档，部署和移除脚本本身不修改存档。
 
 ## 移除与恢复
