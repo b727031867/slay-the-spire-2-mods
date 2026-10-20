@@ -18,16 +18,7 @@ if ($ready.Count -ne 1) { throw "Expected one Sts2Mod initialization marker, got
 if ($CodeCommit -and $ready[0].Value -notmatch ('\+' + [regex]::Escape($CodeCommit) + '(?=\s)')) { throw 'Loaded assembly does not match the expected source commit.' }
 if ($ready[0].Value -notmatch 'baselib=3\.3\.2 resource=ok') { throw 'Dependency/resource verification failed.' }
 if ($text -notmatch "Finished mod initialization for 'BaseLib' \(BaseLib\)" -or $text -notmatch "Finished mod initialization for '[^']*' \(Sts2Mod\)") { throw 'Game loader did not report both mods initialized.' }
-$errorLines = [regex]::Matches($text, '(?m)^ERROR:[^\r\n]*') | ForEach-Object Value
-if ($Headless) {
-    $knownHeadlessRenderErrors = @(
-        'ERROR: Attempting to initialize the wrong RID',
-        'ERROR: Parameter "mem" is null.',
-        'ERROR: Attempting to use an uninitialized RID',
-        'ERROR: Parameter "shader" is null.'
-    )
-    $errorLines = $errorLines | Where-Object { $_ -notin $knownHeadlessRenderErrors }
-}
-if ($text -match '\[ERROR\]' -or $errorLines.Count) { throw 'Game startup logged an unexpected error. Review it before marking the smoke test as passed.' }
+$errors = & (Join-Path $PSScriptRoot 'Get-GameLogErrors.ps1') -Text $text -Headless:$Headless
+if ($text -match '\[ERROR\]' -or $errors.Unexpected.Count) { throw 'Game logged an unexpected error. Review it before marking the smoke test as passed.' }
 Write-Output $ready[0].Value
-Write-Output 'PASS: exactly one initialization, pinned BaseLib and resource check succeeded, game reached main menu without startup errors.'
+Write-Output "PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=$($errors.KnownHeadless.Count)."

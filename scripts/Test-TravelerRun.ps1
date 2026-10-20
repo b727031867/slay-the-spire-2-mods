@@ -11,17 +11,8 @@ $ErrorActionPreference = 'Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless:$Headless
 $content = Get-Content -LiteralPath $LogFile -Raw
 if ($Acquisition -and ($Lightning -or $Task002 -or $Task003)) { throw 'Choose either acquisition or rule evidence.' }
-$errorLines = [regex]::Matches($content, '(?m)^ERROR:[^\r\n]*') | ForEach-Object Value
-if ($Headless) {
-    $knownHeadlessRenderErrors = @(
-        'ERROR: Attempting to initialize the wrong RID',
-        'ERROR: Parameter "mem" is null.',
-        'ERROR: Attempting to use an uninitialized RID',
-        'ERROR: Parameter "shader" is null.'
-    )
-    $errorLines = $errorLines | Where-Object { $_ -notin $knownHeadlessRenderErrors }
-}
-if ($content -match 'STS2MOD_TEST_FAIL' -or $errorLines.Count) { throw 'Traveler game integration test failed. Read the local log.' }
+$errors = & (Join-Path $PSScriptRoot 'Get-GameLogErrors.ps1') -Text $content -Headless:$Headless
+if ($content -match 'STS2MOD_TEST_FAIL|\[ERROR\]' -or $errors.Unexpected.Count) { throw 'Traveler game integration test failed. Read the local log.' }
 if ($Acquisition) {
     if ($content -notmatch 'STS2MOD_ACQUISITION_COMPLETE shouldSave=false' -or $content -notmatch 'TC21_native_room_reward_selected_into_deck') {
         throw 'The native room reward acquisition test has not completed.'
