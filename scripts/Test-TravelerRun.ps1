@@ -59,6 +59,10 @@ if ($Acquisition) {
         if ($content -notmatch 'STS2MOD_TASK003_AUTOMATION_COMPLETE assertions=\d+ singleplayer=PASS multiplayer=NOT_RUN ui=READY_FOR_USER_PLAYTEST') {
             throw 'TASK-003 automated acceptance has not completed.'
         }
+        $finalKill = [regex]::Match($content, '(?m)^STS2MOD_TEST_DETAIL case=final_base_kill player=(\d+) action=(\d+) block_before=7 block_peak=7 block_after=\d+\r?$')
+        if (!$finalKill.Success) { throw 'Missing final-kill block observation before native cleanup.' }
+        $skip = '(?m)^STS2MOD_REWARD player=' + [regex]::Escape($finalKill.Groups[1].Value) + ' action=' + [regex]::Escape($finalKill.Groups[2].Value) + ' skipped=combat_ended_or_dead\r?$'
+        if ($content -notmatch $skip) { throw 'The final killing action did not explicitly skip its combo reward.' }
     }
     if ($content -notmatch 'STS2MOD_TEST_COMPLETE assertions=\d+ multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave=False') {
         throw 'The rule test has not completed.'

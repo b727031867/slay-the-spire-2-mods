@@ -417,8 +417,18 @@ public partial class TravelerTestRunner : Node
         _target = survivor;
         _target.SetCurrentHpInternal(7m);
         var finalTurnState = Power.State;
-        await Play<RockGuard>(); await Play<LightningThrust>();
-        Check(_target.IsDead && finalTurnState.Used == 1 && _player.Creature.Block == 7,
+        await Play<RockGuard>();
+        var blockBeforeKill = _player.Creature.Block;
+        var peakBlock = blockBeforeKill;
+        void TrackBlock(int before, int after) => peakBlock = Math.Max(peakBlock, after);
+        _player.Creature.BlockChanged += TrackBlock;
+        PlayCardAction finalAction;
+        try { finalAction = await Play<LightningThrust>(); }
+        finally { _player.Creature.BlockChanged -= TrackBlock; }
+        // Native Player.AfterCombatEnd clears block. Observe every change during
+        // the killing action so cleanup timing cannot hide an unwanted award.
+        GD.Print($"STS2MOD_TEST_DETAIL case=final_base_kill player={_player.NetId} action={finalAction.Id} block_before={blockBeforeKill} block_peak={peakBlock} block_after={_player.Creature.Block}");
+        Check(_target.IsDead && finalTurnState.Used == 1 && blockBeforeKill == 7 && peakBlock == 7,
             "TASK003_base_kill_ending_combat_skips_combo_reward");
         await Until(() => !CombatManager.Instance.IsInProgress, "TASK003 combat ending after final base kill");
         GD.Print($"STS2MOD_TASK003_AUTOMATION_COMPLETE assertions={_assertions} singleplayer=PASS multiplayer=NOT_RUN ui=READY_FOR_USER_PLAYTEST");
