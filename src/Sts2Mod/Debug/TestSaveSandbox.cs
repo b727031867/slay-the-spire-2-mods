@@ -21,7 +21,14 @@ internal static class TestSaveSandbox
             throw new InvalidOperationException("Refusing an unmarked save sandbox.");
         // Installed during mod initialization, before GameStartup starts cloud/profile sync.
         // This is a real SaveManager/GodotFileIo pair, not an in-memory save mock.
-        var saves = new SaveManager(new GodotFileIo(Root.Replace('\\', '/')));
+        var id = Path.GetFileName(Root);
+        if (!Guid.TryParseExact(id, "N", out _)) throw new InvalidOperationException("Invalid test sandbox identity.");
+        // GodotFileIo accepts user:// paths, not Windows absolute paths. A unique
+        // namespace is separate from steam/<account>/modded/profile*, including settings.
+        var nativeRoot = "user://sts2mod-acceptance/" + id;
+        if (!CommandLineHelper.HasArg("sts2mod-resume") && DirAccess.DirExistsAbsolute(nativeRoot))
+            throw new InvalidOperationException("Preserving an existing native test sandbox.");
+        var saves = new SaveManager(new GodotFileIo(nativeRoot));
         SaveManager.MockInstanceForTesting(saves);
         saves.InitSettingsData();
         saves.SettingsSave.SkipIntroLogo = true;
