@@ -25,7 +25,7 @@ public sealed class Traveler : PlaceholderCharacterModel
     public override IReadOnlyList<RelicModel> StartingRelics => [ModelDb.Relic<JourneyCompass>()];
     public override string CustomVisualPath => "res://Sts2Mod/character/traveler.tscn";
     public override string CustomCharacterSelectBg => "res://Sts2Mod/character/select.tscn";
-    public override string CustomCharacterSelectIconPath => "res://Sts2Mod/character/icon.svg";
+    public override string CustomCharacterSelectIconPath => "res://Sts2Mod/character/icon.png";
     public override string CustomCharacterSelectLockedIconPath => CustomCharacterSelectIconPath;
     public override string CustomIconTexturePath => CustomCharacterSelectIconPath;
     public override string CustomIconOutlineTexturePath => CustomCharacterSelectIconPath;

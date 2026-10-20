@@ -16,7 +16,7 @@ public sealed class GaleSweep : ElementCardModel
 {
     public GaleSweep() : base(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies) { }
     public override Element CardElement => Element.Wind;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/gale_sweep.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/gale_sweep.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5m, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

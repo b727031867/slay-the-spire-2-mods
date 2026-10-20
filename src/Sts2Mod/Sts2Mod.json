@@ -3,7 +3,7 @@
   "name": "STS2 Mod - Traveler Elements",
   "author": "b727031867",
   "description": "Playable Traveler with 18 exclusive reward cards including 4 Powers, a ten-card starting deck, per-turn Journey Compass, and Paimon. Elements persist across turns. Singleplayer test build; multiplayer unverified.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "has_pck": true,
   "has_dll": true,
   "affects_gameplay": true,

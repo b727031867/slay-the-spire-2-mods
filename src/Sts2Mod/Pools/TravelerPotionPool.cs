@@ -7,6 +7,6 @@ namespace Sts2Mod.Pools;
 [CustomID("TC_POTION_POOL")]
 public sealed class TravelerPotionPool : CustomPotionPoolModel
 {
-    public override string BigEnergyIconPath => "res://Sts2Mod/art/compass.svg";
+    public override string BigEnergyIconPath => "res://Sts2Mod/art/compass.png";
     public override string TextEnergyIconPath => BigEnergyIconPath;
 }

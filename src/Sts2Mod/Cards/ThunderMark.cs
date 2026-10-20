@@ -16,7 +16,7 @@ public sealed class ThunderMark : ElementCardModel
 {
     public ThunderMark() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_mark.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_mark.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5m, ValueProp.Move), new DynamicVar("Vulnerable", 1m)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

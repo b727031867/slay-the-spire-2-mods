@@ -94,8 +94,8 @@ public partial class TravelerTestRunner
         await SeedDraw();
         var compass = _player.GetRelic<JourneyCompass>()!;
         await Play<RockGuard>(); await Play<ThunderPrep>();
-        Check(!compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_compass_not_consumed_by_targetless_skip");
+        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 2,
+            "CHAR_compass_triggers_after_random_defensive_attack");
         await NextTurn();
         await Play<WindBlade>(); await Play<RockGuard>();
         Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,

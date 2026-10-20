@@ -9,7 +9,7 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_WIND_GUIDANCE")]
 public sealed class WindGuidancePower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/wind_guidance.svg";
+    public override string CustomPackedIconPath => "res://Sts2Mod/art/wind_guidance.png";
     private int _spentCopies;
     public override Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
     {

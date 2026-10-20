@@ -15,7 +15,7 @@ namespace Sts2Mod.Cards;
 public sealed class TriphaseFinale : CustomCardModel
 {
     public TriphaseFinale() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/triphase_finale.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/triphase_finale.png";
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new CalculationBaseVar(10m), new ExtraDamageVar(4m),
             new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>

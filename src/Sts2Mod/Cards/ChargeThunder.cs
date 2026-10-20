@@ -16,7 +16,7 @@ public sealed class ChargeThunder : ElementCardModel
 {
     public ChargeThunder() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/charge_thunder.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/charge_thunder.png";
     public override bool GainsBlock => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(4m, ValueProp.Move), new EnergyVar(1)];

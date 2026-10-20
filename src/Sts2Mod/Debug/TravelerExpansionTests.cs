@@ -55,6 +55,20 @@ public partial class TravelerTestRunner
     {
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
+        foreach (var asset in new[] { "wind_guidance", "rock_heart", "thunder_echo", "element_resonance", "gale_sweep",
+            "shattering_rock", "thunder_mark", "triphase_finale", "wind_shelter", "patient_rampart", "charge_thunder",
+            "journey_plans", "strike", "defend", "compass", "combo", "body", "icon", "select_background" })
+        {
+            var folder = asset is "body" or "icon" or "select_background" ? "character" : "art";
+            var image = ResourceLoader.Load<Texture2D>($"res://Sts2Mod/{folder}/{asset}.png");
+            Check(image is not null && image.GetWidth() >= 512 && image.GetHeight() >= 512, "ART_final_png_" + asset);
+        }
+        var visual = ResourceLoader.Load<PackedScene>("res://Sts2Mod/character/traveler.tscn")!.Instantiate<Node2D>();
+        var body = visual.GetNode<Sprite2D>("Visuals/Body");
+        Check(body.Texture.ResourcePath.EndsWith("body.png") && body.Texture.GetHeight() * body.Scale.Y is >= 310 and <= 314,
+            "ART_character_native_battle_scale_312px");
+        visual.Free();
+        await TestDefensiveRandomCombos();
         await FreshExpansion();
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Where(c => c.Rarity != CardRarity.Basic).ToArray();
         Check(pool.Length == 18 && pool.Count(c => c.Type == CardType.Attack) == 7
@@ -158,6 +172,57 @@ public partial class TravelerTestRunner
         Check(Power.State.Last == Element.None && Power.State.Used == 0 && Power.State.RewardsThisTurn == 0
             && !_player.Creature.Powers.OfType<TravelerAbilityPower>().Any(), "EXP_new_combat_clears_ability_and_combo_state");
         GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=18 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN");
+    }
+
+    private async Task TestDefensiveRandomCombos()
+    {
+        foreach (var upgraded in new[] { false, true })
+        foreach (var type in new[] { typeof(RockGuard), typeof(PatientRampart), typeof(ThunderPrep), typeof(ChargeThunder) })
+        {
+            await FreshExpansion();
+            if (upgraded) await RelicCmd.Obtain<PaimonCheer>(_player);
+            // The priming attack must not use the target RNG.
+            if (type == typeof(RockGuard) || type == typeof(PatientRampart)) await Play<LightningThrust>();
+            else await Play<RockGuard>();
+            var enemies = _player.Creature.CombatState!.GetOpponentsOf(_player.Creature).Where(e => e.IsAlive).ToArray();
+            var health = enemies.Select(e => e.CurrentHp).ToArray();
+            var rng = _player.RunState.Rng.CombatTargets;
+            var oracle = new MegaCrit.Sts2.Core.Random.Rng(rng.Seed, rng.Counter);
+            var expected = oracle.NextItem(enemies)!;
+            var before = rng.Counter;
+            var card = CombatManager.Instance.DebugOnlyGetState()!.CreateCard(ModelDb.AllCards.Single(c => c.GetType() == type), _player);
+            if (upgraded) CardCmd.Upgrade(card);
+            await CardPileCmd.Add(card, PileType.Hand);
+            // Native self-target hand actions use a null explicit target, not the player creature.
+            await Queue(new PlayCardAction(card, null));
+            var bonus = upgraded ? 8 : 4;
+            GD.Print($"STS2MOD_RANDOM_DETAIL card={card.Id.Entry} upgraded={upgraded} expected={expected.CombatId} rng_before={before} rng_after={rng.Counter} oracle={oracle.Counter} damage={string.Join(',', enemies.Select((e, i) => health[i] - e.CurrentHp))}");
+            Check(enemies.Select((enemy, i) => health[i] - enemy.CurrentHp == (enemy == expected ? bonus : 0)).All(ok => ok)
+                && rng.Counter == oracle.Counter && rng.Counter > before && Power.State.Used == 1
+                && Power.State.RewardsThisTurn == 1, "RANDOM_seeded_single_living_target_" + card.Id.Entry + "_" + upgraded);
+        }
+        await FreshExpansion();
+        var other = _player.Creature.CombatState!.Enemies.First(e => e != _target);
+        await CreatureCmd.Kill(other, force: true);
+        var hp = _target.CurrentHp;
+        await Play<LightningThrust>(); await Play<RockGuard>();
+        Check(hp - _target.CurrentHp == 11 && other.IsDead, "RANDOM_only_living_enemy_selected");
+        var counter = _player.RunState.Rng.CombatTargets.Counter;
+        await Play<ThunderPrep>(); await Play<RockGuard>();
+        hp = _target.CurrentHp;
+        await Play<ThunderPrep>();
+        Check(_target.CurrentHp == hp && Power.State.Used == 3
+            && _player.RunState.Rng.CombatTargets.Counter == counter + 2, "RANDOM_shared_cap_no_fourth_hit_or_rng");
+
+        await FreshExpansion();
+        await Play<ThunderEcho>();
+        foreach (var enemy in _player.Creature.CombatState!.Enemies)
+            await PowerCmd.Apply<BufferPower>(new BlockingPlayerChoiceContext(), enemy, 1m, enemy, null);
+        hp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
+        await Play<RockGuard>(); await Play<ThunderPrep>();
+        Check(_player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == hp && Power.State.RewardsThisTurn == 0,
+            "RANDOM_zero_damage_no_echo_or_actual_reward");
+        GD.Print("STS2MOD_RANDOM_COMBO_COMPLETE cases=11 seeded_rng=native cap=3 rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 
     private async Task TestExpansionRetain()
@@ -299,8 +364,9 @@ public partial class TravelerTestRunner
         await Play<ThunderEcho>(); await Play<ElementResonance>();
         hp = _target.CurrentHp; other = _player.Creature.CombatState!.Enemies.First(e => e != _target); otherHp = other.CurrentHp;
         await Play<RockGuard>(); await Play<ThunderPrep>();
-        Check(hp == _target.CurrentHp && otherHp == other.CurrentHp && Power.State.RewardsThisTurn == 0,
-            "EXP_targetless_combo_does_not_trigger_abilities");
+        Check(hp + otherHp - _target.CurrentHp - other.CurrentHp == 10
+            && hp > _target.CurrentHp && otherHp > other.CurrentHp && Power.State.RewardsThisTurn == 1,
+            "EXP_random_defensive_attack_triggers_echo_and_actual_reward");
         await FreshExpansion();
         await Play<ThunderEcho>();
         other = _player.Creature.CombatState!.Enemies.First(e => e != _target); otherHp = other.CurrentHp;
@@ -338,8 +404,13 @@ public partial class TravelerTestRunner
 
         await FreshExpansion();
         await Play<ElementResonance>();
-        await Play<RockGuard>(); await Play<ThunderPrep>();
-        await Play<WindBlade>(); await Play<RockGuard>();
+        await Play<RockGuard>();
+        // A deliberately blocked draw still consumes a combo but grants no actual reward.
+        source = await Play<WindBlade>();
+        await PowerCmd.Apply<NoDrawPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
+        await Play<LightningThrust>();
+        await PowerCmd.Remove<NoDrawPower>(_player.Creature);
+        await Play<RockGuard>();
         energy = _player.PlayerCombatState!.Energy;
         Check(Power.State.Used == 3 && Power.State.RewardsThisTurn == 2, "EXP_resonance_skipped_reward_is_not_third");
         await Play<WindBlade>();

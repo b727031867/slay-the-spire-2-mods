@@ -10,6 +10,6 @@ namespace Sts2Mod.Cards;
 public sealed class ElementResonance : TravelerPowerCard<ElementResonancePower>
 {
     public ElementResonance() : base(2, CardRarity.Rare, 1m) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/element_resonance.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/element_resonance.png";
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

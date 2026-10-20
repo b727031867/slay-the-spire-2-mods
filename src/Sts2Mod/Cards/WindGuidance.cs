@@ -10,6 +10,6 @@ namespace Sts2Mod.Cards;
 public sealed class WindGuidance : TravelerPowerCard<WindGuidancePower>
 {
     public WindGuidance() : base(1, CardRarity.Uncommon, 1m) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/wind_guidance.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/wind_guidance.png";
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

@@ -10,6 +10,6 @@ namespace Sts2Mod.Cards;
 public sealed class RockHeart : TravelerPowerCard<RockHeartPower>
 {
     public RockHeart() : base(1, CardRarity.Uncommon, 4m) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/rock_heart.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/rock_heart.png";
     protected override void OnUpgrade() => DynamicVars["PowerAmount"].UpgradeValueBy(2m);
 }

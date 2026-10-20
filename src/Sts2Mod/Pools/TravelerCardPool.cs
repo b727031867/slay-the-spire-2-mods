@@ -12,6 +12,6 @@ public sealed class TravelerCardPool : CustomCardPoolModel
     public override Color ShaderColor => new("79D9C8");
     public override bool IsColorless => false;
     public override bool SeenByDefault => true;
-    public override string BigEnergyIconPath => "res://Sts2Mod/art/compass.svg";
+    public override string BigEnergyIconPath => "res://Sts2Mod/art/compass.png";
     public override string TextEnergyIconPath => BigEnergyIconPath;
 }

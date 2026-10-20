@@ -262,11 +262,11 @@ public partial class TravelerTestRunner : Node
         await NextTurn(); hp = _target.CurrentHp;
         await Play<RockGuard>(); await Play<LightningThrust>(true);
         Check(hp - _target.CurrentHp == 14 && Power.State.Used == 1, "TC13_lightning_upgrade10_plus4");
-        await NextTurn(); hp = _target.CurrentHp;
+        await NextTurn(); hp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
         await Play<WindBlade>(); await Play<RockGuard>();
         await Play<RockGuard>(); await Play<LightningThrust>();
         await Play<RockGuard>(); await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 24 && _player.Creature.Block == 25 && Power.State.Used == 3 && Power.State.Last == Element.Lightning, "TC08_mixed_combos_share_three_cap");
+        Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == 28 && _player.Creature.Block == 25 && Power.State.Used == 3 && Power.State.Last == Element.Lightning, "TC08_mixed_combos_share_three_cap");
         await NextTurn(); hp = _target.CurrentHp;
         var rock = await Play<RockGuard>();
         var auto = await Add<LightningThrust>();
@@ -363,10 +363,10 @@ public partial class TravelerTestRunner : Node
         Check(_player.Creature.Block == 8 && PileType.Hand.GetPile(_player).Cards.Count == 1,
             "TC13_thunder_prep_upgrade_block8_draw1");
 
-        await NextTurn(); await SeedDraw(); hp = _target.CurrentHp;
+        await NextTurn(); await SeedDraw(); hp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
         await Play<RockAdvance>(); await Play<ThunderPrep>();
-        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 8 && Power.State.Used == 1 && Power.State.Last == Element.Lightning,
-            "rock_to_targetless_thunder_consumes_combo_without_retarget");
+        Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == 9 && _player.Creature.Block == 8 && Power.State.Used == 1 && Power.State.Last == Element.Lightning,
+            "rock_to_defensive_thunder_attacks_random_enemy");
         await NextTurn(); await SeedDraw();
         await Play<ThunderPrep>(); await Play<TailwindPrep>();
         Check(_player.Creature.Block == 5 && PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1,

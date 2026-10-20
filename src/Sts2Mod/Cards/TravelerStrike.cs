@@ -14,7 +14,7 @@ namespace Sts2Mod.Cards;
 public sealed class TravelerStrike : CustomCardModel
 {
     public TravelerStrike() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/strike.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/strike.png";
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(6m, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);

@@ -15,7 +15,7 @@ public sealed class TravelerDefend : CustomCardModel
 {
     public TravelerDefend() : base(1, CardType.Skill, CardRarity.Basic, TargetType.Self) { }
     public override bool GainsBlock => true;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/defend.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/defend.png";
     protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5m, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);

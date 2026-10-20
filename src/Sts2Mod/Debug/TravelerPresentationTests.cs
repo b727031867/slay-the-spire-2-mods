@@ -55,10 +55,10 @@ public partial class TravelerTestRunner
             && Power.State.Last == Element.Wind && Power.State.Preview(Element.Rock) == ComboKind.None,
             "CHAIN_fifth_card_no_fourth_bonus_" + suffix);
 
-        await NextTurn(); await SeedDraw(); hp = _target.CurrentHp;
+        await NextTurn(); await SeedDraw(); hp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
         await Play<RockGuard>(); await Play<ThunderPrep>();
-        Check(_target.CurrentHp == hp && Power.State.Last == Element.Lightning && Power.State.Used == 1,
-            "CHAIN_skipped_targetless_reward_still_retains_lightning_" + suffix);
+        Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == blockBonus && Power.State.Last == Element.Lightning && Power.State.Used == 1,
+            "CHAIN_random_defensive_reward_still_retains_lightning_" + suffix);
         await Play<WindBlade>();
         Check(PileType.Hand.GetPile(_player).Cards.Count == 1 + draws && Power.State.Used == 2
             && Power.State.Last == Element.Wind, "CHAIN_can_continue_after_targetless_pair_" + suffix);
@@ -108,10 +108,10 @@ public partial class TravelerTestRunner
         await NextTurn();
         await Play<RockGuard>();
         var noTarget = (ThunderPrep)await Add<ThunderPrep>();
-        var hp = _target.CurrentHp;
-        Check(ComboPresentation.Preview(noTarget).LocEntryKey == "TC_PREVIEW.noTarget", "UX_no_target_warns_consumed_use");
+        var hp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
+        Check(ComboPresentation.Preview(noTarget).LocEntryKey == "TC_PREVIEW.randomAttack", "UX_defensive_preview_promises_random_attack");
         await Queue(new PlayCardAction(noTarget, null));
-        Check(_target.CurrentHp == hp && Power.State.Used == 1, "UX_no_target_preview_matches_native_skip");
+        Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == 8 && Power.State.Used == 1, "UX_random_preview_matches_native_attack");
 
         var effects = new[] { ComboKind.WindRock, ComboKind.RockLightning, ComboKind.LightningWind }
             .Select(kind => new ElementComboVfx { Kind = kind, Doubled = true }).ToArray();

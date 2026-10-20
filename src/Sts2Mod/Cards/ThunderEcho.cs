@@ -10,6 +10,6 @@ namespace Sts2Mod.Cards;
 public sealed class ThunderEcho : TravelerPowerCard<ThunderEchoPower>
 {
     public ThunderEcho() : base(2, CardRarity.Rare, 3m) { }
-    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_echo.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_echo.png";
     protected override void OnUpgrade() => DynamicVars["PowerAmount"].UpgradeValueBy(2m);
 }

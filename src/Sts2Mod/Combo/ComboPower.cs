@@ -27,7 +27,7 @@ public sealed class ComboPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Single;
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/combo.svg";
+    public override string CustomPackedIconPath => "res://Sts2Mod/art/combo.png";
     public override string CustomBigIconPath => CustomPackedIconPath;
     protected override object InitInternalData() => new ComboState();
     public ComboState State => GetInternalData<ComboState>();
@@ -111,18 +111,25 @@ public sealed class ComboPower : CustomPowerModel
         if (reservation.Kind == ComboKind.RockLightning)
         {
             var target = play.Target;
-            if (target is null || !target.IsAlive || !creature.CombatState!.Creatures.Contains(target))
+            // Self/untargeted defensive skills use the native seeded combat-target RNG.
+            // A targeted attack whose victim died still must not jump to another enemy.
+            var randomTarget = card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy;
+            if (!randomTarget && (target is null || !target.IsAlive || target.Side == creature.Side
+                || !creature.CombatState!.Creatures.Contains(target)))
             {
                 GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=target_dead_or_removed kind=RockLightning");
             }
             else
             {
-                var hp = target.CurrentHp;
-                var attack = await DamageCmd.Attack(bonus).FromCard(card).Targeting(target)
-                    .WithHitFx("vfx/vfx_attack_slash").Execute(context);
-                ShowReward(creature, target, reservation);
-                awarded = attack.Results.SelectMany(results => results).Any(result => result.TotalDamage > 0);
-                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} bonus={bonus}");
+                var attack = DamageCmd.Attack(bonus).FromCard(card);
+                if (randomTarget) attack.TargetingRandomOpponents(creature.CombatState!);
+                else attack.Targeting(target!);
+                await attack.WithHitFx("vfx/vfx_attack_slash").Execute(context);
+                var results = attack.Results.SelectMany(results => results).ToArray();
+                var receiver = results.FirstOrDefault()?.Receiver;
+                if (receiver is not null) ShowReward(creature, receiver, reservation);
+                awarded = results.Any(result => result.TotalDamage > 0);
+                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning target_mode={(randomTarget ? "random" : "selected")} target={receiver?.CombatId} bonus={bonus}");
             }
         }
         else if (reservation.Kind == ComboKind.LightningWind)

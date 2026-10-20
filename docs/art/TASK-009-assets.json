@@ -1,0 +1,173 @@
+[
+  {
+    "name": "wind_guidance",
+    "path": "src/Sts2Mod/Sts2Mod/art/wind_guidance.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2999300,
+    "sha256": "4741D872F80CB8C13873F14736182DC6072BF23E240724C3CFB5ED155022BBB5"
+  },
+  {
+    "name": "rock_heart",
+    "path": "src/Sts2Mod/Sts2Mod/art/rock_heart.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2851615,
+    "sha256": "D301143681A46DF84457137117597555A9209DEA2653239D2C6C51C8C28D723A"
+  },
+  {
+    "name": "thunder_echo",
+    "path": "src/Sts2Mod/Sts2Mod/art/thunder_echo.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2987612,
+    "sha256": "EDE91EF23D341AD3F60A801CDCFEEE39C6DCEB02D0649E7BA4F5A7AC4A8DE6D7"
+  },
+  {
+    "name": "element_resonance",
+    "path": "src/Sts2Mod/Sts2Mod/art/element_resonance.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 3092027,
+    "sha256": "C074B0916AF7EB5DB69334AE902D493DBF7346AE1F95566C5B86D784B5C85534"
+  },
+  {
+    "name": "gale_sweep",
+    "path": "src/Sts2Mod/Sts2Mod/art/gale_sweep.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 3180251,
+    "sha256": "C9BD477C2A3A1F6F2DE484962931BD0F274E5B58597BA22638EF592EFF464030"
+  },
+  {
+    "name": "shattering_rock",
+    "path": "src/Sts2Mod/Sts2Mod/art/shattering_rock.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 3203237,
+    "sha256": "B3126A5D55B3C7D167ADDEB24C3DB60EE9B36CFBB65564DE7FDFC628D0B6C5FC"
+  },
+  {
+    "name": "thunder_mark",
+    "path": "src/Sts2Mod/Sts2Mod/art/thunder_mark.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2743167,
+    "sha256": "FE9A3BB4EBBEABF35AE225BA65F5C9A33C2DA35DAA164EE306C039A4152BA45B"
+  },
+  {
+    "name": "triphase_finale",
+    "path": "src/Sts2Mod/Sts2Mod/art/triphase_finale.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2990698,
+    "sha256": "49181780E62C321D51A3A8EDE02D4F46372B807FBFC7F111DF26BFE00C26B8F9"
+  },
+  {
+    "name": "wind_shelter",
+    "path": "src/Sts2Mod/Sts2Mod/art/wind_shelter.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 3086839,
+    "sha256": "89E357ED2D667F29E741185223F06D9F87FD1C59C1132DF5F777EFA21A2573AF"
+  },
+  {
+    "name": "patient_rampart",
+    "path": "src/Sts2Mod/Sts2Mod/art/patient_rampart.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2881760,
+    "sha256": "798FD6E5D583AF5DE52745D6B67D73E33F5BB8CDF99CC8843BF7A7DF9DF36314"
+  },
+  {
+    "name": "charge_thunder",
+    "path": "src/Sts2Mod/Sts2Mod/art/charge_thunder.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2950507,
+    "sha256": "037DE139F849B0436DB05EC66343CF552DC248AB569F1E585F99FDADD46558CD"
+  },
+  {
+    "name": "journey_plans",
+    "path": "src/Sts2Mod/Sts2Mod/art/journey_plans.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2796814,
+    "sha256": "FD43F02366DD68DBD6845F4A46EDA91C6CE1D69485B80C18F8D23919A2B93EE2"
+  },
+  {
+    "name": "strike",
+    "path": "src/Sts2Mod/Sts2Mod/art/strike.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2922850,
+    "sha256": "4DA45B7E275C4784778931E9B8400A4C30F63178DF0FF1BFDA7279D82E9777FD"
+  },
+  {
+    "name": "defend",
+    "path": "src/Sts2Mod/Sts2Mod/art/defend.png",
+    "width": 1448,
+    "height": 1086,
+    "transparent": false,
+    "bytes": 2758999,
+    "sha256": "DB4B2D76EAF26817046EAEF781EB9361DA69DB025AC8DE231FE45B3ABE13E3E0"
+  },
+  {
+    "name": "compass",
+    "path": "src/Sts2Mod/Sts2Mod/art/compass.png",
+    "width": 1295,
+    "height": 1214,
+    "transparent": true,
+    "bytes": 1996737,
+    "sha256": "E898C298BAC409A26A4D6B4637A4DB2882C3B38C0D4735786A1C2C90038C5522"
+  },
+  {
+    "name": "combo",
+    "path": "src/Sts2Mod/Sts2Mod/art/combo.png",
+    "width": 1254,
+    "height": 1254,
+    "transparent": true,
+    "bytes": 2212199,
+    "sha256": "AE26D167950AFC7187238D164AD8C4014A1D8431291D54CAFD2C39C0824A7CAF"
+  },
+  {
+    "name": "body",
+    "path": "src/Sts2Mod/Sts2Mod/character/body.png",
+    "width": 1237,
+    "height": 1271,
+    "transparent": true,
+    "bytes": 1513034,
+    "sha256": "83D3B97B5847F29E69466E94B4C8B5C335C7CD1C9CA3449B48CC15739F1F6436"
+  },
+  {
+    "name": "icon",
+    "path": "src/Sts2Mod/Sts2Mod/character/icon.png",
+    "width": 1254,
+    "height": 1254,
+    "transparent": true,
+    "bytes": 2540643,
+    "sha256": "9AAF222AEB058E86C4AC251EB0B37C94F1789F0943CC32F3188D7B7E8903E745"
+  },
+  {
+    "name": "select_background",
+    "path": "src/Sts2Mod/Sts2Mod/character/select_background.png",
+    "width": 1672,
+    "height": 941,
+    "transparent": false,
+    "bytes": 2704834,
+    "sha256": "1D5A459CC4DCB50FB73F88ABD55B157892A6238B11AE38B4511BF7D5FBC2CED4"
+  }
+]

@@ -16,7 +16,7 @@ public sealed class PatientRampart : ElementCardModel
 {
     public PatientRampart() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
     public override Element CardElement => Element.Rock;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/patient_rampart.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/patient_rampart.png";
     public override bool GainsBlock => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5m, ValueProp.Move)];

@@ -18,7 +18,7 @@ public sealed class JourneyCompass : CustomRelicModel
     public bool SpentThisTurn => _spent;
     public override RelicRarity Rarity => RelicRarity.Starter;
     public override bool IsStackable => false;
-    public override string PackedIconPath => "res://Sts2Mod/art/compass.svg";
+    public override string PackedIconPath => "res://Sts2Mod/art/compass.png";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
     public override Task BeforeCombatStart()

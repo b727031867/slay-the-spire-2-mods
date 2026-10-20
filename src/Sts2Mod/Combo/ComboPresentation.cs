@@ -30,7 +30,7 @@ public static class ComboPresentation
         {
             ComboKind.WindRock => "block",
             ComboKind.LightningWind => "draw",
-            ComboKind.RockLightning when card.TargetType != TargetType.AnyEnemy => "noTarget",
+            ComboKind.RockLightning when card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy => "randomAttack",
             _ => "attack"
         };
         var text = new LocString("powers", "TC_PREVIEW." + key);

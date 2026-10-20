@@ -9,7 +9,7 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_THUNDER_ECHO")]
 public sealed class ThunderEchoPower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/thunder_echo.svg";
+    public override string CustomPackedIconPath => "res://Sts2Mod/art/thunder_echo.png";
     public override async Task OnComboReward(PlayerChoiceContext context, ComboKind kind, int actualRewardNumber)
     {
         if (!CanReward || kind != ComboKind.RockLightning) return;

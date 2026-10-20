@@ -7,6 +7,23 @@ if ($Full) {
 }
 $text = Get-Content -Raw -LiteralPath $LogFile
 if ($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR') { throw 'Expanded card acceptance failed.' }
+foreach ($asset in @('wind_guidance','rock_heart','thunder_echo','element_resonance','gale_sweep','shattering_rock',
+ 'thunder_mark','triphase_finale','wind_shelter','patient_rampart','charge_thunder','journey_plans',
+ 'strike','defend','compass','combo','body','icon','select_background')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS ART_final_png_$asset")) { throw "Missing final art: $asset" }
+}
+foreach ($up in @('False','True')) {
+    foreach ($id in @('TC_C02','TC_C16','TC_C06','TC_C17')) {
+        if (!$text.Contains("STS2MOD_TEST_PASS RANDOM_seeded_single_living_target_${id}_$up")) { throw "Missing defensive random target: $id/$up" }
+    }
+}
+foreach ($case in @('only_living_enemy_selected','shared_cap_no_fourth_hit_or_rng','zero_damage_no_echo_or_actual_reward')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS RANDOM_$case")) { throw "Missing random boundary: $case" }
+}
+if (!$text.Contains('STS2MOD_TEST_PASS ART_character_native_battle_scale_312px') -or
+    $text -notmatch '(?m)^STS2MOD_RANDOM_COMBO_COMPLETE cases=11 seeded_rng=native cap=3 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
+    throw 'Final art/random-combo suite incomplete.'
+}
 foreach ($case in @('pool_18_types_7_7_4','rarity_8_7_3','all_ids_once','boss_native_rare_rewards',
  'retain_keyword_survives_native_flush','plans_empty_hand_returns_without_choice','plans_upgraded_can_skip',
  'rock_heart_stacks_caps_4_plus_6','rock_heart_does_not_create_missing_block','rock_heart_does_not_restore_enemy_consumed_block',
@@ -14,7 +31,7 @@ foreach ($case in @('pool_18_types_7_7_4','rarity_8_7_3','all_ids_once','boss_na
  'guidance_resets_on_next_turn','guidance_new_copy_can_trigger_after_old_spent',
  'zero_draw_does_not_consume_actual_reward','guidance_after_blocked_draw_still_triggers',
  'paimon_combo2_guidance1_compass1','echo_stacks_3_plus_5_and_hits_all','echo_repeats_on_second_rock_lightning',
- 'echo_unaffected_by_paimon_or_strength','targetless_combo_does_not_trigger_abilities','base_kill_does_not_trigger_echo',
+ 'echo_unaffected_by_paimon_or_strength','random_defensive_attack_triggers_echo_and_actual_reward','base_kill_does_not_trigger_echo',
  'zero_attack_damage_does_not_trigger_echo',
  'resonance_third_reward_grants_one_per_copy','resonance_cap_does_not_repeat',
  'extra_turn_resets_actual_reward_counter','resonance_can_trigger_on_extra_turn',

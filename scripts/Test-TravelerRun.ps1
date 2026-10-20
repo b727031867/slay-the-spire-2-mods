@@ -35,7 +35,7 @@ if ($Acquisition) {
             'TC23_tailwind_draw1_exhaust_wind','TC13_tailwind_upgrade_draw2','TC03_lightning_wind_base_draw1_bonus_draw1',
             'TC11_burst_tailwind_two_base_resolutions_one_combo_draw','TC13_rock_advance_damage5_then_block3',
             'TC13_rock_advance_upgrade_damage7_block5','TC13_thunder_prep_block5_then_draw1',
-            'TC13_thunder_prep_upgrade_block8_draw1','rock_to_targetless_thunder_consumes_combo_without_retarget',
+            'TC13_thunder_prep_upgrade_block8_draw1','rock_to_defensive_thunder_attacks_random_enemy',
             'new_cards_lightning_wind_draw_order','reverse_wind_lightning_draws_bonus','reverse_lightning_rock_attacks_same_target',
             'TC12_paimon_doubles_wind_rock_block',
             'TC12_paimon_doubles_rock_lightning_attack','TC12_paimon_doubles_lightning_wind_draw',

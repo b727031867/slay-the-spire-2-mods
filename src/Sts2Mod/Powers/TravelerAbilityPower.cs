@@ -11,7 +11,7 @@ public abstract class TravelerAbilityPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/compass.svg";
+    public override string CustomPackedIconPath => "res://Sts2Mod/art/compass.png";
     public override string CustomBigIconPath => CustomPackedIconPath;
     protected bool CanReward => Owner.IsAlive && CombatManager.Instance.IsInProgress
         && !CombatManager.Instance.IsEnding && Owner.CombatState?.Enemies.Any(e => e.IsAlive) == true;

@@ -10,7 +10,7 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_ROCK_HEART")]
 public sealed class RockHeartPower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/rock_heart.svg";
+    public override string CustomPackedIconPath => "res://Sts2Mod/art/rock_heart.png";
     private int _carryCap;
     public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
     {
