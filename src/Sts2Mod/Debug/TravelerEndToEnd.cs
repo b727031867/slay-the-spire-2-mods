@@ -32,8 +32,7 @@ namespace Sts2Mod.Debug;
 public partial class TravelerTestRunner
 {
     private sealed record SaveExpectation(string[] Cards, string[] Relics, int Gold);
-    private static readonly Type[] ThemeTypes = [typeof(WindBlade), typeof(RockGuard), typeof(LightningThrust),
-        typeof(TailwindPrep), typeof(RockAdvance), typeof(ThunderPrep)];
+    private static readonly Type[] ThemeTypes = TravelerContent.RewardCardTypes.ToArray();
     private static bool IsTheme(CardModel card) => ThemeTypes.Contains(card.GetType());
     private string ExpectationPath => Path.Combine(TestSaveSandbox.Root, "expectation.json");
     private SaveExpectation Snapshot() => new(
@@ -66,7 +65,7 @@ public partial class TravelerTestRunner
             }
         }
         Check(ThemeTypes.All(t => _player.Deck.Cards.Any(c => c.GetType() == t && c.CurrentUpgradeLevel == 0)
-            && _player.Deck.Cards.Any(c => c.GetType() == t && c.CurrentUpgradeLevel == 1)), "TASK003_save_fixture_six_base_and_upgrades");
+            && _player.Deck.Cards.Any(c => c.GetType() == t && c.CurrentUpgradeLevel == 1)), "TASK008_save_fixture_eighteen_base_and_upgrades");
         await EnterOrdinaryMapCombat();
         await SaveManager.Instance.SaveRun(null);
         Check(SaveManager.Instance.HasRunSave, "TASK003_native_disk_save_exists");
@@ -76,7 +75,7 @@ public partial class TravelerTestRunner
         await Play<WindBlade>();
         Check(Power.State.Last == Element.Wind, "TASK003_leave_unsaved_wind_before_exit");
         // Native combat-entry rollback is the supported boundary, not arbitrary mid-action continuation.
-        GD.Print($"STS2MOD_E2E_PREPARED assertions={_assertions} cards=6 upgrades=6 paimon=1 shouldSave={RunManager.Instance.ShouldSave} boundary=combat_entry");
+        GD.Print($"STS2MOD_E2E_PREPARED assertions={_assertions} cards=18 upgrades=18 paimon=1 shouldSave={RunManager.Instance.ShouldSave} boundary=combat_entry");
         await ExitThroughNativeMenu();
     }
 
@@ -230,14 +229,13 @@ public partial class TravelerTestRunner
 
     private static Element CardElement(CardModel c) => c switch
     {
-        WindBlade or TailwindPrep => Element.Wind,
-        RockGuard or RockAdvance => Element.Rock,
-        LightningThrust or ThunderPrep => Element.Lightning,
+        ElementCardModel elemental => elemental.CardElement,
         _ => Element.None
     };
 
     private async Task RunContinuousBattles()
     {
+        using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var totalActions = 0; var totalCombos = 0; var totalTurns = 0; var naturalWins = 0;
         for (var battle = 1; battle <= 6; battle++)
         {
@@ -252,10 +250,11 @@ public partial class TravelerTestRunner
             await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay, "soak combat start");
             Check(Power.State.Used == 0 && Power.State.Last == Element.None, "TASK003_soak_fresh_state_battle_" + battle);
             var oracle = new ComboState();
+            var expectedEnergy = _player.MaxEnergy;
             for (var turn = 1; turn <= 4 && CombatManager.Instance.IsInProgress; turn++)
             {
                 totalTurns++;
-                Check(_player.PlayerCombatState!.Energy == _player.MaxEnergy, "TASK003_soak_native_energy_b" + battle + "_t" + turn);
+                Check(_player.PlayerCombatState!.Energy == expectedEnergy, "TASK003_soak_native_energy_b" + battle + "_t" + turn);
                 var turnActions = 0;
                 while (CombatManager.Instance.IsInProgress && turnActions < 30)
                 {
@@ -271,9 +270,11 @@ public partial class TravelerTestRunner
                     if (expected.Triggered) totalCombos++;
                     var stillFighting = CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsEnding
                         && _player.Creature.CombatState?.Enemies.Any(e => e.IsAlive) == true;
-                    Check(state.Used == oracle.Used && (!stillFighting || state.Last == oracle.Last) && state.Used <= 3,
+                    if (!stillFighting) await Until(() => !CombatManager.Instance.IsInProgress, "soak natural combat cleanup");
+                    Check(stillFighting ? state.Used == oracle.Used && state.Last == oracle.Last && state.Used <= 3
+                        : state.Used == 0 && state.Last == Element.None,
                         "TASK003_soak_sequence_b" + battle + "_t" + turn + "_a" + turnActions);
-                    Check(_player.PlayerCombatState!.Energy >= 0 && PileType.Hand.GetPile(_player).Cards.Count <= 10,
+                    Check(!stillFighting || (_player.PlayerCombatState!.Energy >= 0 && PileType.Hand.GetPile(_player).Cards.Count <= 10),
                         "TASK003_soak_energy_hand_bounds_b" + battle + "_t" + turn + "_a" + turnActions);
                     totalActions++; turnActions++;
                 }
@@ -281,6 +282,7 @@ public partial class TravelerTestRunner
                 if (!CombatManager.Instance.IsInProgress) { naturalWins++; break; }
                 if (turn == 4) break;
                 var number = _player.PlayerCombatState!.TurnNumber;
+                expectedEnergy = _player.MaxEnergy + (_player.Creature.GetPower<MegaCrit.Sts2.Core.Models.Powers.EnergyNextTurnPower>()?.Amount ?? 0);
                 await Queue(new EndPlayerTurnAction(_player, number));
                 await Until(() => !CombatManager.Instance.IsInProgress || (_player.PlayerCombatState!.TurnNumber > number && ReadyToPlay), "soak next native turn");
                 oracle.BeginTurn();

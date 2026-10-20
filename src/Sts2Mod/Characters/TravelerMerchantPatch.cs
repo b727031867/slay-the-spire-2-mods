@@ -6,8 +6,8 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace Sts2Mod.Characters;
 
-// The six-card framework has no Power cards yet. Native shops require a Power slot.
-// Fill a missing type from an available non-Basic type, scoped to this character.
+// Guard future restricted pools that omit a shop type. The current 18-card pool
+// has attacks, skills and powers, so normal native slots need no substitution.
 [HarmonyPatch(typeof(CardFactory), nameof(CardFactory.CreateForMerchant),
     new Type[] { typeof(Player), typeof(IEnumerable<CardModel>), typeof(CardType) })]
 internal static class TravelerMerchantPatch

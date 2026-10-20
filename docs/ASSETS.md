@@ -18,4 +18,6 @@ TASK-005 / 0.1.3：运行时改用`src/Sts2Mod/Sts2Mod/art/`下wind.png、rock.p
 
 ## 0.2.0 角色框架素材
 
+0.3.0新卡及能力图标：`wind_guidance.svg`、`rock_heart.svg`、`thunder_echo.svg`、`element_resonance.svg`、`gale_sweep.svg`、`shattering_rock.svg`、`thunder_mark.svg`、`triphase_finale.svg`、`wind_shelter.svg`、`patient_rampart.svg`、`charge_thunder.svg`、`journey_plans.svg`均由本项目通过矢量代码绘制，为可辨识的临时牌图/图标。没有导入外部作品素材，不是生成式图片，不冒称最终角色美术。
+
 `Sts2Mod/character/body.svg`、`icon.svg`、选人背景场景、战斗动画场景，以及 `art/compass.svg`、`strike.svg`、`defend.svg` 为本项目代码绘制的原创简化矢量素材，不是生成式图片或实机截图。角色为通用旅行者概念，不使用主题作品立绘。动画为Godot属性动画。原生能量、拖尾、手势、营地/商人及音效通过游戏已有资源路径引用，不打包复制游戏素材；属于临时演出占位，后续可替换。既有六张卡图和派蒙图标继续使用TASK-005记录的生成式插图。

@@ -12,7 +12,7 @@ $required=if ($Phase -eq 'Prepare') {
       'TASK003_sold_card_slot_not_stocked','TASK003_native_shop_paimon_purchase',
       'TASK003_sold_paimon_slot_not_stocked','TASK003_obtained_paimon_absent_from_both_bags',
       'TASK003_paimon_not_offered_again_0','TASK003_paimon_not_offered_again_1','TASK003_paimon_not_offered_again_2',
-      'TASK003_save_fixture_six_base_and_upgrades','TASK003_native_disk_save_exists','TASK003_leave_unsaved_wind_before_exit')
+      'TASK008_save_fixture_eighteen_base_and_upgrades','TASK003_native_disk_save_exists','TASK003_leave_unsaved_wind_before_exit')
 } else {
     @('TASK003_native_saved_run_read','TASK003_disk_reload_exact_deck_and_upgrades',
       'TASK003_disk_reload_exact_relics_and_gold','TASK003_reload_no_duplicate_relic_or_stale_combo',
@@ -24,7 +24,7 @@ foreach ($case in $required) {
     if ($text -notmatch ('(?m)^STS2MOD_TEST_PASS '+[regex]::Escape($case)+'\r?$')) { throw "Missing passing case: $case" }
 }
 if ($Phase -eq 'Prepare') {
-    if ($text -notmatch '(?m)^STS2MOD_E2E_PREPARED assertions=\d+ cards=6 upgrades=6 paimon=1 shouldSave=True boundary=combat_entry\r?$') { throw 'Prepare phase incomplete.' }
+    if ($text -notmatch '(?m)^STS2MOD_E2E_PREPARED assertions=\d+ cards=18 upgrades=18 paimon=1 shouldSave=True boundary=combat_entry\r?$') { throw 'Prepare phase incomplete.' }
     foreach ($source in @('source=room card=TC_C','source=shop card=TC_C','source=shop relic=TC_R01')) {
         if (!$text.Contains('STS2MOD_E2E_ACQUIRED '+$source)) { throw "Missing acquisition provenance: $source" }
     }

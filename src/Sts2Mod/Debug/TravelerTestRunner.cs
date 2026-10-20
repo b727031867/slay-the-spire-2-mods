@@ -96,9 +96,12 @@ public partial class TravelerTestRunner : Node
 
     private async Task StartFreshCombat()
     {
-        await CreatureCmd.Kill(_player.Creature.CombatState!.Enemies.ToArray(), force: true);
-        await CombatManager.Instance.CheckWinCondition();
-        await Until(() => !CombatManager.Instance.IsInProgress, "combat end before fresh fixture");
+        if (CombatManager.Instance.IsInProgress)
+        {
+            await CreatureCmd.Kill(_player.Creature.CombatState!.Enemies.ToArray(), force: true);
+            await CombatManager.Instance.CheckWinCondition();
+            await Until(() => !CombatManager.Instance.IsInProgress, "combat end before fresh fixture");
+        }
         var encounter = ModelDb.Encounter<CultistsNormal>().ToMutable();
         encounter.DebugRandomizeRng();
         await RunManager.Instance.EnterRoomDebug(RoomType.Monster, model: encounter);
@@ -146,6 +149,12 @@ public partial class TravelerTestRunner : Node
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(20m, _player);
         await TestTravelerCharacter();
+        if (CommandLineHelper.HasArg("sts2mod-cards"))
+        {
+            await TestExpandedCards();
+            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=18 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
+            return;
+        }
         if (CommandLineHelper.HasArg("sts2mod-character"))
         {
             GD.Print($"STS2MOD_CHARACTER_COMPLETE assertions={_assertions} singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave={RunManager.Instance.ShouldSave}");
@@ -234,6 +243,7 @@ public partial class TravelerTestRunner : Node
         if (!CombatManager.Instance.IsInProgress) await StartFreshCombat();
         await TestPresentation();
         await TestContinuousCombos();
+        await TestExpandedCards();
         await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
     }

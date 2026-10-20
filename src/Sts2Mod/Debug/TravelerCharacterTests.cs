@@ -58,8 +58,8 @@ public partial class TravelerTestRunner
             "CHAR_exact_ten_card_starter");
         Check(_player.Relics.Count == 1 && _player.Relics.Single() is JourneyCompass, "CHAR_compass_only_starting_relic");
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).ToArray();
-        Check(pool.Length == 8 && ThemeTypes.All(type => pool.Count(card => card.GetType() == type) == 1)
-            && pool.All(card => card.Pool is TravelerCardPool), "CHAR_eight_models_six_reward_cards_in_exclusive_pool");
+        Check(pool.Length == 20 && ThemeTypes.All(type => pool.Count(card => card.GetType() == type) == 1)
+            && pool.All(card => card.Pool is TravelerCardPool), "CHAR_twenty_models_eighteen_reward_cards_in_exclusive_pool");
         Check(!ModelDb.CardPool<IroncladCardPool>().AllCards.Any(IsTheme)
             && !ModelDb.CardPool<SilentCardPool>().AllCards.Any(IsTheme)
             && !ModelDb.Character<Ironclad>().StartingDeck.Any(IsTheme), "CHAR_ironclad_and_silent_no_theme_cards");
@@ -135,6 +135,6 @@ public partial class TravelerTestRunner
             "CHAR_compass_triggers_after_earlier_skipped_rewards");
         await RelicCmd.Remove(compass);
         await NextTurn();
-        GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=6 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
+        GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=18 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 }

@@ -33,7 +33,8 @@ public sealed class JourneyCompass : CustomRelicModel
     }
     public async Task OnComboReward(PlayerChoiceContext context)
     {
-        if (IsMelted || SpentThisTurn || !Owner.Creature.IsAlive || !CombatManager.Instance.IsInProgress || CombatManager.Instance.IsEnding) return;
+        if (IsMelted || SpentThisTurn || !Owner.Creature.IsAlive || !CombatManager.Instance.IsInProgress || CombatManager.Instance.IsEnding
+            || Owner.Creature.CombatState?.Enemies.Any(enemy => enemy.IsAlive) != true) return;
         // Reserve before awaiting Draw: nested native callbacks cannot award twice.
         _spent = true;
         Flash();

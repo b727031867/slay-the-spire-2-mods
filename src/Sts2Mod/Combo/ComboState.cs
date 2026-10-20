@@ -15,12 +15,14 @@ public sealed class ComboState
     private readonly HashSet<object> _seen = new(ReferenceEqualityComparer.Instance);
     public Element Last { get; private set; }
     public int Used { get; private set; }
+    public int RewardsThisTurn { get; private set; }
     public int Remaining => Limit - Used;
     // Always positive: the engine removes powers whose amount reaches zero.
     public int Encoded => 1 + (int)Last + 4 * Used;
 
-    public void BeginTurn() => Used = 0;
-    public void ClearCombat() { Last = Element.None; Used = 0; }
+    public void BeginTurn() { Used = 0; RewardsThisTurn = 0; }
+    public void ClearCombat() { Last = Element.None; Used = 0; RewardsThisTurn = 0; }
+    public int MarkRewardGranted() => ++RewardsThisTurn;
 
     // Read-only: hovering must never reserve an action or spend a combo use.
     public ComboKind Preview(Element element) => Used >= Limit ? ComboKind.None : Pair(Last, element);

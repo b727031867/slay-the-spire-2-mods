@@ -15,6 +15,8 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Relics;
+using Sts2Mod.Powers;
+using Sts2Mod.Cards;
 
 namespace Sts2Mod.Combo;
 
@@ -58,7 +60,7 @@ public sealed class ComboPower : CustomPowerModel
     private void RefreshHand()
     {
         if (DisplayServer.GetName() == "headless" || Owner?.Player is not { } player || !CombatManager.Instance.IsInProgress) return;
-        foreach (var card in PileType.Hand.GetPile(player).Cards.OfType<ElementCardModel>())
+        foreach (var card in PileType.Hand.GetPile(player).Cards.Where(card => card is ElementCardModel or TriphaseFinale))
         {
             var node = NCard.FindOnTable(card);
             if (node is not null && GodotObject.IsInstanceValid(node) && node.IsInsideTree())
@@ -116,10 +118,10 @@ public sealed class ComboPower : CustomPowerModel
             else
             {
                 var hp = target.CurrentHp;
-                await DamageCmd.Attack(bonus).FromCard(card).Targeting(target)
+                var attack = await DamageCmd.Attack(bonus).FromCard(card).Targeting(target)
                     .WithHitFx("vfx/vfx_attack_slash").Execute(context);
                 ShowReward(creature, target, reservation);
-                awarded = true;
+                awarded = attack.Results.SelectMany(results => results).Any(result => result.TotalDamage > 0);
                 GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning hp_before={hp} hp_after={target.CurrentHp} bonus={bonus}");
             }
         }
@@ -137,12 +139,18 @@ public sealed class ComboPower : CustomPowerModel
             creature.GetPower<ComboPower>()?.Flash();
             await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
             ShowReward(creature, creature, reservation);
-            awarded = true;
+            awarded = creature.Block > before;
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
         }
-        if (awarded)
+        if (awarded && creature.IsAlive && CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsEnding
+            && creature.CombatState?.Enemies.Any(enemy => enemy.IsAlive) == true)
+        {
+            var actualRewardNumber = creature.GetPower<ComboPower>()!.State.MarkRewardGranted();
+            foreach (var ability in creature.Powers.OfType<TravelerAbilityPower>().ToArray())
+                await ability.OnComboReward(context, reservation.Kind, actualRewardNumber);
             foreach (var compass in card.Owner.Relics.OfType<JourneyCompass>().ToArray())
                 await compass.OnComboReward(context);
+        }
     }
 
     private static void ShowReward(Creature creature, Creature effectTarget, Reservation reservation, int? actualDraw = null)
