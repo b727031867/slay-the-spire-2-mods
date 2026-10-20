@@ -3,11 +3,14 @@ $ErrorActionPreference = 'Stop'
 # Match the native source context as well as the message. A generic null/RID
 # error from gameplay or any other subsystem must never become a passing test.
 $nativeHeadlessSources = @{
-    'ERROR: Attempting to initialize the wrong RID' = '^at: initialize_rid \(.*core/templates/rid_owner\.h:\d+\)$'
+    # Godot 4.5.1 emits this from get_or_null(), called by initialize_rid().
+    # Additionally require its adjacent dummy-renderer cascade below.
+    'ERROR: Attempting to initialize the wrong RID' = '^at: get_or_null \(.*core/templates/rid_owner\.h:\d+\)$'
     'ERROR: Initializing already initialized RID' = '^at: get_or_null \(.*core/templates/rid_owner\.h:\d+\)$'
     'ERROR: Attempting to use an uninitialized RID' = '^at: get_or_null \(.*core/templates/rid_owner\.h:\d+\)$'
     'ERROR: Parameter "mem" is null.' = '^at: initialize_rid \(.*core/templates/rid_owner\.h:\d+\)$'
     'ERROR: Parameter "shader" is null.' = '^at: shader_set_code \(.*servers/rendering/dummy/storage/material_storage\.cpp:\d+\)$'
+    'ERROR: Parameter "material" is null.' = '^at: material_set_shader \(.*servers/rendering/dummy/storage/material_storage\.cpp:\d+\)$'
     'ERROR: Parameter "t" is null.' = '^at: texture_2d_initialize \(.*servers/rendering/dummy/storage/texture_storage\.h:\d+\)$'
 }
 $unexpected = [Collections.Generic.List[string]]::new()
@@ -29,7 +32,13 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($nativeQuit -and $line -eq '[INFO] Steamworks shutdown succeeded!') { $steamStopped = $true }
     if ($line -notmatch '^ERROR:') { continue }
     $source = if ($i + 1 -lt $lines.Count) { $lines[$i + 1].Trim() } else { '' }
-    if ($Headless -and $nativeHeadlessSources.ContainsKey($line) -and $source -match $nativeHeadlessSources[$line]) {
+    $contextAllowed = $true
+    if ($line -eq 'ERROR: Attempting to initialize the wrong RID') {
+        $following = $lines[$i..([Math]::Min($i + 9, $lines.Count - 1))] -join "`n"
+        $contextAllowed = $following -match 'ERROR: Parameter "shader" is null\.\n\s*at: shader_set_code \(servers/rendering/dummy/storage/material_storage\.cpp:\d+\)' -or
+            $following -match 'ERROR: Parameter "material" is null\.\n\s*at: material_set_shader \(servers/rendering/dummy/storage/material_storage\.cpp:\d+\)'
+    }
+    if ($Headless -and $contextAllowed -and $nativeHeadlessSources.ContainsKey($line) -and $source -match $nativeHeadlessSources[$line]) {
         $known.Add($line)
     } elseif ($Headless -and $NativeShutdown -and $steamStopped -and
         (($line -match "^ERROR: \d+ RID allocations of type '([^']+)' were leaked at exit\.$" -and $Matches[1] -in $shutdownTypes) -or

@@ -1,10 +1,10 @@
-[b]0.2.0：新增可选旅行者。初始75生命、3能量、99金币；10张起始卡组，旅途罗盘每场战斗首次实际连携奖励时额外抽1张。六张牌和派蒙转为旅行者专属。角色使用简化原创形象，部分营地/商人/能量演出暂复用原生占位。当前验证见TASK-007报告。[/b]
+[b]0.2.0：新增可选旅行者。初始75生命、3能量、99金币；10张起始卡组，旅途罗盘每场战斗首次实际连携奖励时额外抽1张。六张牌和派蒙转为旅行者专属。角色使用简化原创形象，部分营地/商人/能量演出暂复用原生占位。0.2.0已通过42项角色专项、含专项的195项全量断言、13项获取保存和281项恢复/受控连续战斗断言；普通无测试启动通过。当前验证见TASK-007报告。[/b]
 
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
 新增可选角色「旅行者」，拥有六张风、岩、雷专属卡牌、罕见专属遗物「派蒙的应援」和起始遗物「旅途罗盘」。通过主动出牌顺序搭配攻击、防御和抽牌。包含简体中文与英文文本。
 
 [b]单人技术测试版 0.2.0 · 旅行者角色框架候选[/b]
-仅验证 Windows x64、游戏 v0.107.1 / build 23811903、BaseLib 3.4.7。本 Mod 严格检查 BaseLib 版本。工坊 BaseLib 自动更新，订阅前置不保证取得 3.4.7；0.1.2已通过PC-A纯订阅无GUI启动、规则与磁盘恢复验收；0.1.4已通过153项机制/展示/连续连携无GUI断言及普通启动，玩法平衡待自然试玩，详见最新回归报告；PC-B独立安装和图形操作仍未验收。BaseLib其他版本及联机支持尚未验证。
+仅验证 Windows x64、游戏 v0.107.1 / build 23811903、BaseLib 3.4.7。本 Mod 严格检查 BaseLib 版本。工坊 BaseLib 自动更新，订阅前置不保证取得 3.4.7；0.1.2已通过PC-A纯订阅无GUI启动、规则与磁盘恢复验收；0.2.0已通过角色/连携回归与隔离磁盘恢复，图形和玩法平衡待自然试玩，详见TASK-007回归报告；PC-B独立安装和图形操作仍未验收。BaseLib其他版本及联机支持尚未验证。
 
 [h2]内容[/h2]
 风起之刃、岩之守护、雷光突刺、顺风整备、磐岩进击、雷鸣整备，各有一次升级。卡牌进入铁甲战士正常奖励及商店；派蒙进入共享罕见遗物池。不新增角色、不固定赠送卡牌或遗物。
@@ -28,7 +28,7 @@
 
 [h2]English[/h2]
 A playable Traveler character with six exclusive elemental cards, the exclusive Uncommon relic Paimon's Cheer, and Journey Compass as its starting relic. Wind/Rock grants block, Rock/Lightning attacks the triggering card's same living enemy target, and Lightning/Wind draws cards. Either order works. All pairs share a three-per-player-per-turn limit; each pair retains the element just played so the next adjacent pair can trigger. Wind/Rock/Wind grants two Block rewards; Wind/Rock/Lightning grants Block then an attack. Paimon doubles each combo reward.
-Singleplayer technical test build. Validated baseline: Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7 ONLY. Other BaseLib versions are rejected. Version 0.1.2 passed PC-A headless Workshop installation and reload acceptance; version 0.1.4 passed 153 headless assertions and normal startup; natural-run balance needs playtesting; PC-B independent installation and graphical interaction remain unverified; the required item's automatic updates do not pin its version. Multiplayer, complete graphical review, natural full runs and balance are unverified. Preview images are explanatory artwork, not gameplay screenshots.
+Singleplayer technical test build. Validated baseline: Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7 ONLY. Other BaseLib versions are rejected. Version 0.1.2 passed PC-A headless Workshop installation and reload acceptance; version 0.2.0 passed character and combo regression, native disk reload and normal headless startup; natural-run balance needs playtesting; PC-B independent installation and graphical interaction remain unverified; the required item's automatic updates do not pin its version. Multiplayer, complete graphical review, natural full runs and balance are unverified. Preview images are explanatory artwork, not gameplay screenshots.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系。未附带游戏资源、主题作品图片或音频。
 

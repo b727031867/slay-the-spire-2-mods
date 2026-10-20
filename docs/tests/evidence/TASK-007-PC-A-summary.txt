@@ -1,0 +1,27 @@
+STS2MOD_READY version=0.2.0+a6c3a2ae1ee348120d035cd8b9425f7dde945391 baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=0.
+TRAVELER_CHARACTER_PASS starter=10 exclusive_cards=6 starter_relic=1 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN
+STS2MOD_READY version=0.2.0+a6c3a2ae1ee348120d035cd8b9425f7dde945391 baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=1, native shutdown diagnostics=0.
+Traveler singleplayer test evidence passed. UI and multiplayer require their own recorded checks.
+EXPERIENCE_PASS total=195 presentation=28 rendering=NOT_RUN
+CONTINUOUS_COMBO_PASS cases=18 rules=overlapping_pairs cap=3 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN
+TRAVELER_CHARACTER_PASS starter=10 exclusive_cards=6 starter_relic=1 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN
+STS2MOD_READY version=0.2.0+a6c3a2ae1ee348120d035cd8b9425f7dde945391 baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=4, native shutdown diagnostics=9.
+TASK003_END_TO_END_PASS phase=Prepare assertions=13
+STS2MOD_READY version=0.2.0+a6c3a2ae1ee348120d035cd8b9425f7dde945391 baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=0, native shutdown diagnostics=9.
+TASK003_END_TO_END_PASS phase=Resume assertions=281
+STS2MOD_READY version=0.2.0+a6c3a2ae1ee348120d035cd8b9425f7dde945391 baselib=3.4.7 resource=ok
+PASS: one initialization, pinned dependency/resources, main menu reached; unexpected errors=0, known native headless errors=3, native shutdown diagnostics=0.
+NORMAL_TEST_MARKERS=0
+COMBO_RULES_PASS assertions=48
+LOG_CLASSIFICATION_TOTAL_PASS assertions=20
+FINAL_WORKSHOP_PRIVATE=true
+FINAL_SEVEN_FILES_MATCH_CANDIDATE=true
+COVER_AND_GALLERY_HTTP=200
+CDN_SOURCE_HASHES_MATCH=true
+GITHUB_DRAFT=true
+GITHUB_ASSET_SERVER_SHA256_MATCH=true
+GAME_PROCESSES=0

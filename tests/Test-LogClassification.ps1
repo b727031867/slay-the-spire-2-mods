@@ -9,6 +9,13 @@ $cases = @(
     @{ Name='unknown error remains failure'; Headless=$true; Text="ERROR: Card resolution failed`n   at: OnPlay (card.cs:1)"; Unexpected=1; Known=0 }
     @{ Name='native dummy texture in headless'; Headless=$true; Text="ERROR: Parameter `"t`" is null.`n   at: texture_2d_initialize (servers/rendering/dummy/storage/texture_storage.h:84)"; Unexpected=0; Known=1 }
     @{ Name='same texture null from gameplay rejected'; Headless=$true; Text="ERROR: Parameter `"t`" is null.`n   at: Resolve (card.cs:84)"; Unexpected=1; Known=0 }
+    @{ Name='wrong RID requires adjacent dummy cascade'; Headless=$true; Text="ERROR: Attempting to initialize the wrong RID`n   at: get_or_null (./core/templates/rid_owner.h:250)"; Unexpected=1; Known=0 }
+    @{ Name='wrong RID dummy cascade matches real engine function'; Headless=$true; Text="ERROR: Attempting to initialize the wrong RID`n   at: get_or_null (./core/templates/rid_owner.h:250)`nERROR: Parameter `"shader`" is null.`n   at: shader_set_code (servers/rendering/dummy/storage/material_storage.cpp:163)"; Unexpected=0; Known=2 }
+    @{ Name='wrong RID cascade not ignored in graphical mode'; Headless=$false; Text="ERROR: Attempting to initialize the wrong RID`n   at: get_or_null (./core/templates/rid_owner.h:250)`nERROR: Parameter `"shader`" is null.`n   at: shader_set_code (servers/rendering/dummy/storage/material_storage.cpp:163)"; Unexpected=2; Known=0 }
+    @{ Name='wrong RID gameplay source rejected even beside dummy shader'; Headless=$true; Text="ERROR: Attempting to initialize the wrong RID`n   at: Resolve (card.cs:250)`nERROR: Parameter `"shader`" is null.`n   at: shader_set_code (servers/rendering/dummy/storage/material_storage.cpp:163)"; Unexpected=1; Known=1 }
+    @{ Name='wrong RID dummy material cascade matches real engine functions'; Headless=$true; Text="ERROR: Attempting to initialize the wrong RID`n   at: get_or_null (./core/templates/rid_owner.h:250)`nERROR: Parameter `"material`" is null.`n   at: material_set_shader (servers/rendering/dummy/storage/material_storage.cpp:251)"; Unexpected=0; Known=2 }
+    @{ Name='dummy material message rejected without headless'; Headless=$false; Text="ERROR: Parameter `"material`" is null.`n   at: material_set_shader (servers/rendering/dummy/storage/material_storage.cpp:251)"; Unexpected=1; Known=0 }
+    @{ Name='same material null from gameplay rejected'; Headless=$true; Text="ERROR: Parameter `"material`" is null.`n   at: SetCardMaterial (card.cs:251)"; Unexpected=1; Known=0 }
 )
 foreach ($case in $cases) {
     $result = & $classifier -Text $case.Text -Headless:$case.Headless
