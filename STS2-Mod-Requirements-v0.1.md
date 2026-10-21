@@ -1,6 +1,6 @@
 # 旅行者·元素连携：当前需求
 
-当前版本0.3.5，文件名保留以兼容已有链接。交付状态见[STATUS](docs/STATUS.md)，版本演进仅见[更新日志](docs/player/CHANGELOG.md)。
+当前版本0.3.6，文件名保留以兼容已有链接。交付状态见[STATUS](docs/STATUS.md)，版本演进仅见[更新日志](docs/player/CHANGELOG.md)。
 
 ## 内容与规则
 
