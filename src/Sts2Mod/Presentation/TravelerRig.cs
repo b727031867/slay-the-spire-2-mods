@@ -7,7 +7,7 @@ namespace Sts2Mod.Presentation;
 public partial class TravelerRig : Node2D
 {
     public const string AtlasPath = "res://Sts2Mod/character/layers/atlas.png";
-    public const float RigScale = 312f / 344f;
+    public const float RigScale = 312f / 315f;
     public string ActionName { get; private set; } = "Idle";
     public Element Style { get; set; }
     public bool CardActive { get; set; }
@@ -54,18 +54,25 @@ public partial class TravelerRig : Node2D
             joint.AddChild(sprite);
             _parts.Add(sprite);
         }
-        _leftLeg = Joint("LeftLeg", this, new(-25, -116)); Part(_leftLeg, 9, 116, Vector2.Zero);
-        _rightLeg = Joint("RightLeg", this, new(28, -116)); Part(_rightLeg, 10, 116, Vector2.Zero);
-        _torso = Joint("Torso", this, new(0, -160));
-        _cape = Joint("Cape", _torso, new(-28, -108)); Part(_cape, 2, 105, new(-60, 0));
-        _freeArm = Joint("FreeArm", _torso, new(38, -100)); Part(_freeArm, 7, 52, new(0, -6));
-        _freeForearm = Joint("FreeForearm", _freeArm, new(0, 41)); Part(_freeForearm, 8, 53, new(0, -6));
-        _coat = Joint("Coat", _torso, new(0, -3)); Part(_coat, 3, 145, new(0, -8));
-        var chest = Joint("Chest", _torso, Vector2.Zero); Part(chest, 1, 125, new(0, -125));
-        _head = Joint("Head", _torso, new(9, -119)); Part(_head, 0, 76, new(0, -65));
-        _arm = Joint("SwordArm", _torso, new(-37, -100)); Part(_arm, 4, 55, new(0, -9));
-        _forearm = Joint("SwordForearm", _arm, new(0, 41)); Part(_forearm, 5, 55, new(0, -8));
-        _sword = Joint("Sword", _forearm, new(0, 39)); Part(_sword, 6, 128, new(0, -13));
+        // The atlas cells are independently sized illustrations, not equally scaled bones.
+        // Fit a ~6.3-head adult silhouette: waist at 170/315, visible lower legs,
+        // and overlapping shoulder/elbow/neck pivots. Never stretch either texture axis.
+        _leftLeg = Joint("LeftLeg", this, new(-23, -104)); Part(_leftLeg, 9, 104, Vector2.Zero);
+        _rightLeg = Joint("RightLeg", this, new(26, -104)); Part(_rightLeg, 10, 104, Vector2.Zero);
+        _torso = Joint("Torso", this, new(0, -170));
+        _cape = Joint("Cape", _torso, new(-25, -96)); Part(_cape, 2, 105, new(-55, 0));
+        _freeArm = Joint("FreeArm", _torso, new(34, -88)); Part(_freeArm, 7, 58, new(0, -6));
+        _freeForearm = Joint("FreeForearm", _freeArm, new(10, 43)); Part(_freeForearm, 8, 57, new(0, -6));
+        _coat = Joint("Coat", _torso, new(0, -3)); Part(_coat, 3, 111, new(0, -8));
+        var chest = Joint("Chest", _torso, Vector2.Zero); Part(chest, 1, 110, new(0, -110));
+        _head = Joint("Head", _torso, new(8, -101)); Part(_head, 0, 50, new(0, -44));
+        _arm = Joint("SwordArm", _torso, new(-32, -88)); Part(_arm, 4, 60, new(0, -9));
+        _forearm = Joint("SwordForearm", _arm, new(-8, 43)); Part(_forearm, 5, 58, new(0, -8));
+        _sword = Joint("Sword", _forearm, new(0, 41)); Part(_sword, 6, 128, new(0, -13));
+        // The chest already includes the shoulder cap. Keep the moving upper arm
+        // behind it, but draw the forearm/weapon in front during a swing.
+        _torso.MoveChild(_arm, 2);
+        _forearm.ZIndex = 1;
         SamplePose();
     }
 
@@ -123,7 +130,7 @@ public partial class TravelerRig : Node2D
         var pulse = Mathf.Sin(t * Mathf.Pi);
         var breath = (float)Math.Sin(_clock * 2.4);
         Position = Vector2.Zero; Rotation = 0; Scale = Vector2.One * RigScale; Modulate = Colors.White;
-        _torso.Position = new(0, -160 + breath * 0.7f); _torso.Rotation = 0;
+        _torso.Position = new(0, -170 + breath * 0.7f); _torso.Rotation = 0;
         _head.Rotation = breath * 0.006f;
         _cape.Rotation = breath * 0.025f; _coat.Rotation = -breath * 0.009f;
         _arm.Rotation = 0.28f; _forearm.Rotation = 0.1f; _sword.Rotation = 0.2f;

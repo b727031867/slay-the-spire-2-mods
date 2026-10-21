@@ -78,7 +78,10 @@ public partial class TravelerTestRunner
         foreach (var type in new[] { typeof(WindBlade), typeof(RockGuard), typeof(LightningThrust), typeof(TailwindPrep), typeof(RockAdvance), typeof(ThunderPrep) })
         {
             var model = (ElementCardModel)ModelDb.GetById<CardModel>(ModelDb.GetId(type));
-            Check(model.HoverTips.Count() >= 2 && !model.GetDescriptionForPile(PileType.None).Contains("{ComboPreview}"), "UX_library_safe_" + model.Id.Entry);
+            Check(!model.HoverTips.OfType<MegaCrit.Sts2.Core.HoverTips.HoverTip>().Any(tip =>
+                    tip.Title == new MegaCrit.Sts2.Core.Localization.LocString("powers", "TC_PREVIEW.title").GetFormattedText()
+                    || tip.Title == new MegaCrit.Sts2.Core.Localization.LocString("powers", "TC_RULES.title").GetFormattedText())
+                && !model.GetDescriptionForPile(PileType.None).Contains("{ComboPreview}"), "UX_library_safe_" + model.Id.Entry);
         }
         Check(ComboPresentation.Trigger(ComboKind.WindRock, false).GetFormattedText().Contains('4')
             && ComboPresentation.Trigger(ComboKind.WindRock, true).GetFormattedText().Contains('8'), "UX_block_feedback_4_and_8");

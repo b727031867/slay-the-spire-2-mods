@@ -43,6 +43,7 @@ public sealed class Traveler : PlaceholderCharacterModel
     }
     public override string CustomCharacterSelectBg => "res://Sts2Mod/character/select.tscn";
     public override string CustomRestSiteAnimPath => "res://Sts2Mod/character/rest_site.tscn";
+    public override string CustomMerchantAnimPath => "res://Sts2Mod/character/merchant.tscn";
     public override string CustomCharacterSelectIconPath => "res://Sts2Mod/character/icon.png";
     public override string CustomCharacterSelectLockedIconPath => CustomCharacterSelectIconPath;
     public override string CustomIconTexturePath => "res://Sts2Mod/character/head_icon.png";

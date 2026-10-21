@@ -14,8 +14,10 @@ public abstract class ElementCardModel(int cost, CardType type, CardRarity rarit
     {
         get
         {
+            // Reward/draft/library cards cannot be played now. Their native keyword
+            // tips are sufficient; the full rulebook obscures adjacent choices.
+            if (!ComboPresentation.InHand(this)) yield break;
             yield return new HoverTip(new LocString("powers", "TC_PREVIEW.title"), ComboPresentation.Preview(this));
-            yield return new HoverTip(new LocString("powers", "TC_RULES.title"), new LocString("powers", "TC_RULES.description"));
         }
     }
 

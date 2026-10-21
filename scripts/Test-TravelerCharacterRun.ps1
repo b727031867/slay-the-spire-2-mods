@@ -36,5 +36,13 @@ foreach($case in @('traveler_uses_custom_scene','ironclad_resource_unchanged','n
 if($text -notmatch '(?m)^STS2MOD_REST_SITE_COMPLETE assertions=\d+ scene=PASS native_options=PASS cleanup=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$'){
  throw 'Rest-site suite incomplete'
 }
+foreach($case in @('traveler_scene_does_not_replace_ironclad','traveler_art_no_ironclad_spine',
+ 'proportional_art_feet_on_floor','native_inventory_and_controls_preserved','character_freed_on_exit',
+ 'native_ironclad_animation_not_intercepted')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS SHOP_$case")){throw "Missing merchant presentation case: $case"}
+}
+if($text -notmatch '(?m)^STS2MOD_MERCHANT_COMPLETE assertions=\d+ scene=PASS cleanup=PASS rendering=NOT_RUN\r?$'){
+ throw 'Merchant presentation suite incomplete'
+}
 if($Focused -and $text -notmatch '(?m)^STS2MOD_CHARACTER_COMPLETE assertions=\d+ singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False'){throw 'Focused run incomplete'}
 Write-Output 'TRAVELER_CHARACTER_PASS starter=10 exclusive_cards=18 starter_relic=1 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'

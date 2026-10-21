@@ -18,6 +18,22 @@ public partial class TravelerTestRunner
         var node = creature.GetCreatureNode()!;
         var rig = CombatPresentation.Rig(creature)!;
         Check(rig is not null && rig.PartCount == 11, "ANIM_native_scene_eleven_separate_parts");
+        var head = rig!.GetNode<Sprite2D>("Torso/Head/Art");
+        var coat = rig.GetNode<Sprite2D>("Torso/Coat/Art");
+        Check(head.Texture.GetHeight() * head.Scale.Y * TravelerRig.RigScale is >= 48 and <= 51,
+            "ANIM_adult_head_is_about_one_sixth_of_height");
+        Check(coat.Texture.GetHeight() * coat.Scale.Y <= 115 && rig.GetNode<Node2D>("Torso").Position.Y <= -169,
+            "ANIM_waist_above_midpoint_coat_exposes_lower_legs");
+        Check(VisualDescendants(rig).OfType<Sprite2D>().All(s => s.Scale.X == s.Scale.Y),
+            "ANIM_all_parts_preserve_texture_aspect_ratio");
+        foreach (var pose in new[] { "Idle", "Attack", "Defend", "Hit", "Cast" })
+        {
+            rig.Advance(1);
+            rig.PlayAction(pose);
+            rig.Advance(pose == "Idle" ? 0 : rig.Duration * 0.48 / CombatPresentation.Speed);
+            ExportRigPose(rig, pose);
+        }
+        rig.Advance(1);
         var animation = node.Visuals.GetNode<AnimationPlayer>("AnimationPlayer");
         rig!.CardActive = false;
         node.SetAnimationTrigger("Attack");
@@ -112,5 +128,23 @@ public partial class TravelerTestRunner
         Check(rig.ActionName == "Idle" && rig.Position == Vector2.Zero, "ANIM_repeated_hits_restore_pose");
         GD.Print($"STS2MOD_COMBAT_PRESENTATION_COMPLETE assertions={_assertions - start} native_events=PASS cleanup=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
         await NextTurn();
+    }
+
+    // CPU reconstruction of the actual scene transforms allows offline contact-sheet QA
+    // without starting a graphical game. This is not a claim of in-game rendering coverage.
+    private static void ExportRigPose(TravelerRig rig, string pose)
+    {
+        var parts = VisualDescendants(rig).OfType<Sprite2D>().Select(s =>
+        {
+            var texture = (AtlasTexture)s.Texture;
+            var transform = rig.GetParent<Node2D>().GlobalTransform.AffineInverse() * s.GlobalTransform;
+            var z = s.ZIndex;
+            for (var parent = s.GetParent(); parent != rig; parent = parent.GetParent())
+                if (parent is Node2D node) z += node.ZIndex;
+            return new { name = s.GetParent().Name.ToString(), z,
+                region = new[] { texture.Region.Position.X, texture.Region.Position.Y, texture.Region.Size.X, texture.Region.Size.Y },
+                matrix = new[] { transform.X.X, transform.X.Y, transform.Y.X, transform.Y.Y, transform.Origin.X, transform.Origin.Y } };
+        });
+        GD.Print("STS2MOD_POSE_SNAPSHOT " + System.Text.Json.JsonSerializer.Serialize(new { pose, parts }));
     }
 }

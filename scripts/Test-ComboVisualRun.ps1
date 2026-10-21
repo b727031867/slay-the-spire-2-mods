@@ -14,7 +14,8 @@ if($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR'){throw 'Combo visual 
 foreach($case in @('no_custom_panel_fresh_combat','no_custom_panel_after_plays','no_custom_panel_next_combat',
  'native_card_tip_block','native_card_tip_draw','native_card_tip_record','native_card_tip_unplayable','native_card_tip_paimon',
  'native_card_tip_targeted_attack','native_card_tip_random_attack','native_card_tip_exhausted',
- '100_tooltip_reads_no_state_rng_energy_or_hand_mutation','turn_reset_preserves_status')) {
+ '100_tooltip_reads_no_state_rng_energy_or_hand_mutation','turn_reset_preserves_status',
+ 'selection_card_has_no_combo_overlay','hand_has_one_short_preview_no_rulebook')) {
  if(!$text.Contains("STS2MOD_TEST_PASS VIS_$case")){throw "Missing visual case: $case"}
 }
 foreach($element in @('None','Wind','Rock','Lightning')) {
@@ -31,7 +32,9 @@ foreach($case in @('native_scene_eleven_separate_parts','native_attack_reaches_l
  'simultaneous_effects_bounded','effects_free_without_combo_or_rng_changes','native_plain_strike_contact',
  'native_plain_defend_gain','native_mixed_card_both_events','native_fully_blocked_reaction',
  'native_partially_blocked_reaction','native_unblocked_reaction','zero_damage_has_no_hurt_pose',
- 'non_attack_hp_loss_has_no_weapon_contact','repeated_hits_restore_pose')) {
+ 'non_attack_hp_loss_has_no_weapon_contact','repeated_hits_restore_pose',
+ 'adult_head_is_about_one_sixth_of_height','waist_above_midpoint_coat_exposes_lower_legs',
+ 'all_parts_preserve_texture_aspect_ratio')) {
  if(!$text.Contains("STS2MOD_TEST_PASS ANIM_$case")){throw "Missing combat presentation case: $case"}
 }
 foreach($element in @('Wind','Rock','Lightning')) {

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://Sts2Mod/character/body.png" id="1"]
+
+[node name="TravelerMerchant" type="Node2D"]
+
+[node name="TravelerMerchantArt" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-65, -270.0875)
+scale = Vector2(0.425, 0.425)
+texture = ExtResource("1")

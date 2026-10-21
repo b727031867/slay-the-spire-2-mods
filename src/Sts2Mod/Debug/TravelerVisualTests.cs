@@ -36,6 +36,11 @@ public partial class TravelerTestRunner
     {
         var start = _assertions;
         await FreshExpansion();
+        var choice = _player.Creature.CombatState!.CreateCard(MegaCrit.Sts2.Core.Models.ModelDb.Card<ShatteringRock>(), _player);
+        var rulesTitle = new LocString("powers", "TC_RULES.title").GetFormattedText();
+        var previewTitle = new LocString("powers", "TC_PREVIEW.title").GetFormattedText();
+        Check(choice.Pile is null && !choice.HoverTips.OfType<HoverTip>().Any(t => t.Title == rulesTitle || t.Title == previewTitle),
+            "VIS_selection_card_has_no_combo_overlay");
         await TestEnergyIcons();
         // Give native deferred UI setup a frame: absence must hold after mounting would have occurred.
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
@@ -49,6 +54,8 @@ public partial class TravelerTestRunner
         var lightning = (LightningThrust)await Add<LightningThrust>();
         var thunder = (ThunderPrep)await Add<ThunderPrep>();
         var same = (WindBlade)await Add<WindBlade>();
+        Check(rock.HoverTips.OfType<HoverTip>().Count(t => t.Title == previewTitle) == 1
+            && !rock.HoverTips.OfType<HoverTip>().Any(t => t.Title == rulesTitle), "VIS_hand_has_one_short_preview_no_rulebook");
         Check(CardComboTip(rock).Description == ComboPresentation.Preview(rock).GetFormattedText()
             && ComboPresentation.VisualPreview(rock) is { Key: "block", Bonus: 4 }, "VIS_native_card_tip_block");
         Check(CardComboTip(lightning).Description == ComboPresentation.Preview(lightning).GetFormattedText()

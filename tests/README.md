@@ -23,3 +23,5 @@ Full和SaveResume默认1800秒，其余默认300秒，可显式设置TimeoutSeco
 Visuals同时覆盖战斗演出：11块分层素材、原生动画转发、六套元素效果、普通攻防、实际格挡与掉血分支、节点限量/释放、倒地与复活。Cards/Full会复用此专项，并检查分层角色仍维持约312px的战斗高度。无GUI结果不证明贴图拼接、遮挡、动作自然度或实际画面观感，详见docs/tests/COMBAT-PRESENTATION.md。
 
 Character包含篝火资源检查：原生RestSiteRoom加载旅行者自定义休息场景与透明贴图，确认休息/锻造按钮、选项气泡、镜像、命中框和退出释放。它不自动点击菜单，也不验证实际画面观感，记录见docs/tests/REST-SITE.md。
+
+0.3.8的Visuals增加非手牌选择无连携遮挡、手牌单一短预览、成人头身与腰线及等比缩放检查；Character增加进入原生商店、旅行者贴图、脚底基线、原生控件与退出释放检查。Visuals日志中的STS2MOD_POSE_SNAPSHOT可用scripts/Export-RigContactSheet.ps1离线重建动作接触表；该图来自真实节点变换的CPU绘制，不是游戏截图，不替代游戏图形验收。

@@ -9,6 +9,7 @@
 | character/head_icon.png | 内置image_gen编辑项目头像，用于Character.Icon及面部特写；见[头像记录](art/TASK-010-portrait.md) |
 | character/layers/atlas.png | 内置image_gen以本项目body.png为参考生成11块分层角色素材，运行时通过AtlasTexture区域引用；见[提示、来源与哈希](art/TRAVELER-COMBAT-LAYERS.md) |
 | character/rest_site.png | 内置image_gen以项目body.png为参考生成篝火坐姿休息插图，接入原生休息角色场景；见[提示、来源与哈希](art/TRAVELER-REST-SITE.md) |
+| character/merchant.tscn | 商店角色场景复用本项目已生成body.png，等比缩放并校准脚底基线；未新增图片或复制原生角色素材 |
 | ui/element_none、wind、rock、lightning.svg | 项目代码绘制的正式小尺寸状态图标，无外部图片输入 |
 | ui/reward_block、attack、draw.svg及旧插图SVG | 项目矢量源码，当前没有常驻面板使用奖励图标；运行时卡牌和角色插图使用PNG |
 | 连携特效 | ElementComboVfx.cs使用Godot基本线条绘制，无外部纹理或音频 |

@@ -1,5 +1,9 @@
 # 当前接口说明 / v0.107.1 / BaseLib3.4.7
 
+0.3.8商店：CustomMerchantAnimPath注册独立merchant.tscn，原生NMerchantRoom从预加载缓存实例化NMerchantCharacter。该自动转换实例未被BaseLib3.4.7的CreatedFromFactory护栏识别，原生_Ready仍尝试将首个Node2D绑定为SpineSprite，实测抛异常。TravelerMerchantVisualPatch仅识别本Mod唯一命名的TravelerMerchantArt和body.png，跳过其原生Spine初始化/动画调用；铁甲战士及其他角色继续原流程。Character专项实际进入商店并检查资源、比例、原生控件和释放，详见PRESENTATION-FIXES-038报告。
+
+0.3.8悬停：ElementCardModel仅为战斗手牌提供单一TC_PREVIEW；非手牌不追加自定义提示，所有卡牌移除TC_RULES长段。原生关键字说明仍由游戏提供，完整规则仍在玩家指南。
+
 能量提示：BaseLib3.4.7直接把TextEnergyIconPath写成无尺寸[img]，原生EnergyIconsFormatter按图片本身尺寸排版，HoverTipFactory.ForEnergy按本机角色池取大图。三个池使用EnergyColorName=ironclad，沿用原生分别用于能量提示和行内文字的资源，与现有原生能量计一致；不修改全局渲染器、不分发游戏贴图、不改罗盘自身遗物图片或效果。专项覆盖原生烛台获取后/未获取说明、提灯、能量药水、祭品卡牌说明，以及真实NHoverTipSet节点尺寸。
 
 界面实现：删除NCombatUi._Ready的自定义面板挂载与ComboHud/ComboPips类；仅保留NPower.OnDisplayAmountChanged的本Mod元素纹理刷新。原生HoverTip仍来自ElementCardModel.ExtraHoverTips的TC_PREVIEW条目，未改预览公式/文案/规则。专项验收检查整个原生战斗UI没有TravelerComboHud节点，并直接验证原生HoverTip.Description及状态栏%Icon。
