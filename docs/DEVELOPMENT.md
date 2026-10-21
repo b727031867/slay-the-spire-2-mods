@@ -1,6 +1,6 @@
 # 构建、部署与验证
 
-当前工程src/Sts2Mod，Mod ID为Sts2Mod，版本0.3.6。接续分支main，当前规则见[玩家指南](player/README.zh-CN.md)，包身份及验证范围见[发布报告](tests/TASK-011-PC-B-release-035.md)。
+当前工程src/Sts2Mod，Mod ID为Sts2Mod，版本0.3.7。接续分支main，当前规则见[玩家指南](player/README.zh-CN.md)，包身份及验证范围见[发布报告](tests/RELEASE-037.md)。
 
 ## 统一测试入口
 
@@ -101,7 +101,7 @@ Sts2Mod/
 
 ### 原生获取和磁盘恢复
 
-使用main中的最新检查器；已发布包来源S及SHA256见[发布报告](tests/TASK-011-PC-B-release-035.md)。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
+使用main中的最新检查器；已发布包来源S及SHA256见[发布报告](tests/RELEASE-037.md)。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
 
 ```powershell
 $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'

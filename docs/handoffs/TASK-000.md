@@ -4,6 +4,6 @@
 
 - [当前项目状态](../STATUS.md)
 - [当前接续说明](../handoffs/NEXT-PC-CONTINUE-PROMPT.md)
-- [当前0.3.6发布与校验报告](../tests/RELEASE-036.md)
+- [当前发布状态与校验入口](../STATUS.md)
 
 旧版完整记录可通过Git文件历史查阅，不作为当前开发或安装指令。
