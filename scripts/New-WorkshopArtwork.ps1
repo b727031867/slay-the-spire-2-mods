@@ -52,9 +52,9 @@ Canvas 1024 1024 (Join-Path $OutputDirectory 'image.png') {
     Label $g '风' 36 '#7DDBC8' 211 725 $true
     Label $g '岩' 36 '#EAC27C' 493 725 $true
     Label $g '雷' 36 '#BEA4EA' 775 725 $true
-    Label $g '18 张奖励牌  /  4 张能力  /  元素跨回合保留' 28 '#F3EBDD' 80 803
-    Label $g '旅行者独立角色 · 单人技术测试版' 31 '#F3EBDD' 80 900 $true
-    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.3.8  /  非官方同人' 20 '#9AADB8' 80 960
+    Label $g '19 张奖励牌  /  4 张能力  /  元素跨回合保留' 28 '#F3EBDD' 80 803
+    Label $g '旅行者独立角色 · 支持单人和联机' 31 '#F3EBDD' 80 900 $true
+    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.3.13  /  非官方同人' 20 '#9AADB8' 80 960
 }
 Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     param($g)
@@ -71,8 +71,8 @@ Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
         Label $g $rewards[$i] 40 '#F3EBDD' $x 365 $true
         Label $g $doubles[$i] 25 '#9AADB8' $x 430
     }
-    Label $g '三类合计每人每回合最多 3 次 · 触发后保留最新元素' 30 '#F3EBDD' 65 525 $true
+    Label $g '默认每回合合计 3 次，持有罗盘 4 次 · 保留最新元素' 30 '#F3EBDD' 65 525 $true
     Label $g '岩雷：防御技能随机追击；单体攻击追击原目标，死亡不转火。' 24 '#9AADB8' 65 583
-    Label $g '单人测试 · 罗盘隔回合触发 · 共鸣第2次回能 · v0.3.8' 23 '#9AADB8' 65 645
+    Label $g '初始罗盘第3次加力量 · 共鸣第2次回能（升级第1次）· v0.3.13' 23 '#9AADB8' 65 645
 }
 Get-ChildItem -LiteralPath $OutputDirectory -Filter '*.png' | Select-Object Name,Length
