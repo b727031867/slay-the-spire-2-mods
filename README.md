@@ -1,10 +1,10 @@
 # 旅行者·元素连携 / Traveler Elements
 
-本地开发候选0.3.9采用原母稿七层网格、18关节连接和脚底约束；已按评审草图实现侧身前突刺、双手举剑防御、侧身后仰受击及攻防连续切换，并提供原速/慢放/逐帧对照。见[设计](docs/design/TRAVELER-NATURAL-MOTION.md)和[验证](docs/tests/NATURAL-MOTION-039.md)。下文为已发布的0.3.8。
+**0.3.9已合并main并发布到原工坊3823282901，保留好友可见设置。** 原母稿七层网格、18关节与脚底约束保持人物一致性；普通攻击为侧身前突刺，防御为双手举剑挡身前，受击轻微后仰，连续出牌直接衔接攻防。干净包Full474项及实际工坊Load/Character77项/Visuals95项通过，七文件下载一致。来源与范围见[发布报告](docs/tests/RELEASE-039.md)，开发过程见[设计](docs/design/TRAVELER-NATURAL-MOTION.md)和[验证](docs/tests/NATURAL-MOTION-039.md)。
 
-面向《杀戮尖塔2》的单人Mod，版本 **0.3.8**。旅行者拥有18张专属奖励牌（4能力）、10张起始牌、旅途罗盘及派蒙的应援，支持中英文。
+面向《杀戮尖塔2》的单人Mod，版本 **0.3.9**。旅行者拥有18张专属奖励牌（4能力）、10张起始牌、旅途罗盘及派蒙的应援，支持中英文。
 
-0.3.8修复选牌连携长说明遮挡、分层角色头身与腿部比例、商店角色仍为铁甲战士的问题。干净包完整回归466项通过，源码已快进合入main并推送，原工坊3823282901已更新，保留实际的好友可见设置。包身份、下载核对和工坊加载结果见[发布报告](docs/tests/RELEASE-038.md)，实现与早期失败记录见[修复报告](docs/tests/PRESENTATION-FIXES-038.md)。
+保留0.3.8对选牌长说明遮挡和商店旅行者形象的修复，不改变卡牌与连携结算。游戏自动验证全程无GUI；用户已评审动作草图与本地回放，游戏光照、特效叠加及UI下的画面仍需独立试玩。
 
 ## 文档入口
 
@@ -12,7 +12,7 @@
 - [玩家安装与完整玩法](docs/player/README.zh-CN.md)
 - [更新日志](docs/player/CHANGELOG.md)：版本演进的统一入口
 - [跨PC接续](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)
-- [已发布包身份与校验值](docs/tests/RELEASE-038.md)
+- [已发布包身份与校验值](docs/tests/RELEASE-039.md)
 - [当前需求](STS2-Mod-Requirements-v0.1.md)、[开发操作](docs/DEVELOPMENT.md)、[协作约定](docs/COLLABORATION.md)
 - [技术基线](docs/TECH_BASELINE.md)、[接口说明](docs/API_FINDINGS.md)、[素材来源](docs/ASSETS.md)
 
