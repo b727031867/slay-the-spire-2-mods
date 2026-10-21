@@ -1,10 +1,8 @@
 # 旅行者·元素连携 / Traveler Elements
 
-本地开发候选 **0.3.8**：修复选牌时连携长说明遮挡、分层角色头身与腿部比例、商店仍显示铁甲战士。基于最新远端main `ab96b7c`，分支 `codex/fix-traveler-presentation`；未推送或更新工坊。验证与限制见[修复报告](docs/tests/PRESENTATION-FIXES-038.md)。下文为已发布的0.3.7。
+面向《杀戮尖塔2》的单人Mod，版本 **0.3.8**。旅行者拥有18张专属奖励牌（4能力）、10张起始牌、旅途罗盘及派蒙的应援，支持中英文。
 
-面向《杀戮尖塔2》的单人Mod，版本 **0.3.7**。旅行者拥有18张专属奖励牌（4能力）、10张起始牌、旅途罗盘及派蒙的应援，支持中英文。
-
-0.3.7源码已提交、快进合入main并推送，原私有工坊3823282901更新完成。包含分层2D战斗动作、三元素攻防特效及旅行者专属篝火休息图；用户试玩通过，包身份与实际下载/工坊加载验证见[发布报告](docs/tests/RELEASE-037.md)。
+0.3.8修复选牌连携长说明遮挡、分层角色头身与腿部比例、商店角色仍为铁甲战士的问题。干净包完整回归466项通过，源码已快进合入main并推送，原工坊3823282901已更新，保留实际的好友可见设置。包身份、下载核对和工坊加载结果见[发布报告](docs/tests/RELEASE-038.md)，实现与早期失败记录见[修复报告](docs/tests/PRESENTATION-FIXES-038.md)。
 
 ## 文档入口
 
@@ -12,7 +10,7 @@
 - [玩家安装与完整玩法](docs/player/README.zh-CN.md)
 - [更新日志](docs/player/CHANGELOG.md)：版本演进的统一入口
 - [跨PC接续](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)
-- [已发布包身份与校验值](docs/tests/RELEASE-036.md)
+- [已发布包身份与校验值](docs/tests/RELEASE-038.md)
 - [当前需求](STS2-Mod-Requirements-v0.1.md)、[开发操作](docs/DEVELOPMENT.md)、[协作约定](docs/COLLABORATION.md)
 - [技术基线](docs/TECH_BASELINE.md)、[接口说明](docs/API_FINDINGS.md)、[素材来源](docs/ASSETS.md)
 
