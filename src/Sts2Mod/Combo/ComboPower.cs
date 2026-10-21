@@ -38,16 +38,19 @@ public sealed class ComboPower : CustomPowerModel
         var loc = new LocString("powers", $"{Id.Entry}.{key}");
         loc.Add("Element", new LocString("powers", "TC_ELEMENT_" + (IsMutable ? State.Last : Element.None).ToString().ToUpperInvariant()));
         loc.Add("Remaining", DisplayAmount);
+        loc.Add("Limit", IsMutable ? State.TurnLimit : ComboState.Limit);
         var doubled = IsMutable && ComboPresentation.HasPaimon(Owner?.Player);
-        loc.Add("BlockBonus", doubled ? 8 : 4);
-        loc.Add("AttackBonus", doubled ? 8 : 4);
-        loc.Add("DrawBonus", doubled ? 2 : 1);
+        var echoCopies = IsMutable ? ComboPresentation.EchoCopies(Owner?.Player) : 0;
+        loc.Add("BlockBonus", ComboPresentation.Reward(ComboKind.WindRock, doubled, echoCopies));
+        loc.Add("AttackBonus", ComboPresentation.Reward(ComboKind.RockLightning, doubled, echoCopies));
+        loc.Add("DrawBonus", ComboPresentation.Reward(ComboKind.LightningWind, doubled, echoCopies));
         return loc;
     }
     public override LocString Title => WithState(DisplayAmount == 0 ? "exhaustedTitle" : "title");
     public override LocString Description => WithState(DisplayAmount == 0 ? "exhaustedDescription" : "description");
 
-    public void BeginTurn() { State.BeginTurn(); Publish("turn_start"); }
+    internal void RefreshLimit() => State.SetTurnLimit(Owner.Player?.Relics.Any(r => (r is JourneyCompass or UnboundJourneyCompass) && !r.IsMelted) == true ? 4 : ComboState.Limit);
+    public void BeginTurn() { RefreshLimit(); State.BeginTurn(); Publish("turn_start"); }
     private void Clear(string reason) { State.ClearCombat(); Publish(reason); }
     internal void FlashReward() => Flash();
 

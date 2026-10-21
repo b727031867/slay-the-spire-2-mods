@@ -36,15 +36,12 @@ public static class ComboFeedback
 
     public static void ShowReward(Creature creature, Creature effectTarget, Reservation reservation, int? actualDraw = null)
     {
-        // One bubble per actual reward. Skipped target/combat rewards never claim a success.
+        // Native numbers/cards carry amounts. This layer adds no bubbles or enlarged relic artwork.
+        if (actualDraw is <= 0) return;
         if (reservation.PaimonDoubles)
             creature.Player?.Relics.OfType<PaimonCheer>().FirstOrDefault(r => !r.IsMelted)?.Flash();
-        var text = ComboPresentation.Trigger(reservation.Kind, reservation.PaimonDoubles, actualDraw).GetFormattedText();
-        GD.Print($"STS2MOD_FEEDBACK kind={reservation.Kind} bonus={ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles)} doubled={reservation.PaimonDoubles}");
+        GD.Print($"STS2MOD_FEEDBACK kind={reservation.Kind} bonus={ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles, ComboPresentation.EchoCopies(creature.Player))} doubled={reservation.PaimonDoubles}");
         if (DisplayServer.GetName() == "headless") return;
-        if (creature.GetCreatureNode() is not null && creature.GetVfxContainer() is { } container
-            && NThoughtBubbleVfx.Create(text, creature, 1.0) is { } bubble)
-            container.AddChild(bubble);
         // Attack/block fusion is already placed at the authoritative native result, once per target.
         if ((reservation.Kind == ComboKind.LightningWind && actualDraw > 0)
             || Presentation.CombatPresentation.Rig(creature) is null)

@@ -3,10 +3,13 @@
   "TC_R01.description": "Double element combo rewards. Exclusive to the Traveler; duplicate copies do not stack.",
   "TC_R01.flavor": "The best travel companion makes every elemental flourish count twice.",
   "TC_R02.title": "Journey Compass",
-  "TC_R02.description": "After an actual element combo reward, draw [blue]1[/blue] extra card. At most once every two turns: the next turn is on cooldown, then it becomes ready again. Unused opportunities remain ready; extra turns count. Ready at each combat start. A glowing [blue]1[/blue] means ready; a dim [blue]0[/blue] means spent or cooling down.",
+  "TC_R02.description": "Raise the element combo limit to [blue]4[/blue] per turn. After your [blue]third[/blue] actual combo reward each turn, gain [blue]1[/blue] [gold]Strength[/gold] this combat. Does not draw cards.",
   "TC_R02.flavor": "Every journey starts with the next step.",
   "TC_R02.stateTitle": "Journey Compass: {State}",
   "TC_R02.ready": "Ready",
   "TC_R02.spent": "Spent this turn",
-  "TC_R02.cooldown": "On cooldown"
+  "TC_R02.cooldown": "On cooldown",
+  "TC_R03.title": "Unbound Compass",
+  "TC_R03.description": "Replaces Journey Compass. Whenever an Elemental Combo reward is actually granted, draw [blue]1[/blue] additional card. No per-turn trigger limit or turn cooldown. The shared cap of [blue]4[/blue] combos per player per turn is unchanged.",
+  "TC_R03.flavor": "Every resonance points the way onward."
 }

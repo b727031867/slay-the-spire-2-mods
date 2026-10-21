@@ -117,8 +117,7 @@ public partial class TravelerTestRunner
         Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == 8 && Power.State.Used == 1, "UX_random_preview_matches_native_attack");
 
         var effects = new[] { ComboKind.WindRock, ComboKind.RockLightning, ComboKind.LightningWind }
-            .Select(kind => new ElementComboVfx { Kind = kind, Doubled = true }).ToArray();
-        foreach (var effect in effects) GetTree().Root.AddChild(effect);
+            .Select(kind => ElementComboVfx.Spawn(GetTree().Root, kind, true)).ToArray();
         await Until(() => effects.All(effect => !GodotObject.IsInstanceValid(effect)), "finite presentation effect cleanup", 5);
         Check(effects.All(effect => !GodotObject.IsInstanceValid(effect)), "UX_three_effects_free_without_gameplay_wait");
         GD.Print($"STS2MOD_UX_COMPLETE assertions={_assertions - startCount} rendering=NOT_RUN multiplayer=NOT_RUN");

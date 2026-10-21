@@ -18,7 +18,7 @@ public sealed class TailwindPrep : ElementCardModel
     public override string CustomPortraitPath => "res://Sts2Mod/art/tailwind.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
-    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
+    protected override void OnUpgrade() => RemoveKeyword(CardKeyword.Exhaust);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

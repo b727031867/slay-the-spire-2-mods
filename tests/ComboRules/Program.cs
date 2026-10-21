@@ -132,4 +132,12 @@ Check(chain.Reserve(duplicate, Element.Wind).Triggered && !chain.Reserve(duplica
     && chain.Last == Element.Wind && chain.Used == 2, "ordinary card and duplicate action do not break retained chain");
 Check(!chain.Reserve(new object(), Element.Lightning, automatic: true).Advanced && chain.Last == Element.Wind
     && !chain.Reserve(new object(), Element.Lightning, firstInSeries: false).Advanced && chain.Used == 2, "automatic and extra resolution preserve retained chain");
+var compassLimit = new ComboState();
+compassLimit.SetTurnLimit(4);
+Play(compassLimit, Element.Wind);
+for (var i = 0; i < 4; i++) Play(compassLimit, i % 2 == 0 ? Element.Rock : Element.Wind);
+Check(compassLimit.Used == 4 && compassLimit.Remaining == 0, "compass permits exactly four shared combos");
+Check(!Play(compassLimit, Element.Rock).Triggered && compassLimit.Used == 4, "compass fifth combo blocked");
+compassLimit.BeginTurn();
+Check(compassLimit.Remaining == 4 && compassLimit.Last == Element.Rock, "compass turn restores four and retains element");
 Console.WriteLine($"COMBO_RULES_PASS assertions={passed}");

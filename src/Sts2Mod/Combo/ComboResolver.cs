@@ -35,14 +35,16 @@ public static class ComboResolver
         if (power is null || context is not GameActionPlayerChoiceContext { Action: PlayCardAction action }
             || action.Player != card.Owner || action.NetCombatCard.ToCardModel() != card)
             return default;
+        power.RefreshLimit();
         var step = power.State.Reserve(action, element, play.IsAutoPlay, play.IsFirstInSeries);
         var paimonDoubles = step.Triggered
             && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false });
+        var rewardAmount = ComboPresentation.Reward(step.Kind, paimonDoubles, ComboPresentation.EchoCopies(card.Owner));
         var reward = step.Kind switch
         {
-            ComboKind.WindRock => paimonDoubles ? "block8" : "block4",
-            ComboKind.RockLightning => paimonDoubles ? "attack8" : "attack4",
-            ComboKind.LightningWind => paimonDoubles ? "draw2" : "draw1",
+            ComboKind.WindRock => $"block{rewardAmount}",
+            ComboKind.RockLightning => $"attack{rewardAmount}",
+            ComboKind.LightningWind => $"draw{rewardAmount}",
             _ => "none"
         };
         power.Publish(step.Advanced ? "reserve" : "ignored");
@@ -60,15 +62,16 @@ public static class ComboResolver
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=combat_ended_or_dead");
             return;
         }
-        var bonus = reservation.PaimonDoubles ? 8m : 4m;
-        var draws = reservation.PaimonDoubles ? 2m : 1m;
+        var echoCopies = ComboPresentation.EchoCopies(card.Owner);
+        var bonus = ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles, echoCopies);
+        var draws = ComboPresentation.Reward(ComboKind.LightningWind, reservation.PaimonDoubles, echoCopies);
         var awarded = false;
         if (reservation.Kind == ComboKind.RockLightning)
         {
             var target = play.Target;
             // Self/untargeted defensive skills use the native seeded combat-target RNG.
             // A targeted attack whose victim died still must not jump to another enemy.
-            var randomTarget = card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy;
+            var randomTarget = (card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy) || card is ThunderChain;
             if (!randomTarget && (target is null || !target.IsAlive || target.Side == creature.Side
                 || !creature.CombatState!.Creatures.Contains(target)))
             {
@@ -112,7 +115,7 @@ public static class ComboResolver
             var actualRewardNumber = creature.GetPower<ComboPower>()!.State.MarkRewardGranted();
             foreach (var ability in creature.Powers.OfType<TravelerAbilityPower>().ToArray())
                 await ability.OnComboReward(context, reservation.Kind, actualRewardNumber);
-            foreach (var compass in card.Owner.Relics.OfType<JourneyCompass>().ToArray())
+            foreach (var compass in card.Owner.Relics.OfType<IComboRewardRelic>().ToArray())
                 await compass.OnComboReward(context);
         }
     }

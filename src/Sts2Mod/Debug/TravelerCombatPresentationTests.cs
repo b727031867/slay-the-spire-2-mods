@@ -133,7 +133,8 @@ public partial class TravelerTestRunner
             var card = creature.CombatState!.CreateCard((CardModel)ModelDb.GetById<CardModel>(ModelDb.GetId(type)), _player);
             await CardPileCmd.Add(card, MegaCrit.Sts2.Core.Entities.Cards.PileType.Hand);
             defenses = rig.DefenseEvents;
-            await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(card, null));
+            await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(card,
+                card.TargetType == MegaCrit.Sts2.Core.Entities.Cards.TargetType.AnyEnemy ? _target : null));
             Check(rig.DefenseEvents > defenses && rig.LastDefenseElement == ((ElementCardModel)card).CardElement,
                 "ANIM_native_element_defend_" + ((ElementCardModel)card).CardElement);
         }

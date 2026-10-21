@@ -20,7 +20,11 @@ public sealed class TriphaseFinale : CustomCardModel
         [new CalculationBaseVar(10m), new ExtraDamageVar(4m),
             new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>
                 Math.Clamp(card.Owner.Creature.GetPower<ComboPower>()?.State.Used ?? 0, 0, ComboState.Limit))];
-    protected override void OnUpgrade() => DynamicVars.CalculationBase.UpgradeValueBy(4m);
+    protected override void OnUpgrade()
+    {
+        DynamicVars.CalculationBase.UpgradeValueBy(2m);
+        EnergyCost.UpgradeBy(-1);
+    }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         ArgumentNullException.ThrowIfNull(play.Target);

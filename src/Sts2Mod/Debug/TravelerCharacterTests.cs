@@ -41,6 +41,7 @@ public partial class TravelerTestRunner
         screen.SelectCharacter(button, model);
         Check(screen.GetNode<Control>("AnimatedBg").GetChildren().Any(child => child.Name == "TC_TRAVELER_bg"),
             "CHAR_native_selection_loads_background_and_starter_info");
+        await TestLobbyPlayerLayout(screen);
         screen.OnSubmenuClosed();
         screen.QueueFree();
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
@@ -58,8 +59,8 @@ public partial class TravelerTestRunner
             "CHAR_exact_ten_card_starter");
         Check(_player.Relics.Count == 1 && _player.Relics.Single() is JourneyCompass, "CHAR_compass_only_starting_relic");
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).ToArray();
-        Check(pool.Length == 20 && ThemeTypes.All(type => pool.Count(card => card.GetType() == type) == 1)
-            && pool.All(card => card.Pool is TravelerCardPool), "CHAR_twenty_models_eighteen_reward_cards_in_exclusive_pool");
+        Check(pool.Length == 21 && ThemeTypes.All(type => pool.Count(card => card.GetType() == type) == 1)
+            && pool.All(card => card.Pool is TravelerCardPool), "CHAR_twenty_one_models_nineteen_reward_cards_in_exclusive_pool");
         Check(!ModelDb.CardPool<IroncladCardPool>().AllCards.Any(IsTheme)
             && !ModelDb.CardPool<SilentCardPool>().AllCards.Any(IsTheme)
             && !ModelDb.Character<Ironclad>().StartingDeck.Any(IsTheme), "CHAR_ironclad_and_silent_no_theme_cards");
@@ -91,87 +92,11 @@ public partial class TravelerTestRunner
         Check(Enumerable.Range(0, 20).All(_ => IsTheme(CardFactory.CreateRandomCardForTransform(original, false, _player.PlayerRng.Shops))),
             "CHAR_basic_transform_stays_in_exclusive_pool");
 
-        await SeedDraw();
-        var compass = _player.GetRelic<JourneyCompass>()!;
-        var indicatorNotifications = 0;
-        Action indicatorListener = () => indicatorNotifications++;
-        compass.DisplayAmountChanged += indicatorListener;
-        Check(compass.CanTriggerThisTurn && compass.DisplayAmount == 1
-            && compass.Status == MegaCrit.Sts2.Core.Entities.Relics.RelicStatus.Active, "CHAR_compass_ready_icon_1_active");
-        await Play<RockGuard>(); await Play<ThunderPrep>();
-        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 2,
-            "CHAR_compass_triggers_after_random_defensive_attack");
-        Check(!compass.CanTriggerThisTurn && compass.DisplayAmount == 0
-            && compass.Status == MegaCrit.Sts2.Core.Entities.Relics.RelicStatus.Disabled
-            && !compass.Title.GetFormattedText().Contains('{'), "CHAR_compass_spent_icon_0_disabled");
-        await NextTurn();
-        Check(!compass.CanTriggerThisTurn && compass.TurnsUntilReady == 1 && compass.DisplayAmount == 0,
-            "CHAR_compass_next_turn_cooldown_indicator");
-        await Play<WindBlade>(); await Play<RockGuard>();
-        Check(!compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 0,
-            "CHAR_compass_cooldown_turn_no_draw");
-        await Play<WindBlade>();
-        Check(Power.State.Used == 2 && PileType.Hand.GetPile(_player).Cards.Count == 0,
-            "CHAR_compass_second_combo_no_extra_draw");
-        await NextTurn(preserveElement: true); await SeedDraw();
-        Check(compass.CanTriggerThisTurn && compass.DisplayAmount == 1, "CHAR_compass_ready_after_one_gap_turn");
-        await Play<WindBlade>(); await Play<RockGuard>();
-        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_compass_draws_again_two_turns_after_trigger");
-
-        var extraTurnSource = await Play<WindBlade>();
-        await PowerCmd.Apply<MockExtraTurnPower>(extraTurnSource.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
-        await NextTurn(preserveElement: true);
-        Check(!compass.CanTriggerThisTurn && compass.TurnsUntilReady == 1 && Power.State.Last == Element.Wind && Power.State.Remaining == 3,
-            "CHAR_extra_turn_counts_as_compass_cooldown_turn");
-        await Play<RockGuard>();
-        Check(!compass.SpentThisTurn && _player.Creature.Block == 11 && PileType.Hand.GetPile(_player).Cards.Count == 0,
-            "CHAR_extra_turn_cooldown_does_not_draw");
-        await NextTurn(preserveElement: true);
-        Check(compass.CanTriggerThisTurn, "CHAR_compass_ready_after_extra_turn_gap");
-        await NextTurn(preserveElement: true);
-        Check(compass.CanTriggerThisTurn && compass.DisplayAmount == 1, "CHAR_compass_unused_ready_turn_is_not_consumed");
-
-        await StartFreshCombat(); await SeedDraw();
-        Check(!compass.SpentThisTurn, "CHAR_compass_resets_for_new_combat");
-        await RelicCmd.Obtain<PaimonCheer>(_player);
-        await Play<WindBlade>(); await Play<RockGuard>();
-        Check(_player.Creature.Block == 15 && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_paimon_doubles_combo_not_compass");
-        await RelicCmd.Remove(_player.GetRelic<PaimonCheer>()!);
-        await StartFreshCombat(); await SeedDraw();
-        var source = await Play<WindBlade>();
-        await PowerCmd.Apply<NoDrawPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
-        await Play<LightningThrust>();
-        Check(!compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 0,
-            "CHAR_compass_not_consumed_when_combo_draws_zero");
-        await PowerCmd.Remove<NoDrawPower>(_player.Creature);
-        await Play<RockGuard>(); await Play<WindBlade>();
-        Check(compass.SpentThisTurn && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "CHAR_compass_triggers_after_earlier_skipped_rewards");
-        await StartFreshCombat(); await SeedDraw();
-        source = await Play<WindBlade>();
-        await PowerCmd.Apply<NoDrawPower>(source.PlayerChoiceContext!, _player.Creature, 1m, _player.Creature, null);
-        await Play<RockGuard>();
-        Check(compass.SpentThisTurn && !compass.CanTriggerThisTurn && compass.DisplayAmount == 0,
-            "CHAR_compass_own_draw_zero_still_starts_cooldown");
-        await NextTurn();
-        Check(!compass.CanTriggerThisTurn && compass.TurnsUntilReady == 1,
-            "CHAR_compass_zero_draw_cooldown_survives_turn");
-        var sawOutsideReset = false;
-        Action resetListener = () => { if (compass.Status == MegaCrit.Sts2.Core.Entities.Relics.RelicStatus.Normal
-            && compass.DisplayAmount == 0) sawOutsideReset = true; };
-        compass.StatusChanged += resetListener;
-        await StartFreshCombat();
-        Check(sawOutsideReset && compass.CanTriggerThisTurn && compass.DisplayAmount == 1,
-            "CHAR_compass_combat_end_clears_cooldown_and_icon");
-        Check(indicatorNotifications >= 3, "CHAR_compass_indicator_publishes_native_counter_changes");
-        compass.StatusChanged -= resetListener;
-        compass.DisplayAmountChanged -= indicatorListener;
-        await RelicCmd.Remove(compass);
+        await TestStarterCompassBalance();
+        await TestCompassUpgrade();
         await NextTurn();
         await TestRestSiteArt();
         await TestMerchantArt();
-        GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=18 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
+        GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=19 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 }

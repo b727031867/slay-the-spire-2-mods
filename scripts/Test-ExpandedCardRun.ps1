@@ -26,16 +26,16 @@ if (!$text.Contains('STS2MOD_TEST_PASS ART_character_layered_battle_scale_312px'
     $text -notmatch '(?m)^STS2MOD_RANDOM_COMBO_COMPLETE cases=11 seeded_rng=native cap=3 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Final art/random-combo suite incomplete.'
 }
-foreach ($case in @('pool_18_types_7_7_4','rarity_8_7_3','all_ids_once','boss_native_rare_rewards',
+foreach ($case in @('pool_19_types_8_7_4','rarity_8_8_3','all_ids_once','boss_native_rare_rewards',
  'retain_keyword_survives_native_flush','plans_empty_hand_returns_without_choice','plans_upgraded_can_skip',
  'rock_heart_stacks_caps_4_plus_6','rock_heart_does_not_create_missing_block','rock_heart_does_not_restore_enemy_consumed_block',
  'power_cards_do_not_advance_and_copies_stack','guidance_two_copies_once_each','guidance_second_combo_no_second_draw',
  'guidance_resets_on_next_turn','guidance_new_copy_can_trigger_after_old_spent',
  'zero_draw_does_not_consume_actual_reward','guidance_after_blocked_draw_still_triggers',
- 'paimon_combo2_guidance1_compass1','echo_stacks_3_plus_5_and_hits_all','echo_repeats_on_second_rock_lightning',
- 'echo_unaffected_by_paimon_or_strength','random_defensive_attack_triggers_echo_and_actual_reward','base_kill_does_not_trigger_echo',
+ 'paimon_combo2_guidance1_compass0','echo_copies_add_base_reward','echo_boosts_second_rock_lightning',
+ 'echo_does_not_stack_with_paimon','random_defensive_attack_triggers_echo_and_actual_reward','base_kill_does_not_trigger_echo',
  'zero_attack_damage_does_not_trigger_echo',
- 'resonance_second_reward_grants_one_per_copy','resonance_third_reward_does_not_repeat','resonance_second_actual_after_skip_gains_energy','resonance_cap_does_not_repeat',
+ 'resonance_base_and_upgrade_use_separate_thresholds','resonance_third_reward_does_not_repeat','resonance_second_actual_after_skip_gains_energy','resonance_cap_does_not_repeat',
  'extra_turn_resets_actual_reward_counter','resonance_can_trigger_on_extra_turn',
  'resonance_skipped_reward_is_not_second','resonance_no_energy_after_skipped_reward',
  'final_combo_kill_skips_followup_abilities_and_compass','new_combat_clears_ability_and_combo_state')) {
@@ -48,20 +48,29 @@ foreach ($up in @('False','True')) {
       'plans_native_retention','rock_heart_retains_without_regaining','rock_heart_native_retention_wins')) {
         if (!$text.Contains("STS2MOD_TEST_PASS EXP_${case}_$up")) { throw "Missing upgraded/base case: $case/$up" }
     }
-    foreach ($id in 7..18) {
+    foreach ($id in 7..19) {
         $key = 'TC_C' + $id.ToString('00')
         foreach ($case in @('native_roundtrip','library_description')) {
             if (!$text.Contains("STS2MOD_TEST_PASS EXP_${case}_${key}_$up")) { throw "Missing model check: $key/$up/$case" }
         }
     }
 }
-foreach ($id in 7..18) {
+foreach ($id in 7..19) {
     if (!$text.Contains('STS2MOD_TEST_PASS EXP_portrait_TC_C' + $id.ToString('00'))) { throw "Missing portrait $id" }
 }
-if ($text -notmatch '(?m)^STS2MOD_EXPANSION_COMPLETE assertions=\d+ cards=18 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
+if ($text -notmatch '(?m)^STS2MOD_EXPANSION_COMPLETE assertions=\d+ cards=19 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
     throw 'Expansion test has not completed.'
 }
-if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions=\d+ cards=18 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
+if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions=\d+ cards=19 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Focused completion marker missing.'
 }
-Write-Output 'EXPANDED_CARDS_PASS cards=18 powers=4 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'
+foreach ($case in @('chain_native_random_hits_False','chain_native_random_hits_True',
+ 'tailwind_one_draw_exhaust_boundary_False','tailwind_one_draw_exhaust_boundary_True',
+ 'guidance_wind_rock_draws','guidance_pairs_share_once','echo_wind_rock_six_block','echo_paimon_block_eight_no_stack',
+ 'echo_doubles_lightning_wind','echo_paimon_draw_two_no_stack',
+ 'echo_preview_matches_draw','upgraded_resonance_first_refunds_energy','upgraded_resonance_once_per_turn',
+ 'compass_third_actual_reward_strength','compass_fourth_no_second_strength','compass_fifth_combo_blocked',
+ 'compass_strength_accumulates_next_turn','new_combat_strength_reset_without_compass')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS BAL_$case")) { throw "Missing balance case: $case" }
+}
+Write-Output 'EXPANDED_CARDS_PASS cards=19 powers=4 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'

@@ -18,7 +18,7 @@ public sealed class WindGuidancePower : TravelerAbilityPower
     }
     public override async Task OnComboReward(PlayerChoiceContext context, ComboKind kind, int actualRewardNumber)
     {
-        if (!CanReward || kind != ComboKind.LightningWind || Amount <= _spentCopies) return;
+        if (!CanReward || kind is not (ComboKind.LightningWind or ComboKind.WindRock) || Amount <= _spentCopies) return;
         var draws = Amount - _spentCopies;
         _spentCopies = Amount; // Pre-reserve all active copies before awaiting native draw.
         Flash();

@@ -51,6 +51,21 @@ foreach($element in @('Wind','Rock','Lightning')) {
 if($text -notmatch '(?m)^STS2MOD_COMBAT_PRESENTATION_COMPLETE assertions=\d+ native_events=PASS cleanup=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$'){
  throw 'Combat presentation suite incomplete'
 }
+foreach($case in @('combo_burst_reuses_single_node','combo_small_fixed_bounds_short_lifetime',
+ 'combo_has_no_images_or_particles','combo_cleanup_no_rules_or_rng_changes',
+ 'relic_flash_event_preserved_one_icon_pulse','relic_pulse_no_layout_scale_texture_or_input_changes',
+ 'relic_no_creature_portrait_flash','native_portrait_suppressed_TC_R01','native_portrait_suppressed_TC_R02',
+ 'native_portrait_suppressed_TC_R03','other_relic_factory_unchanged','relic_cleanup_no_rules_or_rng_changes',
+ 'zero_draw_no_bubble_or_relic_effect','other_power_unchanged',
+ 'resonance_icon_pulse_TC_ELEMENT_RESONANCE','resonance_no_large_art_TC_ELEMENT_RESONANCE',
+ 'resonance_cleanup_no_gameplay_mutation_TC_ELEMENT_RESONANCE',
+ 'resonance_icon_pulse_TC_FIRST_ELEMENT_RESONANCE','resonance_no_large_art_TC_FIRST_ELEMENT_RESONANCE',
+ 'resonance_cleanup_no_gameplay_mutation_TC_FIRST_ELEMENT_RESONANCE')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS QUIET_$case")){throw "Missing compact trigger case: $case"}
+}
+if(!$text.Contains('STS2MOD_COMPACT_TRIGGERS_COMPLETE compact=PASS cleanup=PASS scope=custom_only rendering=NOT_RUN')){
+ throw 'Compact trigger suite incomplete'
+}
 if(!$WithinExpansion){
  if($text -notmatch '(?m)^STS2MOD_VISUAL_FOCUSED_COMPLETE assertions=(\d+) singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False\r?$'){
   throw 'Visual focused suite incomplete'

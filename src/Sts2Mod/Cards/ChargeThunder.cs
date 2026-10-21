@@ -20,7 +20,11 @@ public sealed class ChargeThunder : ElementCardModel
     public override bool GainsBlock => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(4m, ValueProp.Move), new EnergyVar(1)];
-    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
+    protected override void OnUpgrade()
+    {
+        DynamicVars.Block.UpgradeValueBy(2m);
+        RemoveKeyword(CardKeyword.Exhaust);
+    }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var reservation = ComboPower.Reserve(this, context, play, CardElement);

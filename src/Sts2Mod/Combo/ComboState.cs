@@ -12,11 +12,13 @@ public readonly record struct ComboStep(bool Advanced, ComboKind Kind, Element B
 public sealed class ComboState
 {
     public const int Limit = 3;
+    public int TurnLimit { get; private set; } = Limit;
+    public void SetTurnLimit(int limit) => TurnLimit = Math.Max(Limit, limit);
     private readonly HashSet<object> _seen = new(ReferenceEqualityComparer.Instance);
     public Element Last { get; private set; }
     public int Used { get; private set; }
     public int RewardsThisTurn { get; private set; }
-    public int Remaining => Limit - Used;
+    public int Remaining => Math.Max(0, TurnLimit - Used);
     // Always positive: the engine removes powers whose amount reaches zero.
     public int Encoded => 1 + (int)Last + 4 * Used;
 
@@ -25,7 +27,7 @@ public sealed class ComboState
     public int MarkRewardGranted() => ++RewardsThisTurn;
 
     // Read-only: hovering must never reserve an action or spend a combo use.
-    public ComboKind Preview(Element element) => Used >= Limit ? ComboKind.None : Pair(Last, element);
+    public ComboKind Preview(Element element) => Used >= TurnLimit ? ComboKind.None : Pair(Last, element);
 
     private static ComboKind Pair(Element first, Element second) => (first, second) switch
     {
@@ -41,7 +43,7 @@ public sealed class ComboState
         if (element == Element.None || automatic || !firstInSeries || !_seen.Add(action))
             return new(false, ComboKind.None, before, Last, Used);
 
-        if (Used >= Limit)
+        if (Used >= TurnLimit)
         {
             Last = element;
             return new(true, ComboKind.None, before, Last, Used);

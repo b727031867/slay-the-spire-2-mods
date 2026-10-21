@@ -35,7 +35,7 @@ public partial class TravelerTestRunner
 {
     private async Task FreshExpansion()
     {
-        foreach (var relic in _player.Relics.Where(r => r is PaimonCheer or JourneyCompass).ToArray())
+        foreach (var relic in _player.Relics.Where(r => r is PaimonCheer or JourneyCompass or UnboundJourneyCompass).ToArray())
             await RelicCmd.Remove(relic);
         await StartFreshCombat();
         foreach (var enemy in _player.Creature.CombatState!.Enemies)
@@ -76,11 +76,11 @@ public partial class TravelerTestRunner
         await TestDefensiveRandomCombos();
         await FreshExpansion();
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Where(c => c.Rarity != CardRarity.Basic).ToArray();
-        Check(pool.Length == 18 && pool.Count(c => c.Type == CardType.Attack) == 7
+        Check(pool.Length == 19 && pool.Count(c => c.Type == CardType.Attack) == 8
             && pool.Count(c => c.Type == CardType.Skill) == 7 && pool.Count(c => c.Type == CardType.Power) == 4,
-            "EXP_pool_18_types_7_7_4");
-        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 8 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 7
-            && pool.Count(c => c.Rarity == CardRarity.Rare) == 3, "EXP_rarity_8_7_3");
+            "EXP_pool_19_types_8_7_4");
+        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 8 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 8
+            && pool.Count(c => c.Rarity == CardRarity.Rare) == 3, "EXP_rarity_8_8_3");
         Check(TravelerContent.RewardCardTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "EXP_all_ids_once");
         var boss = CardFactory.CreateForReward(_player, 3, CardCreationOptions.ForRoom(_player, RoomType.Boss)).ToArray();
         Check(boss.Length == 3 && boss.All(c => c.Card.Rarity == CardRarity.Rare), "EXP_boss_native_rare_rewards");
@@ -92,8 +92,8 @@ public partial class TravelerTestRunner
                 && cards.Count(c => c.Type == CardType.Attack) == 2, "EXP_shop_native_type_slots_" + i);
         }
 
-        var upgradedCosts = new[] { 0, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 0 };
-        for (var i = 0; i < 12; i++)
+        var upgradedCosts = new[] { 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1 };
+        for (var i = 0; i < 13; i++)
         {
             var canonical = pool.Single(c => c.Id.Entry == "TC_C" + (i + 7).ToString("00"));
             foreach (var upgraded in new[] { false, true })
@@ -128,11 +128,12 @@ public partial class TravelerTestRunner
             await Play<RockGuard>();
             before = _target.CurrentHp;
             await Play<ThunderMark>(up);
-            Check(before - _target.CurrentHp == (up ? 14 : 11) && _target.GetPower<VulnerablePower>()?.Amount == 1
+            Check(before - _target.CurrentHp == (up ? 13 : 11) && _target.GetPower<VulnerablePower>()?.Amount == (up ? 2 : 1)
                 && Power.State.Used == 1, "EXP_thunder_mark_vulnerable_before_combo_" + up);
             await FreshExpansion();
             await Play<WindShelter>(up);
-            Check(_player.Creature.Block == (up ? 9 : 6) && Power.State.Last == Element.Wind, "EXP_wind_shelter_" + up);
+            Check(_player.Creature.Block == (up ? 7 : 5) && _target.GetPower<WeakPower>()?.Amount == 1
+                && _player.Creature.CombatState!.Enemies.All(e => e == _target || (e.GetPower<WeakPower>()?.Amount == 1) == up) && Power.State.Last == Element.Wind, "EXP_wind_shelter_" + up);
             await FreshExpansion();
             var wall = await Add<PatientRampart>(up);
             await Queue(new PlayCardAction(wall, null));
@@ -140,8 +141,8 @@ public partial class TravelerTestRunner
                 "EXP_patient_rampart_block_" + up);
             await FreshExpansion();
             await Play<ChargeThunder>(up);
-            Check(_player.Creature.Block == (up ? 7 : 4) && _player.Creature.GetPower<EnergyNextTurnPower>()?.Amount == 1
-                && PileType.Exhaust.GetPile(_player).Cards.Any(c => c is ChargeThunder), "EXP_charge_thunder_base_" + up);
+            Check(_player.Creature.Block == (up ? 6 : 4) && _player.Creature.GetPower<EnergyNextTurnPower>()?.Amount == 1
+                && PileType.Exhaust.GetPile(_player).Cards.Any(c => c is ChargeThunder) == !up, "EXP_charge_thunder_base_" + up);
             await SeedDraw();
             await ExpansionNativeTurn();
             Check(_player.PlayerCombatState!.Energy == _player.MaxEnergy + 1 && _player.Creature.GetPower<EnergyNextTurnPower>() is null,
@@ -151,12 +152,12 @@ public partial class TravelerTestRunner
             await FreshExpansion();
             before = _target.CurrentHp;
             await Play<TriphaseFinale>(up);
-            Check(before - _target.CurrentHp == (up ? 14 : 10) && Power.State.Used == 0 && Power.State.Last == Element.None,
+            Check(before - _target.CurrentHp == (up ? 12 : 10) && Power.State.Used == 0 && Power.State.Last == Element.None,
                 "EXP_finale_zero_combos_" + up);
             await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>(); await Play<RockGuard>();
             before = _target.CurrentHp;
             await Play<TriphaseFinale>(up);
-            Check(before - _target.CurrentHp == (up ? 26 : 22) && Power.State.Used == 3 && Power.State.Last == Element.Rock,
+            Check(before - _target.CurrentHp == (up ? 24 : 22) && Power.State.Used == 3 && Power.State.Last == Element.Rock,
                 "EXP_finale_three_combos_without_element_advance_" + up);
             var finale = await Add<TriphaseFinale>(up);
             await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), _player.Creature, 2m, _player.Creature, null);
@@ -164,7 +165,7 @@ public partial class TravelerTestRunner
             await PowerCmd.Apply<VulnerablePower>(new BlockingPlayerChoiceContext(), _target, 2m, _player.Creature, null);
             finale.DynamicVars.CalculatedDamage.UpdateCardPreview(finale, CardPreviewMode.Normal, _target, true);
             var displayedFinale = Math.Floor(finale.DynamicVars.CalculatedDamage.PreviewValue);
-            var expectedFinale = up ? 31 : 27;
+            var expectedFinale = up ? 29 : 27;
             before = _target.CurrentHp;
             await Queue(new PlayCardAction(finale, _target));
             Check(before - _target.CurrentHp == expectedFinale && displayedFinale == expectedFinale,
@@ -173,10 +174,11 @@ public partial class TravelerTestRunner
 
         await TestExpansionRetain();
         await TestExpansionAbilities();
+        await TestBalanceChanges();
         await FreshExpansion();
         Check(Power.State.Last == Element.None && Power.State.Used == 0 && Power.State.RewardsThisTurn == 0
             && !_player.Creature.Powers.OfType<TravelerAbilityPower>().Any(), "EXP_new_combat_clears_ability_and_combo_state");
-        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=18 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN");
+        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=19 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN");
     }
 
     private async Task TestDefensiveRandomCombos()
@@ -246,7 +248,7 @@ public partial class TravelerTestRunner
             var third = await Add<RockGuard>();
             await Play<JourneyPlans>(up);
             Check(first.ShouldRetainThisTurn && second.ShouldRetainThisTurn == up && !third.ShouldRetainThisTurn
-                && Power.State.Last == Element.None && PileType.Exhaust.GetPile(_player).Cards.Any(c => c is JourneyPlans),
+                && Power.State.Last == Element.None && !PileType.Exhaust.GetPile(_player).Cards.Any(c => c is JourneyPlans),
                 "EXP_plans_native_selection_" + up);
             await ExpansionNativeTurn();
             Check(first.Pile?.Type == PileType.Hand && (up ? second.Pile?.Type == PileType.Hand : second.Pile?.Type == PileType.Discard),
@@ -341,19 +343,19 @@ public partial class TravelerTestRunner
         await FreshExpansion(); await SeedDraw();
         await RelicCmd.Obtain<PaimonCheer>(_player); await RelicCmd.Obtain<JourneyCompass>(_player);
         await Play<WindGuidance>(); await Play<WindBlade>(); await Play<LightningThrust>();
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 4, "EXP_paimon_combo2_guidance1_compass1");
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 3, "EXP_paimon_combo2_guidance1_compass0");
 
         await FreshExpansion();
         await Play<ThunderEcho>(); await Play<ThunderEcho>(true);
         var other = _player.Creature.CombatState!.Enemies.First(e => e != _target);
         var hp = _target.CurrentHp; var otherHp = other.CurrentHp;
         await Play<RockGuard>(); await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 19 && otherHp - other.CurrentHp == 8
-            && _player.Creature.GetPower<ThunderEchoPower>()?.Amount == 8, "EXP_echo_stacks_3_plus_5_and_hits_all");
+        Check(hp - _target.CurrentHp == 15 && otherHp == other.CurrentHp
+            && _player.Creature.GetPower<ThunderEchoPower>()?.Amount == 2, "EXP_echo_copies_add_base_reward");
         hp = _target.CurrentHp; otherHp = other.CurrentHp;
         await Play<ShatteringRock>();
-        Check(hp - _target.CurrentHp == 25 && otherHp - other.CurrentHp == 8 && Power.State.Used == 2,
-            "EXP_echo_repeats_on_second_rock_lightning");
+        Check(hp - _target.CurrentHp == 21 && otherHp == other.CurrentHp && Power.State.Used == 2,
+            "EXP_echo_boosts_second_rock_lightning");
 
         await FreshExpansion();
         await RelicCmd.Obtain<PaimonCheer>(_player);
@@ -362,15 +364,15 @@ public partial class TravelerTestRunner
         await PowerCmd.Apply<StrengthPower>(source.PlayerChoiceContext!, _player.Creature, 2m, _player.Creature, null);
         hp = _target.CurrentHp; other = _player.Creature.CombatState!.Enemies.First(e => e != _target); otherHp = other.CurrentHp;
         await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 22 && otherHp - other.CurrentHp == 3,
-            "EXP_echo_unaffected_by_paimon_or_strength");
+        Check(hp - _target.CurrentHp == 19 && otherHp == other.CurrentHp,
+            "EXP_echo_does_not_stack_with_paimon");
 
         await FreshExpansion();
         await Play<ThunderEcho>(); await Play<ElementResonance>();
         hp = _target.CurrentHp; other = _player.Creature.CombatState!.Enemies.First(e => e != _target); otherHp = other.CurrentHp;
         await Play<RockGuard>(); await Play<ThunderPrep>();
-        Check(hp + otherHp - _target.CurrentHp - other.CurrentHp == 10
-            && hp > _target.CurrentHp && otherHp > other.CurrentHp && Power.State.RewardsThisTurn == 1,
+        Check(hp + otherHp - _target.CurrentHp - other.CurrentHp == 6
+            && (hp > _target.CurrentHp || otherHp > other.CurrentHp) && Power.State.RewardsThisTurn == 1,
             "EXP_random_defensive_attack_triggers_echo_and_actual_reward");
         await FreshExpansion();
         await Play<ThunderEcho>();
@@ -393,8 +395,8 @@ public partial class TravelerTestRunner
         await Play<WindBlade>(); await Play<RockGuard>();
         var energy = _player.PlayerCombatState!.Energy;
         await Play<WindBlade>();
-        Check(_player.PlayerCombatState.Energy == energy + 1 && Power.State.RewardsThisTurn == 2 && Power.State.Used == 2,
-            "EXP_resonance_second_reward_grants_one_per_copy");
+        Check(_player.PlayerCombatState.Energy == energy && Power.State.RewardsThisTurn == 2 && Power.State.Used == 2,
+            "EXP_resonance_base_and_upgrade_use_separate_thresholds");
         energy = _player.PlayerCombatState.Energy;
         await Play<RockGuard>();
         Check(_player.PlayerCombatState.Energy == energy - 1 && Power.State.RewardsThisTurn == 3,
@@ -409,7 +411,7 @@ public partial class TravelerTestRunner
         await Play<RockGuard>();
         energy = _player.PlayerCombatState.Energy;
         await Play<WindBlade>();
-        Check(_player.PlayerCombatState.Energy == energy + 1, "EXP_resonance_can_trigger_on_extra_turn");
+        Check(_player.PlayerCombatState.Energy == energy, "EXP_resonance_can_trigger_on_extra_turn");
 
         await FreshExpansion();
         await Play<ElementResonance>();

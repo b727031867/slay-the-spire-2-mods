@@ -1,37 +1,46 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.9 · 单人技术测试版[/b]
-可选角色「旅行者」拥有18张专属奖励牌（7攻击/7技能/4能力）、10张起始牌、旅途罗盘和专属遗物「派蒙的应援」。支持简体中文/英文，通过风、岩、雷出牌顺序组合防御、过牌和追击。
+[b]0.3.13 · 支持单人和联机[/b]
+可选角色「旅行者」拥有19张专属奖励牌（8攻击/7技能/4能力）、10张起始牌，以及旅途罗盘、无界罗盘和派蒙的应援。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
+
+[b]已获得用户双人联机实测反馈。[/b]联机时各方须使用相同游戏、Mod和BaseLib版本。选人页头像与名字重叠问题已修复；自动化检查与用户联机实测分别记录。
 
 [h2]本次更新[/h2]
 [list]
-[*]战斗角色统一使用原始母稿的七层网格与18关节，保持脸型、服装与比例一致；剑与持剑手保持刚性，双脚维持支撑。
-[*]普通攻击改为侧身前突刺，防御改为双手握柄举剑挡在身前，受击改为轻微侧身后仰，各动作结束回归原始姿态。
-[*]连续出牌在突刺和防御之间直接衔接当前姿势；修正命中时钟瞬跳、剑刃拉伸与抬剑时副手翻转。
-[*]沿用既有卡牌与连携规则、商店旅行者、篝火坐姿、三元素攻防特效和融合反馈。
+[*]新增罕见攻击牌雷霆连锁：1费，随机攻击3次，每次3伤害；升级为4次，整张牌推进一次连携。
+[*]旅途罗盘移除抽牌，连携上限提高至4次；每回合第3次实际奖励后获得1点本场战斗力量，每回合一次。
+[*]欧洛巴斯之触可替换为无界罗盘：连携上限4次，每次实际奖励后额外抽1，无额外冷却；不继承原罗盘力量。
+[*]雷霆余响2费/升级1费：连携基础攻击、格挡各+2，抽牌+1；与派蒙逐项取较高奖励，不相乘或相加。
+[*]风的指引1费/升级0费：每回合首次风雷或风岩实际连携后再抽1，两类共享一次，可与派蒙共存。
+[*]元素共鸣2费：每回合第2次实际奖励后回1能量；升级1费，改为第1次。
+[*]顺风整备升级移除消耗，仍只抽1；蓄雷升级6格挡且不消耗；旅途筹谋不再消耗。
+[*]三相终击升级1费12基础伤害，保留每次连携+4（最多+12）；雷痕升级7伤害、2易伤。
+[*]风之庇护基础5格挡、单体虚弱1；升级7格挡、全体虚弱1。
+[*]遗物与元素共鸣改为原图标短闪；连携使用小型短线条，取消放大图片、重复气泡及大金环，连续触发合并显示。
+[*]保留同母稿七层网格、18关节角色动作、旅行者商店与篝火图；修复联机选人头像/名字布局。
 [/list]
 
 [h2]连携规则[/h2]
 [list]
 [*]风↔岩：额外4格挡；岩↔雷：额外4基础攻击；雷↔风：额外抽1。
-[*]两种出牌方向均可，三类每人每回合合计最多3次。连携后保留刚打出的元素，可连续衔接；元素跨回合保留，战斗结束清空。
-[*]单体攻击追击同一存活敌人，原目标死亡不转火；无敌方目标的防御技能随机追击。无目标群攻不自动选择单体追击目标。
-[*]派蒙只翻倍基础连携，不翻倍罗盘/能力；能力牌不带元素，不推进序列。
-[*]自动打出与额外重复结算不推进序列；战斗结束跳过奖励，零伤害/抽0等未发放奖励不计入能力的实际连携次数。
-[*]元素共鸣在每回合第2次实际连携奖励时回能；旅途罗盘触发后隔一次自己的回合恢复。
+[*]双向可触发，每人每回合默认合计3次，持有任一罗盘时4次；连携后保留最新元素，元素跨回合保留，战斗结束清空。
+[*]单体攻击追击原存活目标，目标死亡不转火；无敌方目标的防御技能随机追击，无目标群攻不自动选择目标；雷霆连锁可随机追击。
+[*]派蒙只翻倍基础奖励，不翻倍能力/罗盘。能力不带元素、不推进序列；普通牌不打断元素记录。
+[*]自动打出和额外重复结算不推进序列；战斗结束跳过奖励，抽0、零伤害或无有效目标不计实际奖励次数。
 [/list]
 
 [h2]安装与验证[/h2]
-固定 Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7；本Mod会拒绝其他BaseLib版本。工坊依赖无法锁定版本，更新后请核对。每个Mod只保留一份生效副本。
-构建、完整回归及实际下载检查记录在发布报告。用户已完成动作草图及本地回放评审；AI游戏测试全程无GUI，离线回放来自实际节点网格帧，不能替代实机光照与特效下的画面验收。多人、自然完整流程/Boss平衡和旧档迁移未作系统验收。条目沿用既有好友可见设置，需有访问权限。
-角色、卡牌与篝火插图使用生成式素材。封面与规则图为原创说明设计，不是游戏截图。NPC商人及部分通用演出仍复用原生资源。
+固定Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7。本Mod拒绝其他BaseLib版本；工坊依赖无法锁版本，更新后请核对。每个Mod只保留一份生效副本。
+用户已试玩轻量反馈候选并授权发布；最终包自动化验证范围单独记录，不将无GUI节点检查称为图形或联机验收。自然Boss系统性平衡与用户旧档迁移未作系统验收。条目保留既有好友可见设置。
+角色、卡牌及篝火插图使用生成式素材；雷霆连锁暂复用雷元素插图。封面及规则图为说明素材，不是游戏截图；部分通用演出复用原生资源。
 
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/tests/RELEASE-039.md]0.3.9发布验证[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/STATUS.md]当前状态与验证[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.9 uses a single source illustration with seven mesh layers and eighteen connected joints. Normal attacks now use a side-on forward thrust, defense raises the sword in front of the body with both hands, and hurt reactions lean back slightly before returning to idle. Consecutive attacks and guards blend directly from the current pose. Sword deformation, hand attachment and wrist transitions are corrected. Existing shop/rest-site artwork and elemental effects remain available.
-18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer. Gameplay values, combo limits and save IDs are unchanged. Each element pair works in either order and all pairs share a three-use cap per player per turn; elements persist across turns. Paimon doubles only base combo rewards. Targeted follow-ups never replace a dead target; defensive skills choose a random living enemy using native RNG.
-Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Full regression and download verification are recorded in the release report. The user reviewed the motion storyboards and local playback; headless checks and offline mesh playback do not establish in-game rendered appearance. Multiplayer, natural full-run/Boss balance and old-save migration are not systematically validated. AI-generated illustrations are used; previews are explanatory graphics. Existing friends-only visibility is preserved.
+Version 0.3.13 integrates 19 reward cards (8 Attacks, 7 Skills, 4 Powers), Thunder Chain, revised combo balance, Unbound Compass and the co-op character-selection layout fix. Journey Compass raises the shared combo cap to four and grants 1 combat Strength after the third actual reward each turn, replacing its old draw effect. Unbound Compass instead draws one extra card per actual reward and keeps the four-use cap.
+Base rewards: Wind/Rock grants 4 Block, Rock/Lightning makes a 4-base-damage follow-up, Lightning/Wind draws 1. Both directions work. Elements persist across turns; ordinary cards do not interrupt them. Paimon doubles only base rewards. Thunder Echo adds 2 base attack/Block and 1 draw per copy; use the higher reward versus Paimon rather than stacking them. Wind Guidance can coexist with Paimon. Element Resonance grants energy after the second actual reward, or the first when upgraded.
+Relics and both Resonance variants now use brief flashes inside their existing icons. Combo effects are short, small line accents, without enlarged artwork or repeated text bubbles. Consecutive effects reuse a node without merging gameplay rewards. Original seven-layer, eighteen-joint character animation is retained.
+Supports singleplayer and co-op; all players need matching versions. Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Automated headless checks and user playtesting are separate evidence, not systematic natural-run/Boss balance or old-save migration validation. AI-generated illustrations are used. Existing friends-only visibility is preserved.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。

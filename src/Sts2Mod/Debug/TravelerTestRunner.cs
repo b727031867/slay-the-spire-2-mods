@@ -158,7 +158,7 @@ public partial class TravelerTestRunner : Node
         if (CommandLineHelper.HasArg("sts2mod-cards"))
         {
             await TestExpandedCards();
-            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=18 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
+            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=19 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
             return;
         }
         if (CommandLineHelper.HasArg("sts2mod-character"))
@@ -336,7 +336,7 @@ public partial class TravelerTestRunner : Node
             "TC23_tailwind_draw1_exhaust_wind");
         await NextTurn(); await SeedDraw();
         await Play<TailwindPrep>(true);
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 2, "TC13_tailwind_upgrade_draw2");
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 1 && !PileType.Exhaust.GetPile(_player).Cards.OfType<TailwindPrep>().Any(c => c.CurrentUpgradeLevel > 0), "TC13_tailwind_upgrade_draw1_reusable");
 
         await NextTurn(); await SeedDraw();
         await Play<LightningThrust>();

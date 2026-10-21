@@ -18,7 +18,11 @@ public sealed class ThunderMark : ElementCardModel
     public override Element CardElement => Element.Lightning;
     public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_mark.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5m, ValueProp.Move), new DynamicVar("Vulnerable", 1m)];
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
+    protected override void OnUpgrade()
+    {
+        DynamicVars.Damage.UpgradeValueBy(2m);
+        DynamicVars["Vulnerable"].UpgradeValueBy(1m);
+    }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var reservation = ComboPower.Reserve(this, context, play, CardElement);

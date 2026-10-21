@@ -6,21 +6,39 @@ namespace Sts2Mod.Combo;
 /// <summary>Pure presentation: finite, nonblocking, shader-free and silent.</summary>
 public partial class ElementComboVfx : Node2D
 {
-    public ComboKind Kind { get; init; }
-    public bool Doubled { get; init; }
-    public bool Blocked { get; init; }
+    public ComboKind Kind { get; private set; }
+    public bool Doubled { get; private set; }
+    public bool Blocked { get; private set; }
     private double _elapsed;
-    public const double Duration = 0.55;
+    public const double Duration = 0.22;
+    public const int MaxEffectsPerAnchor = 1;
+    public const float PeakOpacity = 0.55f;
+    public const float MaxRadius = 28f;
+
+    public static ElementComboVfx Spawn(Node parent, ComboKind kind, bool doubled, bool blocked = false)
+    {
+        var effect = parent.GetChildren().OfType<ElementComboVfx>().FirstOrDefault(v => !v.IsQueuedForDeletion());
+        if (effect is null)
+        {
+            effect = new ElementComboVfx { ZIndex = 5 };
+            parent.AddChild(effect);
+        }
+        effect.Kind = kind;
+        effect.Doubled = doubled;
+        effect.Blocked = blocked;
+        effect._elapsed = 0;
+        effect.Scale = Vector2.One;
+        effect.Modulate = new Color(1, 1, 1, PeakOpacity);
+        effect.QueueRedraw();
+        return effect;
+    }
 
     public static void Show(Creature target, ComboKind kind, bool doubled, bool blocked = false)
     {
         var anchor = target.GetCreatureNode();
         var container = target.GetVfxContainer();
         if (anchor is null || container is null || !GodotObject.IsInstanceValid(anchor) || !anchor.IsInsideTree()) return;
-        var existing = container.GetChildren().OfType<ElementComboVfx>().Where(v => !v.IsQueuedForDeletion()).ToArray();
-        if (existing.Length >= 8) existing[0].QueueFree();
-        var effect = new ElementComboVfx { Kind = kind, Doubled = doubled, Blocked = blocked, ZIndex = 5 };
-        container.AddChild(effect);
+        var effect = Spawn(container, kind, doubled, blocked);
         effect.GlobalPosition = anchor.VfxSpawnPosition;
     }
 
@@ -29,8 +47,7 @@ public partial class ElementComboVfx : Node2D
         _elapsed += delta;
         if (_elapsed >= Duration) { QueueFree(); return; }
         var progress = (float)(_elapsed / Duration);
-        Modulate = new Color(1, 1, 1, (1 - progress) * 0.85f);
-        Scale = Vector2.One * (0.8f + progress * 0.45f);
+        Modulate = new Color(1, 1, 1, (1 - progress) * PeakOpacity);
         QueueRedraw();
     }
 
@@ -44,34 +61,20 @@ public partial class ElementComboVfx : Node2D
         };
         if (Blocked)
         {
-            DrawArc(new(-8,0),44,-1.2f,1.2f,24,color,3,true);
-            DrawLine(new(30,-8),new(44,-15),new Color("eac27c"),2,true);
+            DrawArc(new(-6,0),20,-1.1f,1.1f,16,color,2,true);
         }
         else if (Kind == ComboKind.WindRock)
         {
-            Vector2[] shield = [new(-38,-35), new(0,-50), new(38,-35), new(30,20), new(0,45), new(-30,20), new(-38,-35)];
-            DrawPolyline(shield, color, 5, true);
-            DrawLine(new(-25,-12),new(25,-12),color,3,true);
-            DrawArc(Vector2.Zero, 52, -2.8f, 0.3f, 24, new Color("79d9c8"), 3, true);
+            DrawPolyline([new(-18,-16),new(0,-23),new(18,-16),new(14,10),new(0,22),new(-14,10)], color, Doubled ? 2.2f : 1.8f, true);
         }
         else if (Kind == ComboKind.RockLightning)
         {
-            Vector2[] bolt = [new(15,-55), new(-18,-5), new(8,-5), new(-15,45)];
-            DrawPolyline(bolt, color, 6, true);
-            DrawPolyline([new(-28,-30),new(4,-42),new(28,-8),new(12,32),new(-8,18),new(-28,-30)],
-                new Color("eac27c"), 3, true);
+            DrawPolyline([new(9,-23),new(-10,-2),new(5,-2),new(-8,22)], color, Doubled ? 2.2f : 1.8f, true);
         }
         else
         {
-            DrawArc(new(0,-12),35,-2.8f,0.5f,24,color,4,true);
-            DrawArc(new(0,12),45,-0.2f,2.9f,24,color,4,true);
-        }
-        if (Doubled)
-        {
-            var gold = new Color("f4d78d");
-            DrawArc(Vector2.Zero,60,-Mathf.Pi,Mathf.Pi,36,gold,2,true);
-            DrawLine(new(48,-54),new(48,-34),gold,3,true);
-            DrawLine(new(38,-44),new(58,-44),gold,3,true);
+            DrawArc(new(0,-5),18,-2.8f,0.5f,18,color,1.8f,true);
+            DrawArc(new(0,5),20,-0.2f,2.9f,18,color,1.8f,true);
         }
     }
 }
