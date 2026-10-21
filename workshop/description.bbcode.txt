@@ -26,12 +26,12 @@
 角色、卡牌与篝火插图使用生成式素材。封面与规则图为原创说明设计，不是游戏截图。NPC商人及部分通用演出仍复用原生资源。
 
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/tests/RELEASE-038.md]0.3.8发布验证[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/tests/RELEASE-039.md]0.3.9发布验证[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.8 removes long combo overlays from card selection and keeps one short preview for playable hand cards. The Traveler's head/body ratio, waist, coat, legs and elbow connections are recalibrated while combat animations are preserved. Shops now display the Traveler with a dedicated scene and a compatibility guard for native Spine animation calls. Rest-site art and elemental effects remain available.
+Version 0.3.9 uses a single source illustration with seven mesh layers and eighteen connected joints. Normal attacks now use a side-on forward thrust, defense raises the sword in front of the body with both hands, and hurt reactions lean back slightly before returning to idle. Consecutive attacks and guards blend directly from the current pose. Sword deformation, hand attachment and wrist transitions are corrected. Existing shop/rest-site artwork and elemental effects remain available.
 18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer. Gameplay values, combo limits and save IDs are unchanged. Each element pair works in either order and all pairs share a three-use cap per player per turn; elements persist across turns. Paimon doubles only base combo rewards. Targeted follow-ups never replace a dead target; defensive skills choose a random living enemy using native RNG.
-Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Full regression and download verification are recorded in the release report. Headless checks and offline pose reconstructions do not establish in-game rendered appearance. Multiplayer, natural full-run/Boss balance and old-save migration are not systematically validated. AI-generated illustrations are used; previews are explanatory graphics. Private visibility is preserved.
+Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Full regression and download verification are recorded in the release report. The user reviewed the motion storyboards and local playback; headless checks and offline mesh playback do not establish in-game rendered appearance. Multiplayer, natural full-run/Boss balance and old-save migration are not systematically validated. AI-generated illustrations are used; previews are explanatory graphics. Existing friends-only visibility is preserved.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。
