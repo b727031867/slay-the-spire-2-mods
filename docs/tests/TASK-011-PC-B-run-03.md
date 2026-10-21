@@ -1,5 +1,7 @@
 # 0.3.5 / PC-B / 能量提示贴图修复
 
+本页仅标识0.3.5包的技术证据；当前版本与发布状态见[0.3.6报告](RELEASE-036.md)。
+
 本报告记录0.3.5核心包在PC-B的无GUI修复专项。当前交付状态为用户试玩通过、main已推送、原私有工坊已更新；下载与工坊验证见[发布报告](TASK-011-PC-B-release-035.md)。
 
 用户报告开局随机遗物的悬停/查看界面出现巨型罗盘。根因不是随机遗物自己的图片：TravelerCardPool、TravelerRelicPool、TravelerPotionPool将高清compass.png同时当作BigEnergyIconPath与TextEnergyIconPath。BaseLib的能量行内格式不指定缩放，原生HoverTipFactory也依本机角色卡池取得能量图片，故原生遗物同样受影响。

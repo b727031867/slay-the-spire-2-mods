@@ -1,6 +1,6 @@
 # 接续说明 / 0.3.6
 
-稳定接续分支为main。用户已授权提交工程重构、合并main并更新原私有工坊3823282901；实际执行结果和包身份先看[发布报告](../tests/RELEASE-036.md)，不要把准备状态视为发布完成。
+稳定接续分支为main。工程重构已提交并快进合入main、推送完成，原私有工坊3823282901已更新0.3.6。S=0685d66bddf7ec29c604fd61e99c81553fa73aad，dirty=false；包哈希、实际Steam下载、CDN与工坊加载结果见[发布报告](../tests/RELEASE-036.md)。后续文档提交不改变S核心包，不重复构建或上传。
 
 先读根目录AGENTS.md、STATUS、DEVELOPMENT及玩家指南。保留未提交改动，git fetch后仅快进同步，不硬重置、强推或覆盖本机配置。各设备独立核对游戏v0.107.1/build23811903、BaseLib精确3.4.7、SDK10.0.402、Godot.NET4.5.1和PowerShell7。
 
