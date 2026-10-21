@@ -1,5 +1,5 @@
 param([switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance,
-    [switch]$TravelerCharacter, [switch]$TravelerCards, [switch]$TravelerVisuals, [switch]$TravelerEndToEnd, [switch]$ResumeTask003, [string]$SandboxDirectory)
+    [switch]$TravelerCharacter, [switch]$TravelerCards, [switch]$TravelerVisuals, [switch]$TravelerEndToEnd, [switch]$ResumeTask003, [string]$SandboxDirectory, [switch]$PassThru)
 $ErrorActionPreference = 'Stop'
 # Automated game tests must not open a window or steal focus from the user's work.
 if ($TravelerCharacter) { $TravelerTest = $true }
@@ -37,7 +37,7 @@ if ($TravelerTest -or $TravelerAcceptance -or $TravelerRewards) {
         Set-Content -LiteralPath $marker -Value 'STS2MOD_TEST_SANDBOX_V1' -Encoding ascii
     }
     $arguments += @('--sts2mod-sandbox', ('"' + $SandboxDirectory + '"'))
-    Write-Output "SandboxDirectory=$SandboxDirectory"
+    if (!$PassThru) { Write-Output "SandboxDirectory=$SandboxDirectory" }
 }
 if ($TravelerDebug -or $TravelerTest -or $TravelerRewards -or $TravelerAcceptance) { $arguments += '--sts2mod-debug' }
 if ($TravelerTest -or $TravelerRewards -or $TravelerAcceptance) { $arguments += '--sts2mod-test' }
@@ -57,8 +57,15 @@ try {
     $env:SteamGameId = '2868840'
     $windowStyle = if ($Headless) { 'Hidden' } else { 'Normal' }
     $process = Start-Process -FilePath (Join-Path $env:STS2_GAME_DIR 'SlayTheSpire2.exe') -WorkingDirectory $env:STS2_GAME_DIR -ArgumentList $arguments -WindowStyle $windowStyle -PassThru
-    Write-Output "GameProcessId=$($process.Id)"
-    Write-Output "LogFile=$logPath"
+    if ($PassThru) {
+        [pscustomobject]@{
+            GameProcessId=$process.Id; LogFile=$logPath; SandboxDirectory=$SandboxDirectory
+            Headless=[bool]$Headless; Process=$process
+        }
+    } else {
+        Write-Output "GameProcessId=$($process.Id)"
+        Write-Output "LogFile=$logPath"
+    }
 } finally {
     $env:SteamAppId = $oldAppId
     $env:SteamGameId = $oldGameId

@@ -1,32 +1,26 @@
-# 0.3.5 / PC-B / 远端与工坊发布
+# 0.3.5 / PC-B / 发布与校验报告
 
-## 后续main合并（用户新增授权）
-
-2026-10-21用户明确要求「合并main并且推送」。确认工作区干净、origin/main无独立提交后，main从2d0ec8b无冲突快进至已发布分支4484bb6；src/tests/scripts逐项与该分支相同。随后只更新README、STATUS和接续入口/本报告，接手分支改为main。主线重新运行49项纯规则与26项日志分类通过；不重跑/冒称游戏图形测试，不改0.3.5包身份、不重建或再次上传工坊。下方「不合并main/未合并main」均是此前工坊发布阶段的历史边界，本次新增授权已覆盖。
-
-2026-10-21用户明确确认0.3.5试玩通过，授权提交远端、更新交接文档及发布Mod到工坊。保持原条目3823282901/private与BaseLib依赖3737335127，不合并main、不新建条目。
+源码已合入并推送main，用户试玩通过，工坊3823282901已更新0.3.5并保持private。接续入口为[main接续说明](../handoffs/NEXT-PC-CONTINUE-PROMPT.md)。本报告游戏、Steam及图片检查均属于PC-B发布验收，本次文档整理未重跑这些检查。
 
 ## 已试玩核心包身份
 
-可执行源码S `628cd327cc1eeb24c7c9cbc8336491151c3a3561`；包`Sts2Mod-0.3.5-v0.107.1-628cd327cc1e.zip`，SHA256 `D2983666695385EDD08805286084CC3930332241E394E83E79F36CC491CE26AA`。本轮只更新交接、工坊文案及说明图版本，不重建核心包、不改变玩法。
+可执行源码S `628cd327cc1eeb24c7c9cbc8336491151c3a3561`；包`Sts2Mod-0.3.5-v0.107.1-628cd327cc1e.zip`，SHA256 `D2983666695385EDD08805286084CC3930332241E394E83E79F36CC491CE26AA`。已发布核心包身份保持不变，本次文档整理未重新打包或上传。
 
 原包49项无GUI专项（11能量/23元素UI与预览/15选人）、49纯规则、26日志分类通过，原报告[TASK-011-PC-B-run-03.md](TASK-011-PC-B-run-03.md)。用户随后人工试玩通过，不等于多人、所有自然Boss平衡或旧档迁移通过。
 
 ## 发布准备
 
-远端交接分支`codex/TASK-011-combo-visuals`，入口[另一台PC接续提示词](../handoffs/NEXT-PC-CONTINUE-PROMPT.md)。另一PC尚未同步或运行。本轮只对当前分支普通推送，不强推、不合并main。
+接续分支为main。PC-A已同步交接提交63e48febcf91，本机安装及工坊包身份尚未验收。
 
 官方ModUploader v0.2.0 Windows x64 ZIP SHA256 `2B55C19CC5932235CA9DBD663CA07D04E5D5A0018402303199F9B4EC8CA06578`，Probe使用官方随附Steamworks.NET15.0.1，包SHA256 `E32DA6B4199384A1AAA15169514FD957B9FF8BA5BDC487BFED6F91E856DC01A6`。上传前API确认同条目、private、consumerApp2868840、订阅状态5；旧工坊目录曾可恢复移动，仅元数据installed=true不视为实际安装验收。
 
-本轮使用同一S的四个核心文件，另附当前玩家指南、更新记录和素材说明，共7文件。封面和规则说明图更新0.3.5，均小于1MB，已本地检查无裁切。
+本轮使用同一S的四个核心文件，另附发布时的玩家指南、更新记录和素材说明，共7文件。封面和规则说明图更新0.3.5，均小于1MB，已本地检查无裁切。
 
 ## 已完成的上传与下载
 
-远端准备提交`5c40dccf230a5d8597bfe3771394882ae63cae86`首次推送同名分支成功，发布验证完成后再普通推送本报告更新。没有创建PR、合并main或强推。S后src差异仅Godot自动生成的TravelerEnergyIconTests.cs.uid；没有修改可执行C#或重建包。
-
 工坊工作目录`.local/workshop/628cd327cc1eeb24c7c9cbc8336491151c3a3561`，mod_id明确3823282901/private，官方上传PID21848返回Successfully uploaded，依赖没有变化；未代接受法律条款。最终Probe再次确认k_EResultOK、同ID/private、consumerApp2868840、state5，bytes55645593、timestamp1792525484，未新建或公开条目。原始Steam日志仅留本机忽略目录，不提交账号信息。
 
-通过正常Steam订阅/下载API获取（此前已订阅，不取消/重建订阅），不是手工写Steam缓存。实际目录steamapps/workshop/content/2868840/3823282901中恰有7文件；清单0.3.5、build-info的S/dirty=false正确，逐项与上传内容相同：
+通过正常Steam订阅/下载API获取（此前已订阅，不取消/重建订阅），不是手工写Steam缓存。实际目录steamapps/workshop/content/2868840/3823282901中恰有7文件；清单0.3.5、build-info的S/dirty=false正确，逐项与上传内容相同。下表固定标识已上传7文件快照；仓库附带文档后续修订不改变这些哈希，也不代表Steam文档已更新：
 
 | 文件 | SHA256 |
 |---|---|
@@ -42,7 +36,7 @@
 
 ## 本机生效与工坊加载验证
 
-确认没有用户游戏进程后，将mods/Sts2Mod可恢复移动到`.local/backups/workshop035-20261020T194534Z/Sts2Mod`，没有删除，防止与工坊重复加载。当前仅工坊Mod生效；BaseLib仍保留本地锁定3.4.7，未请求再次下载或升级依赖。其DLL/JSON/PCK哈希为`55863CA6ADC30A61A7544874E157A519FFE148CCF2B18025947609C4BFF813CE` / `8B0D470C1C624EED9F7BEBF79FA7985ED7F8F4965154713546890A910A61D6F8` / `95E653B9AEA9A3DCBC45971B8933C854E314B897488643DB71DF1E14A76B808D`，与锁定官方包一致。本轮不冒称两项依赖都从工坊重新下载验证。
+确认没有用户游戏进程后，将mods/Sts2Mod可恢复移动到`.local/backups/workshop035-20261020T194534Z/Sts2Mod`，没有删除，防止与工坊重复加载。PC-B发布验收时仅工坊Mod生效；BaseLib仍保留本地锁定3.4.7，未请求再次下载或升级依赖。其DLL/JSON/PCK哈希为`55863CA6ADC30A61A7544874E157A519FFE148CCF2B18025947609C4BFF813CE` / `8B0D470C1C624EED9F7BEBF79FA7985ED7F8F4965154713546890A910A61D6F8` / `95E653B9AEA9A3DCBC45971B8933C854E314B897488643DB71DF1E14A76B808D`，与锁定官方包一致。本轮不冒称两项依赖都从工坊重新下载验证。
 
 普通无测试参数的无GUI启动通过Test-ModLoad -Headless：PID32684、日志game-20261020T1946045236503Z.log。日志明确从3823282901工坊目录加载Mod DLL/PCK、从本地加载BaseLib；仅一次初始化0.3.5+S、BaseLib3.4.7/resource=ok，到达主菜单，未知错误0、已知原生无GUI诊断0。AI进程已结束，没有启动图形游戏。
 
@@ -54,8 +48,8 @@ STS2MOD_VISUAL_COMPLETE assertions=34 panel=ABSENT status=PASS tooltip=PASS read
 STS2MOD_VISUAL_FOCUSED_COMPLETE assertions=49 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False
 ```
 
-## 完成状态与边界
+## 验证范围与接手
 
-0.3.5用户试玩通过、远端推送、交接文档及原私有工坊更新完成。本机以工坊0.3.5和本地BaseLib3.4.7生效，无同ID重复副本；所有AI游戏/上传/Probe进程结束。工坊可见性未扩大，未合并main。另一PC尚未运行，请按接续提示词安全获取分支、核对本机依赖及工坊下载身份。
+原包与工坊各49项无GUI专项、49纯规则、26日志分类和普通工坊启动通过；main集成时另运行49纯规则与26日志分类通过。用户人工试玩通过单独记录，自动化不证明图形交互。
 
-本轮不重跑完整卡池/磁盘回归，也不将历史409/376项冒充0.3.5测试；不宣称多人、自然Boss系统性平衡或旧档迁移通过。自动化验证仍无GUI，用户人工试玩通过单独列为用户报告的结论。
+0.3.5未重跑完整卡池/磁盘回归；多人、自然Boss系统性平衡和用户旧档迁移未验证。PC-A同步源码不代表本机已安装或测试，按接续说明核对本机版本、下载身份和重复加载情况。版本过程见[更新日志](../player/CHANGELOG.md)。

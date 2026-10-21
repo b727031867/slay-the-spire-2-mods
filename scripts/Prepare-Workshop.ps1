@@ -1,14 +1,10 @@
 param([Parameter(Mandatory)][string]$PackageDirectory)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
-$packagePath = (Resolve-Path -LiteralPath $PackageDirectory).Path
-$info = Get-Content -Raw -LiteralPath (Join-Path $packagePath 'build-info.txt') | ConvertFrom-Json
-if ($info.modId -ne 'Sts2Mod' -or $info.dirty -or $info.codeCommit -notmatch '^[a-f0-9]{40}$') { throw 'A clean, identified Sts2Mod package is required.' }
+$package = & (Join-Path $PSScriptRoot 'Get-ModPackage.ps1') -PackageDirectory $PackageDirectory
+$packagePath = $package.PackageDirectory
+$info = $package.Info
 $names = @('Sts2Mod.dll','Sts2Mod.json','Sts2Mod.pck','build-info.txt')
-if (@(Get-ChildItem -LiteralPath $packagePath -Force | Where-Object { $_.PSIsContainer -or $_.Name -notin $names -or ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) }).Count) { throw 'Unexpected package content.' }
-foreach ($name in $names[0..2]) {
-    if ((Get-FileHash -LiteralPath (Join-Path $packagePath $name)).Hash -ne $info.files.$name) { throw "Checksum mismatch: $name" }
-}
 $workspace = Join-Path $projectRoot ('.local/workshop/' + $info.codeCommit)
 if (Test-Path -LiteralPath $workspace) { throw 'Workspace already exists; preserve its mod_id.txt and review before refreshing it.' }
 New-Item -ItemType Directory -Force -Path (Join-Path $workspace 'content'),(Join-Path $workspace 'previews') | Out-Null

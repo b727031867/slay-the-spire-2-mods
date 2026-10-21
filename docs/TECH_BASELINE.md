@@ -1,66 +1,25 @@
-# Windows 开发环境基线
+# 开发与运行基线
 
-2026-10-20 TASK-004更新：当前0.1.2候选将唯一运行时框架精确更新为BaseLib3.4.7（NuGet和锁文件同步），以适配Steam工坊实际分发版本。官方ZIP SHA256 `D28C649A3AEA9EF4869050A06BFBADC4863016BCBD4C1740ACC4CD07809E4BD8`；Steam下载的DLL/JSON/PCK与官方包一致。游戏及工具链基线不变。下列3.3.2记录为此前任务历史，当前依赖以dependencies.json和TASK-004报告为准。
-
-核查日期：2026-10-19。PC-A 与 PC-B 均按需求书第 8 节完成 Windows 开发与测试工具核查。需求原文仍为根目录 `STS2-Mod-Requirements-v0.1.md`。
-
-协作基线：PC-A 和后续接入的 PC-B 均可开发、构建与测试，通过 GitHub 同步代码、文档和构建产物。操作约定见 [COLLABORATION](COLLABORATION.md)，本次决定见 [DECISIONS](DECISIONS.md)。以下版本与 PASS 记录均只属于 PC-A，不代表 PC-B 已安装或验证。
-
-## 设备登记
-
-| 设备 | 用途 | 环境与验证状态 |
-|---|---|---|
-| PC-A | 当前电脑，开发、构建、单人测试及联机测试 | 环境、程序集编译、PCK导出及最小Mod图形界面加载通过；正式玩法与联机未测试 |
-| PC-B | 当前接续电脑，开发、构建与单人测试 | Windows 11 x64 build 26200；环境检查、正式构建、PCK导出及91项真实游戏单人断言通过 |
-
-两台 PC 使用各自的本地配置和合法游戏安装；涉及联机时统一游戏分支、构建与 Mod 及依赖版本。PC-B 实测 PowerShell 7.6.5、Git 2.43、.NET SDK 10.0.402（运行时 9.0.21/10.0.13）、Godot .NET 4.5.1、ILSpy CLI 11.1.0.9782。
-
-## 已核实的游戏
-
-| 项目 | 本机证据 |
-|---|---|
+| 项目 | 固定值 |
+| --- | --- |
+| 平台 | Windows x64 |
 | Steam App ID | 2868840 |
-| 游戏版本 | v0.107.1 |
-| 游戏发布分支字段 | release_info.json：v0.107.1；Steam manifest未设置BetaKey；实际启动日志报告Platform branch为public |
-| Steam buildid | 23811903 |
-| 游戏提交 | 59260271 |
-| 游戏程序集 | data_sts2_windows_x86_64/sts2.dll，文件版本 0.1.0.0（该值不等于游戏发行版本） |
-| 游戏目标框架 | sts2.runtimeconfig.json：net9.0，内置运行时 9.0.7 |
-| GodotSharp | 文件版本 4.5.1.0 |
-| Harmony | 文件版本 2.4.2.0 |
+| 游戏版本 / 构建 / 提交 | v0.107.1 / 23811903 / 59260271 |
+| BaseLib | 精确3.4.7，NuGet与锁文件固定 |
+| .NET SDK | 10.0.402，由global.json固定 |
+| 目标框架 / 开发工具运行时 | net9.0 / 9.0.21 |
+| Godot .NET / Godot.NET.Sdk | 4.5.1 |
+| Mod模板 | Alchyr.Sts2.Templates 2.5.3 |
+| 接口查看工具 | ILSpy CLI 11.1.0.9782 |
+| 终端 | PowerShell 7 |
 
-绝对安装路径仅保存在被 Git 忽略的 `local.settings.json`。游戏引用直接读取本机文件，没有复制进仓库、发布包或上传。
+游戏内置运行时由游戏提供，开发工具运行时不替代游戏运行时。依赖地址和SHA256以dependencies.json为准；程序集版本字段不等同于游戏发行版本。
 
-## 工具版本与安装方式
+PC-A与PC-B均可开发、构建和单人测试，各自使用本机工具路径、合法游戏及local.settings.json。当前版本与逐设备接手范围见[STATUS](STATUS.md)。环境验证不能由另一台PC结果推断。
 
-| 工具 | 版本 | 状态 |
-|---|---|---|
-| Windows | Windows 11 专业版，10.0.26200，x64 | 已有 |
-| PowerShell | 7.6.5 | 已有；所有本次 shell 命令显式使用用户安装的 PowerShell 7 |
-| Git | 2.45.0.windows.1 | 已有 |
-| VS Code | 1.134.0 | 已有 |
-| .NET SDK | 10.0.402 | 已安装；global.json 精确锁定 |
-| .NET 9 运行时 | 9.0.21 | 已安装，供 net9 工具使用 |
-| SDK 自带 .NET 10 运行时 | 10.0.13 | 已安装 |
-| Godot .NET | 4.5.1.stable.mono.official.f62fdbde1 | 已安装，匹配本机 GodotSharp 4.5.1 |
-| Godot.NET.Sdk | 4.5.1 | 实际还原并编译通过；packages.lock.json 记录 GodotSharp/SourceGenerators 4.5.1 |
-| Alchyr.Sts2.Templates | 2.5.3 | 已安装，包含空 Mod、内容 Mod、角色 Mod 三种模板 |
-| BaseLib | 3.3.2 | 唯一运行时框架；官方发行包校验通过，真实游戏初始化通过 |
-| ILSpy CLI | 11.1.0.9782 | 已安装并成功启动 |
-| VS Code C# 扩展 | ms-dotnettools.csharp 2.160.4 | 已安装 |
-| 扩展依赖 | ms-dotnettools.vscode-dotnet-runtime 3.2.0 | 自动安装 |
+## 本机核对
 
-采用较新的 SDK 编译 net9.0，运行目标仍是本机游戏使用的 .NET 9。没有把项目目标框架改为 net10.0。
-
-便携工具位于当前用户的 `%LOCALAPPDATA%/STS2Modding/`，无需管理员安装。该目录内保存 `Install-Toolchain.ps1`、下载包、安装清单 `installed-manifest.json` 和修改前用户环境变量 `environment-before.json`。
-
-SDK 与 .NET 9 运行时按微软官方发布元数据验证 SHA512；Godot 按官方 GitHub release asset digest 验证 SHA256。安装包验证后才解压。VS Code 工作区终端已配置 PowerShell 7 和本地 SDK 路径；机器专用设置被 Git 忽略。
-
-用户环境已登记 DOTNET_ROOT、DOTNET_ROOT_X64 与工具路径。系统 PATH 内还有原先的 .NET 6 主机，Windows 可能优先命中它。项目内应使用下方环境入口，确保 `dotnet` 指向本次 SDK；不依赖重新登录后的 PATH 排序。
-
-## 使用和复查
-
-在项目根目录的 PowerShell 7 执行：
+在PowerShell 7填写本机配置后执行：
 
 ```powershell
 . .\scripts\Enter-DevEnvironment.ps1
@@ -69,55 +28,6 @@ ilspycmd --version
 .\scripts\Test-DevEnvironment.ps1
 ```
 
-或者用 PowerShell 7 的 `-NoExit -File scripts/Start-DevShell.ps1` 打开专用终端。VS Code 重新打开本项目后，新建集成终端也会使用本地 SDK。Godot 可用 `& $env:STS2_GODOT_EXE --editor --path .\tools\EnvironmentCheck` 打开环境验证工程。
+PC-A显式使用用户安装的PowerShell 7；另一PC定位自己的安装路径。不要复制其他设备的路径、凭据、缓存或存档。系统PATH可能优先命中旧dotnet，先加载项目环境入口。
 
-PC-B 接入时：克隆同一 GitHub 仓库，按本表固定版本安装工具，复制 `local.settings.example.json` 为该机的 `local.settings.json` 并填入实际路径；从该机合法游戏安装读取引用，然后运行上述检查。PC-A 上的工具安装目录和下载缓存不会随 Git 自动同步，当前也没有通用的一键环境安装脚本；逐项检查步骤见 COLLABORATION。PC-B 的结果须单独写入本表和测试报告。
-
-## 验证事实
-
-| 检查 | 结果 |
-|---|---|
-| SDK 版本、Godot 版本 | PASS |
-| 固定版本模板安装 | PASS |
-| ILSpy 启动 | PASS，11.1.0.9782 |
-| 引用真实 sts2.dll、0Harmony.dll 和 GodotSharp 编译 EnvironmentCheck | PASS，Release，退出码 0，0 警告、0 错误 |
-| Godot 无 UI 导入验证工程 | PASS，退出码 0 |
-| Godot 无 UI 导出资源包 | PASS，退出码 0 |
-| 导出结果 | artifacts/environment-check/EnvironmentCheck.pck，840 字节 |
-| 资源包 SHA256 | 1885468FED231FC669B517A6ECEECF1316DB2A827E453643E0691B96B6B21318 |
-| src/Sts2Mod的DLL/PCK和BaseLib初始化 | PASS，干净提交af2bd55139fa；每次READY一次，进入图形主菜单，无启动ERROR |
-| 连续两次干净构建 | PASS，ExportRelease/win-x64，DLL与PCK哈希分别一致 |
-| 重复部署、重启、移除、恢复 | PASS，移除后不加载本项目，BaseLib保留，备份恢复同一提交 |
-| 原生模组列表可见性 | PASS，游戏设置→Modding列出BaseLib与STS2 Mod - Technical Preview |
-| TASK-000阶段正常卡池、连招UI、玩法与存档 | NOT_RUN（历史最小加载阶段；当前结果见文末PC-B增量） |
-| 双人、主客机同步 | NOT_RUN |
-| PC-B 环境、编译、资源包导出与游戏测试 | PASS；SDK 10.0.402、Godot 4.5.1、游戏 v0.107.1/build 23811903；35项纯规则与91项游戏断言 |
-
-原先tools/EnvironmentCheck只证明工具链可用；后续src/Sts2Mod已建立真实可加载入口。两者均没有卡牌或连招实现。无需额外安装Godot导出模板即可完成当前PCK导出；完整可执行游戏导出不在本次范围内。正式包身份与精确结果见 [TASK-000报告](tests/TASK-000-PC-A-run-01.md)，跨机获取与部署见 [handoff](handoffs/TASK-000.md)。
-
-## 后续 TASK-000 的剩余工作
-
-已完成本次第1、2步的最小路径：选用并固定BaseLib 3.3.2、精确NuGet引用与锁文件、真实加载和资源读取；工程没有模板中的自动部署钩子，构建与部署由独立脚本执行。依赖官方ZIP的SHA256为`600d7ab3e4d735ec9bc97f06f1dfb03e51680d1ba2756117bcabcc5ea1d50e8a`。
-
-玩法接口调查见 [API_FINDINGS](API_FINDINGS.md)，实际操作见 [DEVELOPMENT](DEVELOPMENT.md)。后续TASK-001须解决动作暂停/恢复时ID变化的逻辑动作关联，验证正常获取、回合与奖励时序；这些静态证据不等于玩法已实测。
-
-PC-B接入后独立核查环境；双人测试还需要两个可同时使用的客户端、账号及操作者。当前无自动打包上传或公开发行流程。
-
-## TASK-001 当前增量（2026-10-19）
-
-以上TASK-000矩阵是历史加载阶段结果。当前Mod0.0.2已在同一版本基线实现并验证风/岩两张牌、单条连招、原生状态与奖励入口。代码S为`3c95e19441261410ed254ceada47c83c1af53b62`；21项纯规则、28项真实游戏断言、手动界面、两次干净构建与部署/移除/恢复通过。默认启动不运行测试Node，游戏内`tc_hand`也明确拒绝未开启测试参数的调用。
-
-本段记录的是TASK-001当时的PC-A结论；完整退出读档仍NOT_RUN。按后续用户决策DEC-004，双人延期专项测试，不再阻塞单人交付。精确历史包、结果及限制见[TASK-001报告](tests/TASK-001-PC-A-run-01.md)和[交接](handoffs/TASK-001.md)。Godot导入配置与源码UID文件随仓库提交。
-
-## PC-B TASK-002/003 增量（2026-10-19）
-
-PC-B 已完成环境检查、35项纯规则、正式Mod干净构建、PCK导出与91项真实游戏单人自动化。被测代码为`744b0490e268aef67d19a64877c3a5c7c35bd620`，包SHA256为`1F1A6629C65C6491C01D6F340BB5A91907EDD633AF2E215D75328D95ED3EABC1`。环境验证PCK哈希与PC-A一致。人工UI/自然整局、完整退出读档及双人仍未执行，见[TASK-003报告](tests/TASK-003-PC-B-run-01.md)。
-
-## 来源
-
-- [模板作者安装指南](https://github.com/Alchyr/ModTemplate-StS2/wiki/Setup)：.NET SDK、Godot/MegaDot、模板与默认部署行为。
-- [模板作者仓库](https://github.com/Alchyr/ModTemplate-StS2)：本机另外检查了 NuGet 2.5.3 包内的 csproj、props、入口源码与导出配置。
-- [Godot 官方 4.5.1 发布页](https://github.com/godotengine/godot-builds/releases/tag/4.5.1-stable)：本次安装标准 Godot .NET 4.5.1，未安装 MegaDot。
-- [Godot 官方资源包导出说明](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_pcks.html)。
-- [.NET 10 官方发布元数据](https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/10.0/releases.json)、[.NET 9 官方发布元数据](https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/9.0/releases.json)。
-- [ILSpy 作者仓库](https://github.com/icsharpcode/ILSpy)。
+环境检查验证工具链、真实程序集编译及无GUI资源导出，不能代替Mod加载、玩法、工坊和多人验收。版本不同先报告，不静默更新锁定基线。版本演进统一见[更新日志](player/CHANGELOG.md)。

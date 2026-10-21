@@ -2,7 +2,7 @@
 
 标题：旅行者·元素连携 / Traveler Elements。工程及存档ID仍为Sts2Mod。封面和规则图是原创说明设计图，不是实机截图；不能代替图形验收。
 
-1. 使用 PowerShell 7，从干净提交运行 `scripts/Build-ReleaseCandidate.ps1 -DeviceId PC-A`（另一台改PC-B）。
+1. 使用PowerShell 7，复用已验收核心包：scripts/Build-ReleaseCandidate.ps1 -PackageDirectory '<核心目录>/Sts2Mod'。该入口只校验和包装，不构建。新代码先独立运行Build-Mod.ps1，再将返回的PackageDirectory交给包装入口，并记录新包来源和哈希。
 2. 对构建生成的核心 `Sts2Mod` 目录运行 `scripts/Prepare-Workshop.ps1 -PackageDirectory <目录>`，生成 `.local/workshop/<完整源码提交>/`。仅此目录用于上传，不上传仓库或本机配置。
 3. 从官方发行页下载 Mega Crit ModUploader v0.2.0 Windows x64，保存其ZIP哈希。查看生成的workshop.json、image.png、previews/rules.png及content。
 4. Steam登录拥有本游戏的账号。使用官方 `ModUploader.exe upload -w <工作目录>` 进行私有上传；此动作会向Steam提交内容。若平台要求同意法律条款，交由账号持有人完成。

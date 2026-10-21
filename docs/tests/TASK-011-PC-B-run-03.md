@@ -1,6 +1,6 @@
 # 0.3.5 / PC-B / 能量提示贴图修复
 
-后续用户2026-10-21明确反馈「0.3.5已经试玩通过」，授权推送、更新交接文档和发布原工坊。该人工结论与下方当时无GUI测试范围分别记录；发布结果见[TASK-011-PC-B-release-035.md](TASK-011-PC-B-release-035.md)。下方未上传/未推送是修复交付时的历史状态。
+本报告记录0.3.5核心包在PC-B的无GUI修复专项。当前交付状态为用户试玩通过、main已推送、原私有工坊已更新；下载与工坊验证见[发布报告](TASK-011-PC-B-release-035.md)。
 
 用户报告开局随机遗物的悬停/查看界面出现巨型罗盘。根因不是随机遗物自己的图片：TravelerCardPool、TravelerRelicPool、TravelerPotionPool将高清compass.png同时当作BigEnergyIconPath与TextEnergyIconPath。BaseLib的能量行内格式不指定缩放，原生HoverTipFactory也依本机角色卡池取得能量图片，故原生遗物同样受影响。
 
@@ -18,4 +18,4 @@ STS2MOD_VISUAL_COMPLETE assertions=34 panel=ABSENT status=PASS tooltip=PASS read
 STS2MOD_VISUAL_FOCUSED_COMPLETE assertions=49 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False
 ```
 
-Test-ComboVisualRun严格核对通过；AI测试PID29676已结束，没有启动图形游戏。部署的DLL/JSON/PCK/build-info四文件与构建包逐一哈希一致。源码S之后只记录文档和Godot自动生成的脚本UID，不重建包或混淆来源。未重跑完整卡池/磁盘回归；图形渲染、人工鼠标悬停、多人与用户旧档实测仍NOT_RUN。未上传工坊、推送分支或合并main。
+Test-ComboVisualRun严格核对通过；AI测试PID29676已结束，没有启动图形游戏。部署的DLL/JSON/PCK/build-info四文件与构建包逐一哈希一致。源码S之后只记录文档和Godot自动生成的脚本UID，不重建包或混淆来源。未重跑完整卡池/磁盘回归；本次自动化未执行图形渲染或人工鼠标悬停，多人与用户旧档迁移未验证；用户随后报告试玩通过，作为独立证据。

@@ -1,20 +1,49 @@
-# 构建、部署与最小加载检查
+# 构建、部署与验证
 
-0.3.4补充：TravelerVisuals专项已改为检查无自定义面板、原生状态图标与卡牌HoverTip以及只读性。旧0.3.3的面板节点/高亮断言不再要求；Test-ComboVisualRun.ps1要求新的panel=ABSENT完成标记，不沿用旧包的33项节点结果。
+当前工程src/Sts2Mod，Mod ID为Sts2Mod，版本0.3.5。接续分支main，当前规则见[玩家指南](player/README.zh-CN.md)，包身份及验证范围见[发布报告](tests/TASK-011-PC-B-release-035.md)。
 
-0.3.3/TASK-011：`Start-ModGame.ps1 -TravelerVisuals -Headless`仅运行可视连携专项，完成后`Test-ComboVisualRun.ps1 -LogFile <日志> -CodeCommit <S>`检查；完整回归仍为TravelerTest和Test-ExpandedCardRun.ps1 -Full，也强制检查本专项。验证范围是实际原生控件属性/状态/选牌读取/资源接线与只读性，不是截图、鼠标或控制器实机验收。UI符号为刻意设计的SVG，原PNG插图不变。
+## 统一测试入口
 
-0.3.2/TASK-010：完整回归新增罗盘两回合间隔/额外回合/原生图标事件、20项PNG及Character.Icon头像接线、元素共鸣第2次实际奖励专项。跨PC从[最新提示词](handoffs/NEXT-PC-CONTINUE-PROMPT.md)开始，最终包身份和测试范围见[TASK-010报告](tests/TASK-010-PC-B-run-01.md)。下方为历史。
+自动运行、等待完成、严格验收并清理自己的测试进程：
 
-0.3.1/TASK-009：当前`-TravelerCards`也覆盖19项正式PNG、312px战斗配置及11项防御牌原生随机追击；`Test-ExpandedCardRun.ps1`要求这些证据。完整回归仍用`-TravelerTest -Headless`及检查器`-Full`。随机技能使用原生CombatTargets；测试动作的Self牌显式目标必须为null。图片联系表可由`New-Task009ArtCatalog.ps1`重建（只组合QA预览，不改变运行时PNG），生成记录在`docs/art/TASK-009-prompts.md`。以下为早期版本记录。
+```powershell
+.\scripts\Invoke-ModTests.ps1 -Suite Full -CodeCommit '<实际程序集身份S>'
+```
 
-0.3.0/TASK-008新增12张牌，奖励池18张。新卡专项：`Start-ModGame.ps1 -TravelerCards -Headless`，完成后运行`Test-ExpandedCardRun.ps1 -LogFile '<日志>' -CodeCommit '<S>'`。全量使用`-TravelerTest -Headless`，检查器加`-Full`。磁盘夹具已改为18种牌的基础/升级，依旧使用下方原生隔离存储的准备和恢复步骤。以下六牌/早期版本说明为历史；正常模式没有自动测试或自动选牌。
+Suite支持Load、Visuals、Cards、Character、Full、SavePrepare和SaveResume。统一入口强制无GUI，返回Suite、Status、Assertions、Cases、CodeCommit、LogFile、SandboxDirectory和PID；结果JSON保存到日志旁。Rendering和Multiplayer标明NOT_RUN，不把节点测试视作图形验收。
 
-当前工程：`src/Sts2Mod`，Mod ID为`Sts2Mod`；0.1.2候选已实现六张牌、三类双向连招与派蒙遗物。下列构建和部署步骤适用于两台PC，首次环境配置参见 [COLLABORATION](COLLABORATION.md)，跨机接手可直接使用[完整提示词](handoffs/PC-B-CONTINUE-PROMPT.md)。
+需要分开启动与读取日志时：
+
+```powershell
+$launch = .\scripts\Start-ModTest.ps1 -Suite Visuals
+# 等待套件完成后再验收；结束时由调用方清理$launch.Process。
+.\scripts\Test-ModRun.ps1 -Suite Visuals -LogFile $launch.LogFile -CodeCommit '<S>'
+```
+
+分步启动由调用方等待并只清理该PID。Invoke-ModTests自动等待套件完成标记，超时或失败也清理本轮进程。各套件保留严格检查器和断言，Full同时检查基础、角色、扩展卡池及视觉证据；旧脚本作为兼容入口保留。
+
+| Suite | 范围 |
+| --- | --- |
+| Load | 普通加载、来源身份、依赖及未知错误 |
+| Visuals | 元素状态、原生悬停、能量图标及无自定义面板 |
+| Cards | 扩展卡池、能力、随机追击和美术 |
+| Character | 选人、初始模型、角色专属获取 |
+| Full | 完整单人回归及相关套件 |
+| SavePrepare / SaveResume | 原生磁盘准备与新进程恢复 |
+
+所有测试经Start-ModGame.ps1 -Headless启动，自动套件使用隔离存档；Load仅普通启动。TravelerRewards等待人工操作，不纳入自动套件。
+
+纯规则和日志分类检查：
+
+```powershell
+. .\scripts\Enter-DevEnvironment.ps1
+dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
+.\tests\Test-LogClassification.ps1
+```
 
 ## 前提
 
-2026-10-20用户要求：后续由AI执行的游戏测试一律使用无GUI模式，避免影响其他工作。加载检查使用`Start-ModGame.ps1 -Headless`；回归和验收分别使用`-TravelerTest -Headless`或`-TravelerAcceptance -Headless`，日志检查按支持情况加`-Headless`。自动测试参数也会在启动脚本中强制启用无GUI。仅在用户明确要求图形测试时再安排人工界面验证；下文历史人工选牌流程不作为后台自动测试运行。测试结束只清理本次启动的进程，不启动图形窗口。
+AI执行的游戏测试一律使用无GUI模式，避免影响其他工作。加载检查使用`Start-ModGame.ps1 -Headless`；回归和验收分别使用`-TravelerTest -Headless`或`-TravelerAcceptance -Headless`，日志检查按支持情况加`-Headless`。自动测试参数也会在启动脚本中强制启用无GUI。仅在用户明确要求图形测试时再安排人工界面验证；TravelerRewards等待人工选牌，不作为无人值守测试运行。测试结束只清理本次启动的进程，不启动图形窗口。
 
 - 游戏v0.107.1、Steam构建23811903，Steam客户端已运行并登录拥有游戏的账号。
 - .NET SDK 10.0.402、Godot .NET 4.5.1、本机合法游戏引用；各设备配置自己的`local.settings.json`。
@@ -34,7 +63,7 @@ PC-B使用`-DeviceId PC-B`。构建默认要求所有源码和配置已提交；
 
 脚本核对游戏版本和Steam构建号，执行锁定依赖还原、ExportRelease/win-x64编译、Godot导入与PCK导出，并输出包含源码提交的目录、ZIP和SHA256文件。还原和导出统一配置，避免Godot的Debug编辑器依赖改写发布锁文件。构建不会自动复制文件到游戏。正式交接必须从实际代码提交S的干净工作区执行。
 
-包内仅有：
+构建输出的核心目录包含四文件；发布准备另附玩家指南、更新日志和素材说明，共七文件：
 
 ```text
 Sts2Mod/
@@ -57,7 +86,7 @@ Sts2Mod/
 
 `-InstallDependencies`下载并校验官方BaseLib 3.4.7，安装到`mods/BaseLib`；当前Mod安装到`mods/Sts2Mod`。已有目录先备份至`.local/backups/`，遇到未知文件、错误ID或重定向目录则拒绝覆盖。后续可省略该参数复用已匹配版本的BaseLib。不要同时安装Workshop的另一版本BaseLib；此工作流使用本地固定版本。
 
-启动脚本会输出游戏进程ID与本次日志路径。它通过子进程环境提供真实Steam App ID，Steam仍执行账号/拥有权校验；启动失败时先确认Steam登录状态。AI测试使用`-Headless`，图形界面验收保留NOT_RUN，待用户另行明确安排。
+启动脚本会输出游戏进程ID与本次日志路径。它通过子进程环境提供真实Steam App ID，Steam仍执行账号/拥有权校验；启动失败时先确认Steam登录状态。AI测试使用`-Headless`，本轮自动化图形界面验收记录NOT_RUN；用户试玩结论单列。
 
 进入主菜单后检查（用实际日志路径和完整代码提交替换占位符）：
 
@@ -70,27 +99,24 @@ Sts2Mod/
 
 全量单人无GUI回归使用`Start-ModGame.ps1 -Headless -TravelerTest`，完成后执行`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Task003 -Headless`。`-TravelerAcceptance`仅运行TASK-003边界子集，不能替代全量回归，也不能单独传给要求全量标记的检查器。
 
-### TASK-003 正常获取和磁盘恢复
+### 原生获取和磁盘恢复
 
-使用main中的最新检查器；当前被测包来源S及SHA256见[TASK-003交接](handoffs/TASK-003.md)。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
+使用main中的最新检查器；已发布包来源S及SHA256见[发布报告](tests/TASK-011-PC-B-release-035.md)。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
 
 ```powershell
-.\scripts\Start-ModGame.ps1 -TravelerEndToEnd -Headless
-# 记录输出SandboxDirectory、GameProcessId、LogFile，等待该进程原生退出后检查：
-.\scripts\Test-Task003EndToEnd.ps1 -Phase Prepare -LogFile '<准备日志>' -CodeCommit '<包S>'
-# 再次部署相同包，验证部署后恢复；然后：
-.\scripts\Start-ModGame.ps1 -ResumeTask003 -SandboxDirectory '<准备阶段返回目录>' -Headless
-# 等待新进程原生退出：
-.\scripts\Test-Task003EndToEnd.ps1 -Phase Resume -LogFile '<恢复日志>' -CodeCommit '<同一包S>'
+$prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
+# 准备进程原生退出后，重新部署同一包：
+.\scripts\Deploy-Mod.ps1 -PackageDirectory '<同一包目录>/Sts2Mod'
+.\scripts\Invoke-ModTests.ps1 -Suite SaveResume -CodeCommit '<同一包S>' -SandboxDirectory $prepare.SandboxDirectory
 ```
 
 自动测试使用唯一的本地隔离存储：`.local/task003-saves/<id>`存元数据，真实原生存档写入`user://sts2mod-acceptance/<id>`。没有Steam云后端，不拷贝用户档案；启动时仍读取本机原生模组启用设置。测试显示/音频设置使用默认值且静音，run/progress/prefs保留真实磁盘路径。首次准备拒绝已存在的目录，恢复要求所属标记；不会删除或覆盖用户profile。
 
-准备阶段领取未修改的原生战斗奖励、按原价购买普通商店的主题牌和派蒙，再保存六种牌的基础/升级覆盖夹具。恢复阶段使用原生主菜单同一路径加载磁盘run，核对牌组、遗物、金币、重复注册/发奖和战斗入口状态；连续场景不补手牌/能量，每场最多4回合，不等于自然整局或平衡性通过。
+准备阶段领取未修改的原生战斗奖励、按原价购买普通商店的主题牌和派蒙，再保存18种奖励牌的基础/升级覆盖夹具。恢复阶段使用原生主菜单同一路径加载磁盘run，核对牌组、遗物、金币、重复注册/发奖和战斗入口状态；连续场景不补手牌/能量，每场最多4回合，不等于自然整局或平衡性通过。
 
-原生退出存在不依赖本Mod的headless资源清理诊断，见[对照及验收报告](tests/TASK-003-PC-A-run-03.md)。E2E检查器单独统计经过对照的精确引擎类型，且必须位于NGame.Quit和Steam shutdown成功之后；其他错误仍失败。普通全量回归不启用这项退出分类。不要用泛化过滤规则隐藏未知错误，也不要把该限制写成“退出没有任何ERROR”。
+原生退出存在不依赖本Mod的headless资源清理诊断，由严格分类器按退出阶段、错误文本和原生源码位置限定。E2E检查器单独统计经过对照的精确引擎类型，且必须位于NGame.Quit和Steam shutdown成功之后；其他错误仍失败。普通全量回归不启用这项退出分类。不要用泛化过滤规则隐藏未知错误，也不要把该限制写成“退出没有任何ERROR”。
 
-原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。游戏原生启动可能同步Steam云存档，部署和移除脚本本身不修改存档。
+原始日志保存在`.local/logs/`，不上传；收集脚本仅导出有限诊断摘录到`artifacts/logs/`，分享前仍需检查内容。普通游戏启动可能同步Steam云；自动验收使用上述隔离命名空间且无云后端。部署与移除脚本不修改存档。
 
 ## 移除与恢复
 
@@ -106,39 +132,25 @@ Sts2Mod/
 .\scripts\Deploy-Mod.ps1 -PackageDirectory '<备份目录>/Sts2Mod'
 ```
 
-移除后也可启动游戏，并使用`Test-ModLoad.ps1 -LogFile '<日志>' -ExpectAbsent`检查本项目不再加载；BaseLib作为共享框架仍会加载。
+移除后AI加载检查仍使用Start-ModGame.ps1 -Headless，并使用`Test-ModLoad.ps1 -LogFile '<日志>' -ExpectAbsent`检查本项目不再加载；BaseLib作为共享框架仍会加载。
 
-## TASK-001：风岩玩法与测试
+## 发布包装：复用已验收核心包
 
-两张普通牌加入铁甲战士原生卡池，不修改初始牌组。风起之刃1费6伤害（升级9），岩之守护1费7格挡（升级10）；主动风→岩额外4格挡，每人每回合最多2次。普通牌不打断，自动打出和额外结算不推进。上一元素、剩余次数在原生状态图标的提示中显示；触发有短气泡提示。
-
-默认 `Start-ModGame.ps1` 只启动正常游戏，不开启测试局或赠牌。纯规则测试：
+Build-Mod.ps1负责从源码构建四文件核心包。Build-ReleaseCandidate.ps1不再构建，也不读取当前HEAD替换核心源码身份：
 
 ```powershell
-. .\scripts\Enter-DevEnvironment.ps1
-dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
+.\scripts\Build-ReleaseCandidate.ps1 -PackageDirectory '<已校验核心目录>/Sts2Mod'
 ```
 
-退出游戏后，以明确参数启动不保存run快照的单人测试局：
+入口通过Get-ModPackage校验四个非空普通文件、干净标记、源码提交、清单版本和三文件SHA256，再逐字节复制核心；附带当前玩家文档及release-info.txt，分别记录核心四文件哈希、文档提交/dirty与文档哈希。输出为新ZIP和SHA256，拒绝覆盖已有目录或归档。文档dirty标记不改变核心clean身份。
+
+新二进制先从干净源码运行Build-Mod.ps1，再将返回的PackageDirectory交给包装入口。重新包装ZIP拥有新SHA256，不能沿用原ZIP身份；核心S和文件哈希保持。Prepare-Workshop也复用核心校验器，仅准备私有目录，不上传。
+
+脚本回归：
 
 ```powershell
-.\scripts\Start-ModGame.ps1 -TravelerTest -Headless
+.\tests\Test-ReleasePackaging.ps1
+.\tests\Test-ModTestEntry.ps1
 ```
 
-等待日志出现 `STS2MOD_TEST_COMPLETE`，再运行 `Test-TravelerRun.ps1 -LogFile '<本次日志>' -CodeCommit '<S>'`。测试用原生出牌动作和回合转换验证规则；仅在测试夹具中补能量、清手牌、治疗玩家及提高靶子生命。结束后留下风岩手牌供手动检查。测试角色/seed固定，正常模式无这些处理。
-
-游戏内按 `Shift+8`（原生控制台也支持键盘左上角的反引号）打开控制台，输入 `tc_hand 1`，或 `tc_hand 3 upgraded`。该命令要求显式测试参数、单人铁甲战斗、玩家阶段且无执行中的动作；替换当前战斗手牌并提供2/4/6能量，不改永久牌组，不重置连招状态。测试下一组前先正常结束回合。命令用 `-TravelerDebug` 或 `-TravelerTest` 开启，默认会拒绝执行；不能用于双人联机测试。
-
-正常获取入口的独立检查：`Start-ModGame.ps1 -TravelerRewards`。它创建独立测试局，用原生Kill快速结束测试战斗，保留未修改的原生三选一奖励逻辑，跳过不含主题牌的奖励。出现 `STS2MOD_ACQUISITION_READY` 后，手动点击卡牌奖励并选择主题牌；只有原生奖励流程把牌加入永久牌组后才输出 `STS2MOD_ACQUISITION_COMPLETE`。用 `Test-TravelerRun.ps1 ... -Acquisition` 检查证据。该模式不强塞奖励、不替换奖励卡池，属于正常奖励入口的集成测试，不代表自然通关/平衡性测试。
-
-测试局设置 `ShouldSave=false`，不创建该run的保存快照；游戏仍可能按原生行为写入模组档案的进度及同步Steam云数据。脚本不手工读取、删除或覆盖玩家存档，测试模式不要打开自己的既有对局。
-
-双人端必须使用相同代码包、游戏和BaseLib版本，按需求书TC-16/17交换主客机验证；测试手牌通过测试新局的正常获取或双方原生支持的调试入口准备，`tc_hand`明确不适用于多人。缺少第二客户端时保留NOT_RUN/BLOCKED。
-
-## TASK-002/003：完整内容与单人自动化
-
-0.1.0包含六张铁甲主题牌、风岩/岩雷/雷风三条连招及派蒙遗物。岩→雷在基础伤害后对同一存活目标额外执行4点原生攻击伤害；雷→风抽1；派蒙在本回合第一次成功连招后额外3格挡。三条连招共用每回合2次上限。
-
-正常模式不赠牌。显式测试模式下，`tc_hand 1 full paimon`准备完整普通卡组和派蒙，`tc_hand 1 full upgraded paimon`准备升级卡；`lightning`及原有风岩用法保留。调试入口只用于单人测试。
-
-`Start-ModGame.ps1 -TravelerTest -Headless`执行完整单人回归，完成后用`Test-TravelerRun.ps1 -LogFile '<日志>' -CodeCommit '<S>' -Task003 -Headless`检查标记。`Start-ModGame.ps1 -TravelerAcceptance -Headless`可只跑TASK-003边界。无窗口逻辑检查不能替代卡牌图形界面验收；完整退出读档及双人测试仍未执行。
+包装测试使用合成四文件夹具验证流程与拒绝条件，不视为可加载游戏包；测试入口离线用例使用合成日志，真实游戏结果另记。

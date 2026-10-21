@@ -49,130 +49,22 @@ public sealed class ComboPower : CustomPowerModel
 
     public void BeginTurn() { State.BeginTurn(); Publish("turn_start"); }
     private void Clear(string reason) { State.ClearCombat(); Publish(reason); }
-    private void Publish(string reason)
+    internal void FlashReward() => Flash();
+
+    internal void Publish(string reason)
     {
         SetAmount(State.Encoded, silent: true);
         InvokeDisplayAmountChanged();
-        RefreshHand();
+        ComboFeedback.RefreshHand(Owner);
         GD.Print($"STS2MOD_COMBO player={Owner.Player?.NetId} event={reason} last={State.Last} used={State.Used} remaining={State.Remaining}");
     }
 
-    private void RefreshHand()
-    {
-        if (DisplayServer.GetName() == "headless" || Owner?.Player is not { } player || !CombatManager.Instance.IsInProgress) return;
-        foreach (var card in PileType.Hand.GetPile(player).Cards.Where(card => card is ElementCardModel or TriphaseFinale))
-        {
-            var node = NCard.FindOnTable(card);
-            if (node is not null && GodotObject.IsInstanceValid(node) && node.IsInsideTree())
-                node.CallDeferred(NCard.MethodName.UpdateVisuals, (int)PileType.Hand, (int)CardPreviewMode.Normal);
-        }
-    }
-
+    // Stable facade for existing card models; engine orchestration lives in ComboResolver.
     public static Reservation Reserve(CardModel card, PlayerChoiceContext context, CardPlay play, Element element)
-    {
-        var power = card.Owner.Creature.GetPower<ComboPower>();
-        if (play.IsAutoPlay || !play.IsFirstInSeries)
-        {
-            GD.Print($"STS2MOD_STEP player={card.Owner.NetId} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced=False reason=automatic_or_extra_resolution");
-            return default;
-        }
-        // Only a validated, active native hand play may advance the sequence.
-        if (power is null || context is not GameActionPlayerChoiceContext { Action: PlayCardAction action }
-            || action.Player != card.Owner || action.NetCombatCard.ToCardModel() != card)
-            return default;
-        var step = power.State.Reserve(action, element, play.IsAutoPlay, play.IsFirstInSeries);
-        var paimonDoubles = step.Triggered
-            && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false });
-        var reward = step.Kind switch
-        {
-            ComboKind.WindRock => paimonDoubles ? "block8" : "block4",
-            ComboKind.RockLightning => paimonDoubles ? "attack8" : "attack4",
-            ComboKind.LightningWind => paimonDoubles ? "draw2" : "draw1",
-            _ => "none"
-        };
-        power.Publish(step.Advanced ? "reserve" : "ignored");
-        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={action.Id} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} kind={step.Kind} reward={reward} paimonDouble={paimonDoubles}");
-        return new(step.Kind, action.Id, paimonDoubles);
-    }
+        => ComboResolver.Reserve(card, context, play, element);
 
-    public static async Task Resolve(CardModel card, PlayerChoiceContext context, CardPlay play, Reservation reservation)
-    {
-        if (reservation.Kind == ComboKind.None) return;
-        var creature = card.Owner.Creature;
-        if (!CombatManager.Instance.IsInProgress || CombatManager.Instance.IsEnding || !creature.IsAlive
-            || creature.CombatState?.Enemies.Any(enemy => enemy.IsAlive) != true)
-        {
-            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=combat_ended_or_dead");
-            return;
-        }
-        var bonus = reservation.PaimonDoubles ? 8m : 4m;
-        var draws = reservation.PaimonDoubles ? 2m : 1m;
-        var awarded = false;
-        if (reservation.Kind == ComboKind.RockLightning)
-        {
-            var target = play.Target;
-            // Self/untargeted defensive skills use the native seeded combat-target RNG.
-            // A targeted attack whose victim died still must not jump to another enemy.
-            var randomTarget = card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy;
-            if (!randomTarget && (target is null || !target.IsAlive || target.Side == creature.Side
-                || !creature.CombatState!.Creatures.Contains(target)))
-            {
-                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=target_dead_or_removed kind=RockLightning");
-            }
-            else
-            {
-                var attack = DamageCmd.Attack(bonus).FromCard(card);
-                if (randomTarget) attack.TargetingRandomOpponents(creature.CombatState!);
-                else attack.Targeting(target!);
-                await attack.WithHitFx("vfx/vfx_attack_slash").Execute(context);
-                var results = attack.Results.SelectMany(results => results).ToArray();
-                var receiver = results.FirstOrDefault()?.Receiver;
-                if (receiver is not null) ShowReward(creature, receiver, reservation);
-                awarded = results.Any(result => result.TotalDamage > 0);
-                GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning target_mode={(randomTarget ? "random" : "selected")} target={receiver?.CombatId} bonus={bonus}");
-            }
-        }
-        else if (reservation.Kind == ComboKind.LightningWind)
-        {
-            var handBefore = PileType.Hand.GetPile(card.Owner).Cards.Count;
-            var drawn = (await CardPileCmd.Draw(context, draws, card.Owner)).Count();
-            ShowReward(creature, creature, reservation, drawn);
-            awarded = drawn > 0;
-            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=LightningWind hand_before={handBefore} hand_after={PileType.Hand.GetPile(card.Owner).Cards.Count} bonus_draw={draws}");
-        }
-        else
-        {
-            var before = creature.Block;
-            creature.GetPower<ComboPower>()?.Flash();
-            await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
-            ShowReward(creature, creature, reservation);
-            awarded = creature.Block > before;
-            GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
-        }
-        if (awarded && creature.IsAlive && CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsEnding
-            && creature.CombatState?.Enemies.Any(enemy => enemy.IsAlive) == true)
-        {
-            var actualRewardNumber = creature.GetPower<ComboPower>()!.State.MarkRewardGranted();
-            foreach (var ability in creature.Powers.OfType<TravelerAbilityPower>().ToArray())
-                await ability.OnComboReward(context, reservation.Kind, actualRewardNumber);
-            foreach (var compass in card.Owner.Relics.OfType<JourneyCompass>().ToArray())
-                await compass.OnComboReward(context);
-        }
-    }
-
-    private static void ShowReward(Creature creature, Creature effectTarget, Reservation reservation, int? actualDraw = null)
-    {
-        // One bubble per actual reward. Skipped target/combat rewards never claim a success.
-        if (reservation.PaimonDoubles)
-            creature.Player?.Relics.OfType<PaimonCheer>().FirstOrDefault(r => !r.IsMelted)?.Flash();
-        var text = ComboPresentation.Trigger(reservation.Kind, reservation.PaimonDoubles, actualDraw).GetFormattedText();
-        GD.Print($"STS2MOD_FEEDBACK kind={reservation.Kind} bonus={ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles)} doubled={reservation.PaimonDoubles}");
-        if (DisplayServer.GetName() == "headless") return;
-        if (creature.GetCreatureNode() is not null && creature.GetVfxContainer() is { } container
-            && NThoughtBubbleVfx.Create(text, creature, 1.0) is { } bubble)
-            container.AddChild(bubble);
-        ElementComboVfx.Show(effectTarget, reservation.Kind, reservation.PaimonDoubles);
-    }
+    public static Task Resolve(CardModel card, PlayerChoiceContext context, CardPlay play, Reservation reservation)
+        => ComboResolver.Resolve(card, context, play, reservation);
 
     public override Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
     {

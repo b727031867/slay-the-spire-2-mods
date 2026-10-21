@@ -1,7 +1,9 @@
-# TASK-010 交接
+# TASK-010 文档入口
 
-当前0.3.2，分支`codex/TASK-010-balance-workshop`。已实现获批方案A、罗盘触发后间隔一个自己的回合及原生状态图标、左上角面部特写，并更新同一私有工坊。源码S `a3ffe66bd48dce568af2bdff6f7bdd2bb4bf0b18`；包SHA256 `834612844C136AC5F66A48379F64F1F082833D8FA2E003BECCB0E39F2C487016`。
+版本变更已统一收录到[更新日志](../player/CHANGELOG.md)。本页仅保留导航，避免旧链接失效。
 
-49纯规则、26日志分类、376完整游戏回归、13原生保存及250恢复/受控六场通过。私有工坊3823282901实际下载7文件、BaseLib3.4.7三文件与锁定产物一致；两张CDN图HTTP200且哈希一致，纯工坊普通启动及角色专项59项通过。当前保留工坊部署，本地同ID副本可恢复备份在.local/backups/workshop032-20261020T182549Z。所有AI测试游戏进程已结束；没有打开图形游戏。最终完整证据及范围见[验收记录](../tests/TASK-010-PC-B-run-01.md)。
+- [当前项目状态](../STATUS.md)
+- [当前接续说明](../handoffs/NEXT-PC-CONTINUE-PROMPT.md)
+- [0.3.5发布与校验报告](../tests/TASK-011-PC-B-release-035.md)
 
-另一台PC从[完整接续提示词](NEXT-PC-CONTINUE-PROMPT.md)开始。精确游戏v0.107.1/build23811903及BaseLib3.4.7，不自动合并main、公开工坊或实现方案B。所有AI游戏测试无GUI；图片观感与自然Boss平衡单列人工验证。
+旧版完整记录可通过Git文件历史查阅，不作为当前开发或安装指令。
