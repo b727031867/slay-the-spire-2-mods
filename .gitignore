@@ -18,3 +18,5 @@ artifacts/
 *.nupkg
 *.zip
 references/
+output/playwright/
+.playwright-cli/

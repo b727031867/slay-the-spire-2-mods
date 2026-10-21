@@ -3,186 +3,142 @@ using Sts2Mod.Combo;
 
 namespace Sts2Mod.Presentation;
 
-/// <summary>A small deterministic cutout rig. Owns visual state only, never gameplay or RNG.</summary>
+/// <summary>Mother-image skinning and authored poses; never owns gameplay or RNG.</summary>
 public partial class TravelerRig : Node2D
 {
-    public const string AtlasPath = "res://Sts2Mod/character/layers/atlas.png";
-    public const float RigScale = 312f / 315f;
-    public string ActionName { get; private set; } = "Idle";
+    public const float RigScale=312f/TravelerSkin.Height;
+    public string ActionName { get; private set; }="Idle";
     public Element Style { get; set; }
     public bool CardActive { get; set; }
     public bool CardAttacked { get; set; }
     public int ActionSerial { get; private set; }
-    public int PartCount => _parts.Count;
+    public int PartCount=>_skin?.Layers.Count??0;
+    internal TravelerSkin Skin=>_skin!;
     internal Element LastDefenseElement { get; set; }
     internal Element LastImpactElement { get; set; }
-    internal string LastReaction { get; set; } = "None";
+    internal string LastReaction { get; set; }="None";
     internal int DefenseEvents { get; set; }
     internal int ImpactEvents { get; set; }
     internal int ReactionEvents { get; set; }
     public double Elapsed { get; private set; }
-    private readonly List<Sprite2D> _parts = [];
-    private Node2D _torso = null!, _head = null!, _cape = null!, _coat = null!;
-    private Node2D _arm = null!, _forearm = null!, _sword = null!, _freeArm = null!, _freeForearm = null!;
-    private Node2D _leftLeg = null!, _rightLeg = null!;
-    private double _clock;
-    private bool _guardOnRecovery;
-    private bool _dead;
-
-    public override void _Ready()
+    private TravelerSkin? _skin;
+    private double _clock,_blendElapsed,_catchUp;
+    private bool _guardOnRecovery,_dead;
+    private float _cape,_coat;
+    private Pose _pose,_from;
+    private const double BlendDuration=.075;
+    private record struct Pose(float X=0,float Y=0,float Torso=0,float Head=0,float Arm=0,float Forearm=0,
+        float Wrist=0,float FreeArm=0,float FreeForearm=0,float Root=0,
+        float Aim=0,float ReachX=493,float ReachY=564,float SwordAngle=0,float Grip=0,float Yaw=1)
     {
-        var atlas = ResourceLoader.Load<Texture2D>(AtlasPath);
-        // Explicit regions account for the generated atlas's margins and the sword hilt
-        // extending above its nominal cell. No GPU readback (also works with headless textures).
-        Rect2[] regions = [new(56,43,280,291), new(384,0,311,363), new(724,33,350,306),
-            new(1070,35,375,330), new(70,377,215,321), new(477,374,142,347),
-            new(850,340,109,377), new(1197,376,195,311), new(77,722,218,342),
-            new(443,723,180,355), new(838,723,217,340)];
-        Node2D Joint(string name, Node parent, Vector2 position)
-        {
-            var joint = new Node2D { Name = name, Position = position };
-            parent.AddChild(joint);
-            return joint;
-        }
-        void Part(Node2D joint, int slot, float height, Vector2 offset)
-        {
-            var region = regions[slot];
-            var texture = new AtlasTexture { Atlas = atlas, Region = region, FilterClip = true };
-            var scale = height / region.Size.Y;
-            var sprite = new Sprite2D { Name = "Art", Texture = texture, Centered = false,
-                Scale = Vector2.One * scale, Position = offset + new Vector2(-region.Size.X * scale / 2, 0) };
-            joint.AddChild(sprite);
-            _parts.Add(sprite);
-        }
-        // The atlas cells are independently sized illustrations, not equally scaled bones.
-        // Fit a ~6.3-head adult silhouette: waist at 170/315, visible lower legs,
-        // and overlapping shoulder/elbow/neck pivots. Never stretch either texture axis.
-        _leftLeg = Joint("LeftLeg", this, new(-23, -104)); Part(_leftLeg, 9, 104, Vector2.Zero);
-        _rightLeg = Joint("RightLeg", this, new(26, -104)); Part(_rightLeg, 10, 104, Vector2.Zero);
-        _torso = Joint("Torso", this, new(0, -170));
-        _cape = Joint("Cape", _torso, new(-25, -96)); Part(_cape, 2, 105, new(-55, 0));
-        _freeArm = Joint("FreeArm", _torso, new(34, -88)); Part(_freeArm, 7, 58, new(0, -6));
-        _freeForearm = Joint("FreeForearm", _freeArm, new(10, 43)); Part(_freeForearm, 8, 57, new(0, -6));
-        _coat = Joint("Coat", _torso, new(0, -3)); Part(_coat, 3, 111, new(0, -8));
-        var chest = Joint("Chest", _torso, Vector2.Zero); Part(chest, 1, 110, new(0, -110));
-        _head = Joint("Head", _torso, new(8, -101)); Part(_head, 0, 50, new(0, -44));
-        _arm = Joint("SwordArm", _torso, new(-32, -88)); Part(_arm, 4, 60, new(0, -9));
-        _forearm = Joint("SwordForearm", _arm, new(-8, 43)); Part(_forearm, 5, 58, new(0, -8));
-        _sword = Joint("Sword", _forearm, new(0, 41)); Part(_sword, 6, 128, new(0, -13));
-        // The chest already includes the shoulder cap. Keep the moving upper arm
-        // behind it, but draw the forearm/weapon in front during a swing.
-        _torso.MoveChild(_arm, 2);
-        _forearm.ZIndex = 1;
-        SamplePose();
+        public Pose():this(0,0,0,0,0,0,0,0,0,0,0,493,564,0,0,1) { }
     }
+    private readonly record struct Key(float Time,Pose Pose);
+    private static readonly Key[] Attack=[new(0,new()),
+        new(.25f,new(-8,8,-.015f,.01f,FreeArm:.12f,Aim:1,ReachX:760,ReachY:490,SwordAngle:-2.18f,Yaw:.90f)),
+        new(.48f,new(48,22,.17f,-.06f,FreeArm:.20f,Aim:1,ReachX:1050,ReachY:420,SwordAngle:-2.18f,Yaw:.86f)),
+        new(.60f,new(48,22,.17f,-.06f,FreeArm:.20f,Aim:1,ReachX:1050,ReachY:420,SwordAngle:-2.18f,Yaw:.86f)),
+        new(.82f,new(3,6,.02f,0,FreeArm:.05f,Aim:1,ReachX:775,ReachY:490,SwordAngle:-2.18f,Yaw:.94f)),new(1,new())];
+    private static readonly Key[] Guard=[new(0,new()),
+        new(.24f,new(-5,14,-.015f,Aim:1,ReachX:850,ReachY:475,SwordAngle:-2.70f,Grip:.8f,Yaw:.94f)),
+        new(.40f,new(-8,25,-.035f,.015f,Aim:1,ReachX:900,ReachY:445,SwordAngle:-3.75f,Grip:1,Yaw:.92f)),
+        new(.66f,new(-8,25,-.035f,.015f,Aim:1,ReachX:900,ReachY:445,SwordAngle:-3.75f,Grip:1,Yaw:.92f)),
+        new(.84f,new(-2,9,-.01f,Aim:1,ReachX:795,ReachY:505,SwordAngle:-2.30f,Grip:.35f,Yaw:.97f)),new(1,new())];
 
+    public override void _Ready() { _skin=new TravelerSkin(this); ResetForPreview(); }
+    public double Duration=>ActionName switch { "Attack"=>.60,"Defend"=>.62,"BlockHit"=>.22,
+        "Hit" or "PartialHit"=>.36,"LifeLoss"=>.22,"Dead"=>.60,_=>.44 };
     public void PlayAction(string action)
     {
-        action = action switch { "revive" => "Revive", "Relaxed" => "Idle", _ => action };
-        if (_dead && action is not ("Revive" or "Idle")) return;
-        if (_dead && action == "Idle") return;
-        if (action == "Revive") { _dead = false; action = "Idle"; }
-        if (action == "Dead") _dead = true;
-        if (action == "Attack" && CardActive && CardAttacked) return;
-        if (action == "Attack") CardAttacked = true;
-        if (action == "Defend" && ActionName == "Attack") { _guardOnRecovery = true; return; }
-        if (action == "Idle" && ActionName != "Idle") return;
-        _guardOnRecovery = false;
-        ActionName = action;
-        Elapsed = 0;
-        ActionSerial++;
-        if (action == "Attack" && _sword is not null) CombatElementVfx.Spawn(_sword, Style, CombatEffect.Trail);
-        if (IsNodeReady()) SamplePose();
+        action=action switch { "revive"=>"Revive","Relaxed"=>"Idle",_=>action };
+        if(_dead&&action!="Revive") return;
+        var revive=action=="Revive";
+        if(revive) { _dead=false; action="Idle"; }
+        if(action=="Dead") _dead=true;
+        if(action=="Attack"&&CardActive&&CardAttacked) return;
+        if(action=="Attack") CardAttacked=true;
+        if(action=="Defend"&&ActionName=="Attack"&&CardActive&&CardAttacked) { _guardOnRecovery=true; return; }
+        if(action=="Idle"&&!revive&&ActionName!="Idle"&&Elapsed<Duration) return;
+        _from=_pose; _blendElapsed=0; _catchUp=0; _guardOnRecovery=false;
+        var switchWeapon=ActionName is "Attack" or "Defend" && action is "Attack" or "Defend";
+        ActionName=action; Elapsed=switchWeapon?Duration*.24:0; ActionSerial++;
+        if(action=="Attack"&&_skin is not null)
+        {
+            var trail=CombatElementVfx.Spawn(_skin.Bones["Sword"],Style,CombatEffect.Trail);
+            trail.Scale=Vector2.One/RigScale;
+        }
+        if(IsNodeReady()) ApplyPose(0);
     }
-
-    public void Contact()
-    {
-        // Actual damage is authoritative; bring the sword to contact if native fast mode lands early.
-        if (ActionName == "Attack") Elapsed = Math.Max(Elapsed, Duration * 0.43);
-    }
-
-    public double Duration => ActionName switch
-    {
-        "Attack" => 0.4, "Defend" => 0.34, "BlockHit" => 0.2,
-        "PartialHit" or "Hit" => 0.3, "LifeLoss" => 0.22, "Dead" => 0.6, _ => 0.4
-    };
-
-    public override void _Process(double delta) => Advance(delta);
-
-    // Also used by headless tests to sample animation without depending on frame timing.
+    public void Contact() { if(ActionName=="Attack") _catchUp=Math.Max(0,Duration*.48-Elapsed); }
+    public override void _Process(double delta)=>Advance(delta);
     public void Advance(double delta)
     {
-        _clock += delta;
-        Elapsed += delta * CombatPresentation.Speed;
-        if (!_dead && ActionName != "Idle" && Elapsed >= Duration)
+        _clock+=delta;
+        var step=delta*CombatPresentation.Speed;
+        var extra=Math.Min(_catchUp,step*1.5); _catchUp-=extra;
+        Elapsed+=step+extra; _blendElapsed+=step;
+        if(_guardOnRecovery&&ActionName=="Attack"&&Elapsed>=Duration*.60)
         {
-            ActionName = _guardOnRecovery ? "Defend" : "Idle";
-            _guardOnRecovery = false;
-            Elapsed = 0;
+            _from=_pose; _blendElapsed=0; _guardOnRecovery=false; ActionName="Defend"; Elapsed=Duration*.24;
         }
-        SamplePose();
+        else if(!_dead&&ActionName!="Idle"&&Elapsed>=Duration)
+        {
+            var next=_guardOnRecovery?"Defend":"Idle";
+            _guardOnRecovery=false; _from=_pose; _blendElapsed=0; ActionName=next; Elapsed=0;
+            if(delta>=BlendDuration) _blendElapsed=BlendDuration;
+        }
+        ApplyPose(delta);
     }
-
-    private void SamplePose()
+    private static Pose Lerp(Pose a,Pose b,float t)=>new(
+        Mathf.Lerp(a.X,b.X,t),Mathf.Lerp(a.Y,b.Y,t),Mathf.Lerp(a.Torso,b.Torso,t),Mathf.Lerp(a.Head,b.Head,t),
+        Mathf.Lerp(a.Arm,b.Arm,t),Mathf.Lerp(a.Forearm,b.Forearm,t),Mathf.Lerp(a.Wrist,b.Wrist,t),
+        Mathf.Lerp(a.FreeArm,b.FreeArm,t),Mathf.Lerp(a.FreeForearm,b.FreeForearm,t),Mathf.Lerp(a.Root,b.Root,t),
+        Mathf.Lerp(a.Aim,b.Aim,t),Mathf.Lerp(a.ReachX,b.ReachX,t),Mathf.Lerp(a.ReachY,b.ReachY,t),
+        Mathf.Lerp(a.SwordAngle,b.SwordAngle,t),Mathf.Lerp(a.Grip,b.Grip,t),Mathf.Lerp(a.Yaw,b.Yaw,t));
+    private static Pose Sample(Key[] keys,float t)
     {
-        if (_torso is null) return;
-        var t = (float)Math.Clamp(Elapsed / Duration, 0, 1);
-        var pulse = Mathf.Sin(t * Mathf.Pi);
-        var breath = (float)Math.Sin(_clock * 2.4);
-        Position = Vector2.Zero; Rotation = 0; Scale = Vector2.One * RigScale; Modulate = Colors.White;
-        _torso.Position = new(0, -170 + breath * 0.7f); _torso.Rotation = 0;
-        _head.Rotation = breath * 0.006f;
-        _cape.Rotation = breath * 0.025f; _coat.Rotation = -breath * 0.009f;
-        _arm.Rotation = 0.28f; _forearm.Rotation = 0.1f; _sword.Rotation = 0.2f;
-        _freeArm.Rotation = -0.06f; _freeForearm.Rotation = -0.08f;
-        _leftLeg.Rotation = 0.03f; _rightLeg.Rotation = -0.03f;
-        switch (ActionName)
-        {
-            case "Attack":
-                var swing = t < 0.23f ? Mathf.Lerp(0.28f, 0.75f, t / 0.23f)
-                    : t < 0.48f ? Mathf.Lerp(0.75f, -1.8f, (t - 0.23f) / 0.25f)
-                    : Mathf.Lerp(-1.8f, 0.28f, (t - 0.48f) / 0.52f);
-                _arm.Rotation = swing;
-                _forearm.Rotation = -0.5f * pulse;
-                _sword.Rotation = 0.2f - 0.8f * pulse;
-                _torso.Rotation = 0.1f * pulse; _torso.Position += new Vector2(9 * pulse, 2 * pulse);
-                _head.Rotation = -0.08f * pulse; _cape.Rotation += 0.14f * pulse;
-                _coat.Rotation -= 0.08f * pulse; _freeArm.Rotation += 0.25f * pulse;
-                if (Style == Element.Rock)
-                {
-                    _arm.Rotation += 0.3f * pulse;
-                    _torso.Position += new Vector2(0, 3 * pulse);
-                    _sword.Rotation += 0.3f * pulse;
-                }
-                else if (Style == Element.Lightning)
-                {
-                    _arm.Rotation = 0.28f - 1.6f * pulse;
-                    _forearm.Rotation = 0.1f - 0.3f * pulse;
-                    _sword.Rotation = 0.2f - 0.4f * pulse;
-                    _torso.Position += new Vector2(4 * pulse, -pulse);
-                }
-                break;
-            case "Defend": case "BlockHit":
-                _arm.Rotation -= 1.05f * pulse; _forearm.Rotation -= 0.9f * pulse;
-                _sword.Rotation -= 0.5f * pulse; _freeArm.Rotation -= 0.65f * pulse;
-                _torso.Position += new Vector2(-3 * pulse, 4 * pulse); _head.Rotation = -0.05f * pulse;
-                if (ActionName == "Defend" && Style == Element.Wind) _freeForearm.Rotation -= 0.7f * pulse;
-                if (ActionName == "Defend" && Style == Element.Rock) _torso.Position += new Vector2(0, 2 * pulse);
-                if (ActionName == "Defend" && Style == Element.Lightning) _sword.Rotation -= 0.3f * pulse;
-                break;
-            case "PartialHit": case "Hit":
-                _torso.Rotation = -0.13f * pulse; _torso.Position += new Vector2(-7 * pulse, 2 * pulse);
-                _head.Rotation = -0.1f * pulse; _arm.Rotation += 0.18f * pulse;
-                _cape.Rotation -= 0.13f * pulse; _freeForearm.Rotation += 0.18f * pulse;
-                if (ActionName == "PartialHit") _forearm.Rotation -= 0.5f * pulse;
-                Modulate = new Color(1, 1 - 0.13f * pulse, 1 - 0.16f * pulse);
-                break;
-            case "LifeLoss": Modulate = new Color(1, 1 - 0.12f * pulse, 1 - 0.12f * pulse); break;
-            case "Dead": Rotation = -1.35f * t; Position = new(-12 * t, 12 * t); _head.Rotation = -0.15f * t; break;
-            case "Cast": case "PowerUp":
-                _freeArm.Rotation -= 0.9f * pulse; _freeForearm.Rotation -= 0.5f * pulse;
-                _head.Rotation = -0.05f * pulse; _cape.Rotation += 0.08f * pulse;
-                break;
-        }
+        for(var i=1;i<keys.Length;i++)
+            if(t<=keys[i].Time) return Lerp(keys[i-1].Pose,keys[i].Pose,TravelerSkin.Smooth(keys[i-1].Time,keys[i].Time,t));
+        return keys[^1].Pose;
     }
+    private void ApplyPose(double delta)
+    {
+        if(_skin is null) return;
+        var t=(float)Math.Clamp(Elapsed/Duration,0,1); var pulse=Mathf.Sin(t*Mathf.Pi);
+        var target=ActionName switch {
+            "Attack"=>Sample(Attack,t),"Defend"=>Sample(Guard,t),
+            "BlockHit"=>new Pose(-4*pulse,9*pulse,-.02f*pulse,0,-.45f*pulse,-.55f*pulse,-.20f*pulse),
+            "Hit" or "PartialHit"=>new Pose(-18*pulse,8*pulse,-.21f*pulse,.025f*pulse,.06f*pulse,Wrist:.20f*pulse,Yaw:1-.10f*pulse),
+            "Cast" or "PowerUp"=>new Pose(0,4*pulse,.01f*pulse,-.01f*pulse,0,0,0,-.30f*pulse,-.55f*pulse),
+            "Dead"=>new Pose(-15*t,15*t,-.04f*t,0,0,0,0,0,0,-1.35f*t),_=>new Pose() };
+        _pose=Lerp(_from,target,TravelerSkin.Smooth(0,(float)BlendDuration,(float)_blendElapsed));
+        var breath=(float)Math.Sin(_clock*2.4)*1.5f;
+        _skin.ResetBones(); var bones=_skin.Bones;
+        bones["Pelvis"].Position+=new Vector2(_pose.X,_pose.Y);
+        bones["Torso"].Rotation=_pose.Torso; bones["Torso"].Position+=new Vector2(0,breath);
+        bones["Torso"].Scale=new Vector2(_pose.Yaw,1);
+        bones["Head"].Rotation=_pose.Head; bones["SwordArm"].Rotation=_pose.Arm;
+        bones["SwordForearm"].Rotation=_pose.Forearm; bones["Hand"].Rotation=_pose.Wrist;
+        bones["FreeArm"].Rotation=_pose.FreeArm; bones["FreeForearm"].Rotation=_pose.FreeForearm;
+        _skin.AimArm(true,new Vector2(_pose.ReachX,_pose.ReachY),_pose.SwordAngle,_pose.Aim);
+        // Supporting palm meets the same handle, below the dominant palm in guard.
+        var hand=bones["Hand"];
+        var gripTarget=_skin.Canvas.ToLocal(hand.ToGlobal(new Vector2(0,-45)));
+        _skin.AimArm(false,gripTarget,_pose.SwordAngle,_pose.Grip);
+        _cape=Mathf.Lerp(_cape,-_pose.Torso*.32f-_pose.Arm*.025f,1-(float)Math.Exp(-delta*9));
+        _coat=Mathf.Lerp(_coat,-_pose.Torso*.18f,1-(float)Math.Exp(-delta*14));
+        bones["Cape"].Rotation=_cape+(float)Math.Sin(_clock*2.4-.7)*.004f; bones["Coat"].Rotation=_coat;
+        _skin.PlantLeg("Left"); _skin.PlantLeg("Right");
+        Position=Vector2.Zero; Rotation=_pose.Root; Scale=Vector2.One*RigScale;
+        Modulate=ActionName is "Hit" or "PartialHit" or "LifeLoss"?new Color(1,1-.12f*pulse,1-.14f*pulse):Colors.White;
+        _skin.Update();
+    }
+    internal void ResetForPreview()
+    {
+        ActionName="Idle"; Elapsed=0; _clock=0; _catchUp=0; _dead=false; _guardOnRecovery=false;
+        _blendElapsed=BlendDuration; _pose=new(); _from=new(); _cape=0; _coat=0;
+        CardActive=false; CardAttacked=false; Position=Vector2.Zero; Rotation=0; Scale=Vector2.One*RigScale;
+        if(_skin is null) return; _skin.ResetBones(); _skin.Update();
+    }
+    internal float[] FrameVertices()=>_skin!.Vertices.SelectMany(p=>new[]{(p.X-TravelerSkin.Origin.X)*RigScale,(p.Y-TravelerSkin.Origin.Y)*RigScale}).ToArray();
 }

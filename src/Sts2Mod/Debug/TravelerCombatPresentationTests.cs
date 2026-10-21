@@ -17,35 +17,67 @@ public partial class TravelerTestRunner
         var creature = _player.Creature;
         var node = creature.GetCreatureNode()!;
         var rig = CombatPresentation.Rig(creature)!;
-        Check(rig is not null && rig.PartCount == 11, "ANIM_native_scene_eleven_separate_parts");
-        var head = rig!.GetNode<Sprite2D>("Torso/Head/Art");
-        var coat = rig.GetNode<Sprite2D>("Torso/Coat/Art");
-        Check(head.Texture.GetHeight() * head.Scale.Y * TravelerRig.RigScale is >= 48 and <= 51,
-            "ANIM_adult_head_is_about_one_sixth_of_height");
-        Check(coat.Texture.GetHeight() * coat.Scale.Y <= 115 && rig.GetNode<Node2D>("Torso").Position.Y <= -169,
-            "ANIM_waist_above_midpoint_coat_exposes_lower_legs");
-        Check(VisualDescendants(rig).OfType<Sprite2D>().All(s => s.Scale.X == s.Scale.Y),
-            "ANIM_all_parts_preserve_texture_aspect_ratio");
-        foreach (var pose in new[] { "Idle", "Attack", "Defend", "Hit", "Cast" })
-        {
-            rig.Advance(1);
-            rig.PlayAction(pose);
-            rig.Advance(pose == "Idle" ? 0 : rig.Duration * 0.48 / CombatPresentation.Speed);
-            ExportRigPose(rig, pose);
-        }
-        rig.Advance(1);
+        Check(rig is not null && rig.PartCount == 7 && rig.Skin.Bones.Count == 18, "ANIM_native_scene_single_mother_connected_skin");
+        rig!.ResetForPreview();
+        Check(rig.Skin.Layers.All(layer => layer.Texture.ResourcePath == TravelerSkin.TexturePath)
+            && rig.Skin.Vertices.Zip(rig.Skin.Uv).All(p => p.First.DistanceTo(p.Second) < .01f),
+            "ANIM_bind_pose_reconstructs_original_mother_without_rescaling_parts");
+        Check(rig.Skin.Triangles.SelectMany(t => t).Select(t => string.Join(',',t)).Distinct().Count()
+            == rig.Skin.Triangles.Sum(t => t.Count), "ANIM_source_triangles_drawn_once_no_duplicate_shoulders");
+        rig.PlayAction("Defend");
+        for (var i = 0; i < 20; i++) rig.Advance(.01 / CombatPresentation.Speed);
+        Check(new[] { "LeftFoot", "RightFoot" }.All(name => rig.Skin.BonePosition(name).DistanceTo(rig.Skin.Bind[name]) < .05f)
+            && rig.Skin.Bones["LeftShin"].Rotation != 0, "ANIM_guard_bends_knees_with_planted_feet");
+        rig.Advance(.10 / CombatPresentation.Speed);
+        var hand=rig.Skin.Bones["Hand"]; var support=rig.Skin.Bones["FreeHand"];
+        var palmGap=rig.Skin.Canvas.ToLocal(support.ToGlobal(new Vector2(0,40))).DistanceTo(rig.Skin.BonePosition("Hand"));
+        var blade=hand.GlobalTransform.X.Normalized().Rotated(2.18f);
+        Check(palmGap<20 && blade.Y<-.95f, "ANIM_guard_two_palms_share_hilt_blade_upright_in_front");
+        var before = rig.FrameVertices();
+        rig.PlayAction("Hit");
+        Check(before.Zip(rig.FrameVertices()).Max(p => Math.Abs(p.First - p.Second)) < .01,
+            "ANIM_interrupt_blends_from_current_pose_no_teleport");
+        rig.ResetForPreview(); rig.PlayAction("Attack"); rig.Advance(.02);
+        var elapsed = rig.Elapsed; before = rig.FrameVertices(); rig.Contact();
+        Check(rig.Elapsed == elapsed && before.SequenceEqual(rig.FrameVertices()), "ANIM_contact_does_not_jump_animation_clock");
+        rig.Advance(.16 / CombatPresentation.Speed);
+        var offset = rig.Skin.Uv.Length-TravelerSkin.Weapon.Length;
+        Check(Enumerable.Range(1,TravelerSkin.Weapon.Length-1).All(i =>
+            Math.Abs(rig.Skin.Vertices[offset+i].DistanceTo(rig.Skin.Vertices[offset])
+                -TravelerSkin.Weapon[i].DistanceTo(TravelerSkin.Weapon[0])) < .02f),
+            "ANIM_hand_and_sword_keep_rigid_shape_during_swing");
+        rig.ResetForPreview(); rig.PlayAction("Attack");
+        for(var i=0;i<30;i++)rig.Advance(.01 / CombatPresentation.Speed);
+        blade=rig.Skin.Bones["Hand"].GlobalTransform.X.Normalized().Rotated(2.18f);
+        Check(blade.X>.98f && Math.Abs(blade.Y)<.12f && rig.Skin.Bones["Torso"].Scale.X<.9f
+            && rig.Skin.BonePosition("Hand").X>900, "ANIM_side_on_forward_thrust_has_horizontal_blade");
+        before=rig.FrameVertices(); rig.PlayAction("Defend");
+        Check(rig.ActionName=="Defend" && before.Zip(rig.FrameVertices()).Max(p=>Math.Abs(p.First-p.Second))<.01,
+            "ANIM_thrust_to_guard_switch_keeps_current_pose");
+        for(var i=0;i<12;i++)rig.Advance(.01 / CombatPresentation.Speed);
+        before=rig.FrameVertices(); rig.PlayAction("Attack");
+        Check(rig.ActionName=="Attack" && before.Zip(rig.FrameVertices()).Max(p=>Math.Abs(p.First-p.Second))<.01,
+            "ANIM_guard_to_thrust_reentry_has_no_idle_reset");
+        rig.ResetForPreview(); rig.PlayAction("Hit");
+        for(var i=0;i<18;i++)rig.Advance(.01 / CombatPresentation.Speed);
+        Check(rig.Skin.Bones["Torso"].Rotation<-.19f && rig.Skin.Bones["Torso"].Scale.X<.92f
+            && new[]{"LeftFoot","RightFoot"}.All(n=>rig.Skin.BonePosition(n).DistanceTo(rig.Skin.Bind[n])<.05),
+            "ANIM_hurt_side_on_leans_back_with_supported_feet");
+        ExportNativeMotion(rig);
+        rig.ResetForPreview();
         var animation = node.Visuals.GetNode<AnimationPlayer>("AnimationPlayer");
         rig!.CardActive = false;
         node.SetAnimationTrigger("Attack");
         animation.Advance(0);
         Check(rig.ActionName == "Attack", "ANIM_native_attack_reaches_layered_rig");
         rig.Advance(0.08);
-        Check(rig.GetNode<Node2D>("Torso/SwordArm").Rotation != 0.28f
-            && rig.GetNode<Node2D>("Torso").Rotation != 0 && rig.Position == Vector2.Zero,
+        Check(rig.Skin.Bones["SwordArm"].Rotation != 0
+            && rig.Skin.Bones["Torso"].Rotation != 0 && rig.Position == Vector2.Zero,
             "ANIM_independent_arm_and_torso_not_whole_image_slide");
-        rig.PlayAction("Defend");
+        rig.CardActive=true; rig.CardAttacked=true; rig.PlayAction("Defend");
         rig.Advance(1);
         Check(rig.ActionName == "Defend", "ANIM_mixed_card_defense_uses_attack_recovery");
+        rig.CardActive=false;
         rig.Advance(1);
         Check(rig.ActionName == "Idle" && rig.Position == Vector2.Zero && rig.Rotation == 0,
             "ANIM_pose_returns_without_drift");
@@ -130,21 +162,41 @@ public partial class TravelerTestRunner
         await NextTurn();
     }
 
-    // CPU reconstruction of the actual scene transforms allows offline contact-sheet QA
-    // without starting a graphical game. This is not a claim of in-game rendering coverage.
-    private static void ExportRigPose(TravelerRig rig, string pose)
+    // The review player uses these actual native mesh frames, not a second JS animation implementation.
+    private static void ExportNativeMotion(TravelerRig rig)
     {
-        var parts = VisualDescendants(rig).OfType<Sprite2D>().Select(s =>
+        var path = System.Environment.GetEnvironmentVariable("STS2MOD_MOTION_EXPORT");
+        if (string.IsNullOrWhiteSpace(path)) return;
+        var clips = new List<object>();
+        foreach (var name in new[] { "Bind", "Attack", "Defend", "Hit", "Continuous", "Interrupted" })
         {
-            var texture = (AtlasTexture)s.Texture;
-            var transform = rig.GetParent<Node2D>().GlobalTransform.AffineInverse() * s.GlobalTransform;
-            var z = s.ZIndex;
-            for (var parent = s.GetParent(); parent != rig; parent = parent.GetParent())
-                if (parent is Node2D node) z += node.ZIndex;
-            return new { name = s.GetParent().Name.ToString(), z,
-                region = new[] { texture.Region.Position.X, texture.Region.Position.Y, texture.Region.Size.X, texture.Region.Size.Y },
-                matrix = new[] { transform.X.X, transform.X.Y, transform.Y.X, transform.Y.Y, transform.Origin.X, transform.Origin.Y } };
-        });
-        GD.Print("STS2MOD_POSE_SNAPSHOT " + System.Text.Json.JsonSerializer.Serialize(new { pose, parts }));
+            rig.ResetForPreview();
+            var frames = new List<float[]>();
+            var boneFrames = new List<float[]>();
+            var count = name == "Continuous" ? 90 : 42;
+            for (var frame = 0; frame < count; frame++)
+            {
+                if (frame == 0 && name != "Bind") rig.PlayAction(name is "Attack" or "Defend" or "Hit" ? name : "Attack");
+                if (name == "Continuous" && frame is 10 or 31 or 52) rig.PlayAction("Defend");
+                if (name == "Continuous" && frame is 19 or 40) rig.PlayAction("Attack");
+                if (name == "Interrupted" && frame == 6) rig.PlayAction("Hit");
+                if (name == "Interrupted" && frame == 14) rig.PlayAction("Defend");
+                frames.Add(rig.FrameVertices().Select(v => MathF.Round(v,3)).ToArray());
+                boneFrames.Add(rig.Skin.Bones.Keys.SelectMany(key => {
+                    var p = (rig.Skin.BonePosition(key)-TravelerSkin.Origin)*TravelerRig.RigScale;
+                    return new[] { MathF.Round(p.X,3),MathF.Round(p.Y,3) };
+                }).ToArray());
+                if (name != "Bind") rig.Advance(1.0 / 30 / CombatPresentation.Speed);
+            }
+            clips.Add(new { name, fps = 30, frames, boneFrames });
+        }
+        var layers = rig.Skin.Layers.Select((layer,index) => new { z = layer.ZIndex, mask = index != 6, triangles = rig.Skin.Triangles[index] });
+        System.IO.File.WriteAllText(path,System.Text.Json.JsonSerializer.Serialize(new {
+            texture = TravelerSkin.TexturePath, bones = rig.Skin.Bones.Keys,
+            weapon = TravelerSkin.Weapon.SelectMany(p => new[] { p.X,p.Y }),
+            parents = rig.Skin.Bones.Values.Select(b => Array.IndexOf(rig.Skin.Bones.Keys.ToArray(),b.GetParent().Name.ToString())),
+            uv = rig.Skin.Uv.SelectMany(p => new[] { p.X,p.Y }), layers, clips }));
+        rig.ResetForPreview();
+        GD.Print("STS2MOD_MOTION_EXPORT_COMPLETE native_mesh_frames=PASS preview_rendering=OFFLINE");
     }
 }

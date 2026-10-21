@@ -65,14 +65,9 @@ public partial class TravelerTestRunner
             Check(image is not null && image.GetWidth() >= 512 && image.GetHeight() >= 512, "ART_final_png_" + asset);
         }
         var rig = Presentation.CombatPresentation.Rig(_player.Creature)!;
-        rig.Advance(1);
-        var points = VisualDescendants(rig).OfType<Sprite2D>().SelectMany(sprite =>
-        {
-            var rect = sprite.GetRect();
-            return new[] { rect.Position, rect.End, new Vector2(rect.End.X, rect.Position.Y), new Vector2(rect.Position.X, rect.End.Y) }
-                .Select(point => rig.GetParent<Node2D>().ToLocal(sprite.ToGlobal(point)).Y);
-        }).ToArray();
-        Check(rig.PartCount == 11 && points.Max() - points.Min() is >= 310 and <= 314,
+        rig.ResetForPreview();
+        var points = rig.FrameVertices().Where((_,index) => index % 2 == 1).ToArray();
+        Check(rig.PartCount == 7 && points.Max() - points.Min() is >= 310 and <= 314,
             "ART_character_layered_battle_scale_312px");
         var topBarIcon = _player.Character.Icon;
         Check(topBarIcon is TextureRect topTexture && topTexture.Texture.ResourcePath.EndsWith("head_icon.png"),

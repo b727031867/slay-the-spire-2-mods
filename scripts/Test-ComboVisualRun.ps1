@@ -26,15 +26,18 @@ foreach($element in @('None','Wind','Rock','Lightning')) {
 if($text -notmatch '(?m)^STS2MOD_VISUAL_COMPLETE assertions=\d+ panel=ABSENT status=PASS tooltip=PASS readonly=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$'){
  throw 'Visual suite incomplete'
 }
-foreach($case in @('native_scene_eleven_separate_parts','native_attack_reaches_layered_rig',
+foreach($case in @('native_scene_single_mother_connected_skin','native_attack_reaches_layered_rig',
  'independent_arm_and_torso_not_whole_image_slide','mixed_card_defense_uses_attack_recovery',
  'pose_returns_without_drift','death_cannot_be_overwritten_by_old_actions','native_revive_restores_pose','lowercase_revive_alias_restores_pose',
  'simultaneous_effects_bounded','effects_free_without_combo_or_rng_changes','native_plain_strike_contact',
  'native_plain_defend_gain','native_mixed_card_both_events','native_fully_blocked_reaction',
  'native_partially_blocked_reaction','native_unblocked_reaction','zero_damage_has_no_hurt_pose',
  'non_attack_hp_loss_has_no_weapon_contact','repeated_hits_restore_pose',
- 'adult_head_is_about_one_sixth_of_height','waist_above_midpoint_coat_exposes_lower_legs',
- 'all_parts_preserve_texture_aspect_ratio')) {
+ 'bind_pose_reconstructs_original_mother_without_rescaling_parts','source_triangles_drawn_once_no_duplicate_shoulders',
+ 'guard_bends_knees_with_planted_feet','interrupt_blends_from_current_pose_no_teleport','contact_does_not_jump_animation_clock',
+ 'hand_and_sword_keep_rigid_shape_during_swing','guard_two_palms_share_hilt_blade_upright_in_front',
+ 'side_on_forward_thrust_has_horizontal_blade','thrust_to_guard_switch_keeps_current_pose',
+ 'guard_to_thrust_reentry_has_no_idle_reset','hurt_side_on_leans_back_with_supported_feet')) {
  if(!$text.Contains("STS2MOD_TEST_PASS ANIM_$case")){throw "Missing combat presentation case: $case"}
 }
 foreach($element in @('Wind','Rock','Lightning')) {

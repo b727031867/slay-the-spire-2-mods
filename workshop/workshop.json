@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [单人测试版]",
   "description": "由 Prepare-Workshop.ps1 从 description.bbcode.txt 填充。",
   "visibility": "private",
-  "changeNote": "0.3.8：修复选牌界面连携长说明遮挡卡牌，战斗手牌保留单条短预览；重新校准旅行者分层模型的头身、腰线、衣摆、腿部及肘部连接，保留攻防动作；商店角色改为旅行者专用场景并修复原生Spine动画兼容。沿用原私有条目与BaseLib3.4.7。",
+  "changeNote": "0.3.9：统一原始母稿七层网格与18关节；普通攻击改为侧身前突刺，防御改为双手举剑挡身前，受击改为轻微后仰；连续出牌直接衔接突刺与防御。修正剑刃变形、手部连接和动作切换，保留玩法结算及既有工坊可见性。",
   "tags": [],
   "dependencies": [
     3737335127
