@@ -8,16 +8,18 @@ public partial class ElementComboVfx : Node2D
 {
     public ComboKind Kind { get; init; }
     public bool Doubled { get; init; }
+    public bool Blocked { get; init; }
     private double _elapsed;
     public const double Duration = 0.55;
 
-    public static void Show(Creature target, ComboKind kind, bool doubled)
+    public static void Show(Creature target, ComboKind kind, bool doubled, bool blocked = false)
     {
-        if (DisplayServer.GetName() == "headless") return;
         var anchor = target.GetCreatureNode();
         var container = target.GetVfxContainer();
         if (anchor is null || container is null || !GodotObject.IsInstanceValid(anchor) || !anchor.IsInsideTree()) return;
-        var effect = new ElementComboVfx { Kind = kind, Doubled = doubled, ZIndex = 5 };
+        var existing = container.GetChildren().OfType<ElementComboVfx>().Where(v => !v.IsQueuedForDeletion()).ToArray();
+        if (existing.Length >= 8) existing[0].QueueFree();
+        var effect = new ElementComboVfx { Kind = kind, Doubled = doubled, Blocked = blocked, ZIndex = 5 };
         container.AddChild(effect);
         effect.GlobalPosition = anchor.VfxSpawnPosition;
     }
@@ -40,17 +42,24 @@ public partial class ElementComboVfx : Node2D
             ComboKind.RockLightning => new Color("bea4ea"),
             _ => new Color("7ddbc8")
         };
-        if (Kind == ComboKind.WindRock)
+        if (Blocked)
+        {
+            DrawArc(new(-8,0),44,-1.2f,1.2f,24,color,3,true);
+            DrawLine(new(30,-8),new(44,-15),new Color("eac27c"),2,true);
+        }
+        else if (Kind == ComboKind.WindRock)
         {
             Vector2[] shield = [new(-38,-35), new(0,-50), new(38,-35), new(30,20), new(0,45), new(-30,20), new(-38,-35)];
             DrawPolyline(shield, color, 5, true);
             DrawLine(new(-25,-12),new(25,-12),color,3,true);
+            DrawArc(Vector2.Zero, 52, -2.8f, 0.3f, 24, new Color("79d9c8"), 3, true);
         }
         else if (Kind == ComboKind.RockLightning)
         {
             Vector2[] bolt = [new(15,-55), new(-18,-5), new(8,-5), new(-15,45)];
             DrawPolyline(bolt, color, 6, true);
-            DrawArc(Vector2.Zero,44,0,Mathf.Tau,28,new Color(color,0.5f),2,true);
+            DrawPolyline([new(-28,-30),new(4,-42),new(28,-8),new(12,32),new(-8,18),new(-28,-30)],
+                new Color("eac27c"), 3, true);
         }
         else
         {

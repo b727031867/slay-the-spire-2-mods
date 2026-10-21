@@ -1,36 +1,37 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.6 · 单人技术测试版[/b]
-可选角色「旅行者」拥有18张专属奖励牌（7攻击/7技能/4能力）、10张起始牌、旅途罗盘和专属罕见遗物「派蒙的应援」。支持简体中文/英文。通过风、岩、雷出牌顺序组合防御、过牌和追击。
+[b]0.3.7 · 单人技术测试版[/b]
+可选角色「旅行者」拥有18张专属奖励牌（7攻击/7技能/4能力）、10张起始牌、旅途罗盘和专属遗物「派蒙的应援」。支持简体中文/英文，通过风、岩、雷出牌顺序组合防御、过牌和追击。
 
 [h2]本次更新[/h2]
 [list]
-[*]0.3.6整理发布流程、统一无GUI测试入口，并拆分连携结算与表现代码；玩法、卡池、数值及存档ID不变。
-[*]角色状态栏保留无/风/岩/雷图标，卡牌旁保留只读连携预览；没有左上常驻连携面板。
-[*]18张奖励牌含4能力；共鸣第2次实际连携回能，旅途罗盘隔回合恢复，派蒙只翻倍基础连携。
-[*]卡牌、遗物和药水使用原生能量图标。战斗动作优化尚处讨论阶段，不包含在此更新。
+[*]新增11部件分层2D战斗动作：普通挥剑、防御、全挡、部分格挡受伤、直接受伤、倒地与复活。
+[*]风、岩、雷分别提供攻击和防御特效；连携按实际奖励显示融合反馈，派蒙强化突出表现，不增加虚假打击次数。
+[*]篝火使用旅行者专属坐姿休息图，保留原生各幕环境、休息/锻造按钮和选项气泡。
+[*]卡池、伤害、格挡、抽牌、连携额度和存档ID保持。角色状态图标与只读卡牌悬停预览保留。
 [/list]
 
 [h2]连携规则[/h2]
 [list]
 [*]风↔岩：额外4格挡；岩↔雷：额外4基础攻击；雷↔风：额外抽1。
-[*]两种出牌方向均可；三类每人每回合合计最多3次。连携后保留刚打出的元素，可连续衔接；元素跨回合保留，仅战斗结束清空。
-[*]单体攻击追击同一存活敌人，原目标死亡不转火；无敌方目标的技能随机追击。无目标群攻不自动选择单体追击目标。
-[*]派蒙只翻倍三种基础连携，不翻倍罗盘/能力；不会正常重复获得。能力牌不带元素，不推进序列。
-[*]自动打出与额外重复结算不推进；战斗结束跳过奖励，零伤害/抽0等未发放奖励不计入能力的实际连携次数。
+[*]两种出牌方向均可，三类每人每回合合计最多3次。连携后保留刚打出的元素，可连续衔接；元素跨回合保留，战斗结束清空。
+[*]单体攻击追击同一存活敌人，原目标死亡不转火；无敌方目标的防御技能随机追击。无目标群攻不自动选择单体追击目标。
+[*]派蒙只翻倍基础连携，不翻倍罗盘/能力；能力牌不带元素，不推进序列。
+[*]自动打出与额外重复结算不推进序列；战斗结束跳过奖励，零伤害/抽0等未发放奖励不计入能力的实际连携次数。
+[*]元素共鸣在每回合第2次实际连携奖励时回能；旅途罗盘触发后隔一次自己的回合恢复。
 [/list]
 
-[h2]安装与验证边界[/h2]
-仅固定 Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7；其他BaseLib版本会被拒绝。工坊依赖无法锁定版本，Steam更新后请核查。不要同时保留本地和工坊重复副本。更新前结束旧局并备份存档；自动化测试不使用你的正常档案。
-本条目保持私有，不扩大可见性。用户已确认0.3.5试玩通过；这不等于所有自然Boss平衡、多人或旧档迁移已验收。后台无GUI检查与人工试玩分别记录，具体结果见仓库最新0.3.5报告。画面使用生成式插图，非官方素材；营地/商人等部分原生共用演出仍保留。页面封面/规则图为原创说明设计，不是游戏截图。
+[h2]安装与验证[/h2]
+固定 Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7；本Mod会拒绝其他BaseLib版本。工坊依赖无法锁定版本，更新后请核对。每个Mod只保留一份生效副本。
+用户已确认本轮战斗演出及篝火图开发包试玩通过，干净0.3.7的构建和下载检查单独记录。AI游戏测试全程无GUI，不能替代人工画面验收；多人、自然完整流程/Boss平衡和旧档迁移未作系统验收。条目保持私有，需有访问权限。
+角色、卡牌与篝火插图使用生成式素材。封面与规则图为原创说明设计，不是游戏截图。商人及部分通用演出仍复用原生资源。
 
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/codex/TASK-011-combo-visuals/docs/player/README.zh-CN.md]玩家指南[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/tests/RELEASE-037.md]0.3.7发布验证[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.5: a playable Traveler with 18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer.
-Fixed oversized Compass artwork overflowing native energy-relic tooltips by using native energy glyphs for cards, relics and potions. Current element uses distinct status icons; native card-hover combo previews remain. The persistent top-left combo panel was removed following playtest feedback. Version 0.3.5 passed the user's playtest; gameplay rules are unchanged.
-Element Resonance now grants Energy on the SECOND actual combo reward each turn, once per copy per turn. Journey Compass draws one after an actual reward, then skips the next owner turn and becomes ready again; unused opportunities stay ready, extra turns count, and combat start resets it. Its glowing 1 means ready; dim 0 means spent/cooling down. The top-left portrait is now a face close-up.
-All three element pairs work in either order and share a three-use cap per player per turn. Elements persist across turns. Defensive Rock/Lightning skills hit one random living enemy; targeted attacks follow up on the original living target, never replacing a dead target. Paimon doubles only base combo rewards, not Powers or Compass.
-Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. No multiplayer support claim; natural full-run/Boss balance and old-save migration need separate validation. AI-generated illustrations are used; previews are explanatory graphics, not gameplay screenshots. Keep only one installed copy of each mod. Private visibility is preserved.
+Version 0.3.7 adds layered 2D combat animation for the Traveler: sword attacks, defense, fully and partially blocked hits, hurt, death and revival. Wind, Rock and Lightning each have attack and defense effects, with fused feedback for actual combo rewards. A custom seated Traveler illustration now appears at rest sites while native rest/smith options remain.
+18 exclusive reward cards including 4 Powers, a ten-card starting deck, Journey Compass and Paimon's Cheer. Gameplay values, combo limits and save IDs are unchanged. Each element pair works in either order and all pairs share a three-use cap per player per turn; elements persist across turns. Paimon doubles only base combo rewards. Targeted follow-ups never replace a dead target; defensive skills choose a random living enemy using native RNG.
+Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. The user approved the development build after playtesting; clean release checks are recorded separately. Headless tests do not establish rendered appearance. Multiplayer, natural full-run/Boss balance and old-save migration are not systematically validated. AI-generated illustrations are used; previews are explanatory graphics. Private visibility is preserved.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。

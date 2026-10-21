@@ -79,10 +79,11 @@ public static class ComboResolver
                 var attack = DamageCmd.Attack(bonus).FromCard(card);
                 if (randomTarget) attack.TargetingRandomOpponents(creature.CombatState!);
                 else attack.Targeting(target!);
-                await attack.WithHitFx("vfx/vfx_attack_slash").Execute(context);
+                using (Presentation.CombatPresentation.Reward(reservation.Kind, reservation.PaimonDoubles))
+                    await attack.WithHitFx("vfx/vfx_attack_slash").Execute(context);
                 var results = attack.Results.SelectMany(results => results).ToArray();
                 var receiver = results.FirstOrDefault()?.Receiver;
-                if (receiver is not null) ComboFeedback.ShowReward(creature, receiver, reservation);
+                if (receiver is not null && results.Any(result => result.TotalDamage > 0)) ComboFeedback.ShowReward(creature, receiver, reservation);
                 awarded = results.Any(result => result.TotalDamage > 0);
                 GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning target_mode={(randomTarget ? "random" : "selected")} target={receiver?.CombatId} bonus={bonus}");
             }
@@ -99,8 +100,9 @@ public static class ComboResolver
         {
             var before = creature.Block;
             creature.GetPower<ComboPower>()?.FlashReward();
-            await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
-            ComboFeedback.ShowReward(creature, creature, reservation);
+            using (Presentation.CombatPresentation.Reward(reservation.Kind, reservation.PaimonDoubles))
+                await CreatureCmd.GainBlock(creature, bonus, ValueProp.Unpowered, play);
+            if (creature.Block > before) ComboFeedback.ShowReward(creature, creature, reservation);
             awarded = creature.Block > before;
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
         }

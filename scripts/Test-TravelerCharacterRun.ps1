@@ -27,5 +27,14 @@ foreach($index in 0..4) {
     if(!$text.Contains("STS2MOD_TEST_PASS CHAR_native_shop_five_slots_and_shared_potions_$index")){throw "Missing native shop case $index"}
 }
 if($text -notmatch '(?m)^STS2MOD_CHARACTER_CASES_COMPLETE assertions=\d+ starter=10 exclusive_cards=18 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN'){throw 'Character cases incomplete'}
+foreach($case in @('traveler_uses_custom_scene','ironclad_resource_unchanged','native_room_mounts_traveler',
+ 'custom_texture_imported','no_inherited_ironclad_spine','seated_illustration_bounded','native_interaction_nodes_exist',
+ 'rest_and_smith_buttons_preserved','native_flip_keeps_art_and_hitbox_together','flip_restores_original_pose',
+ 'native_option_bubble_works','room_and_character_free_on_exit')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS REST_$case")){throw "Missing rest-site case: $case"}
+}
+if($text -notmatch '(?m)^STS2MOD_REST_SITE_COMPLETE assertions=\d+ scene=PASS native_options=PASS cleanup=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$'){
+ throw 'Rest-site suite incomplete'
+}
 if($Focused -and $text -notmatch '(?m)^STS2MOD_CHARACTER_COMPLETE assertions=\d+ singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False'){throw 'Focused run incomplete'}
 Write-Output 'TRAVELER_CHARACTER_PASS starter=10 exclusive_cards=18 starter_relic=1 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'

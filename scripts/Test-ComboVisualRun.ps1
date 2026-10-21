@@ -25,6 +25,26 @@ foreach($element in @('None','Wind','Rock','Lightning')) {
 if($text -notmatch '(?m)^STS2MOD_VISUAL_COMPLETE assertions=\d+ panel=ABSENT status=PASS tooltip=PASS readonly=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$'){
  throw 'Visual suite incomplete'
 }
+foreach($case in @('native_scene_eleven_separate_parts','native_attack_reaches_layered_rig',
+ 'independent_arm_and_torso_not_whole_image_slide','mixed_card_defense_uses_attack_recovery',
+ 'pose_returns_without_drift','death_cannot_be_overwritten_by_old_actions','native_revive_restores_pose','lowercase_revive_alias_restores_pose',
+ 'simultaneous_effects_bounded','effects_free_without_combo_or_rng_changes','native_plain_strike_contact',
+ 'native_plain_defend_gain','native_mixed_card_both_events','native_fully_blocked_reaction',
+ 'native_partially_blocked_reaction','native_unblocked_reaction','zero_damage_has_no_hurt_pose',
+ 'non_attack_hp_loss_has_no_weapon_contact','repeated_hits_restore_pose')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS ANIM_$case")){throw "Missing combat presentation case: $case"}
+}
+foreach($element in @('Wind','Rock','Lightning')) {
+ foreach($effect in @('Attack','Defend')) {
+  if(!$text.Contains("STS2MOD_TEST_PASS ANIM_six_effect_node_${element}_$effect")){throw "Missing element effect: $element/$effect"}
+ }
+ foreach($effect in @('attack','defend')) {
+  if(!$text.Contains("STS2MOD_TEST_PASS ANIM_native_element_${effect}_$element")){throw "Missing native element event: $element/$effect"}
+ }
+}
+if($text -notmatch '(?m)^STS2MOD_COMBAT_PRESENTATION_COMPLETE assertions=\d+ native_events=PASS cleanup=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$'){
+ throw 'Combat presentation suite incomplete'
+}
 if(!$WithinExpansion){
  if($text -notmatch '(?m)^STS2MOD_VISUAL_FOCUSED_COMPLETE assertions=(\d+) singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False\r?$'){
   throw 'Visual focused suite incomplete'

@@ -19,3 +19,7 @@ Full和SaveResume默认1800秒，其余默认300秒，可显式设置TimeoutSeco
 磁盘流程先SavePrepare，等待原生退出后重新部署同一包，以返回的SandboxDirectory调用SaveResume。不复制用户存档、不启用Steam云。图形、多人、自然Boss平衡单列验证。
 
 旧Test-*Run脚本作为严格检查器保留，统一入口不减少必需用例或忽略未知错误。
+
+Visuals同时覆盖战斗演出：11块分层素材、原生动画转发、六套元素效果、普通攻防、实际格挡与掉血分支、节点限量/释放、倒地与复活。Cards/Full会复用此专项，并检查分层角色仍维持约312px的战斗高度。无GUI结果不证明贴图拼接、遮挡、动作自然度或实际画面观感，详见docs/tests/COMBAT-PRESENTATION.md。
+
+Character包含篝火资源检查：原生RestSiteRoom加载旅行者自定义休息场景与透明贴图，确认休息/锻造按钮、选项气泡、镜像、命中框和退出释放。它不自动点击菜单，也不验证实际画面观感，记录见docs/tests/REST-SITE.md。

@@ -85,6 +85,7 @@ public partial class TravelerTestRunner
         CheckNoComboPanel("next_combat");
         CheckStatusIcon(Element.None);
         foreach (var relic in _player.Relics.OfType<PaimonCheer>().ToArray()) await RelicCmd.Remove(relic);
+        await TestCombatPresentation();
         GD.Print($"STS2MOD_VISUAL_COMPLETE assertions={_assertions - start} panel=ABSENT status=PASS tooltip=PASS readonly=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 }

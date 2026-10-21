@@ -22,7 +22,7 @@ foreach ($up in @('False','True')) {
 foreach ($case in @('only_living_enemy_selected','shared_cap_no_fourth_hit_or_rng','zero_damage_no_echo_or_actual_reward')) {
     if (!$text.Contains("STS2MOD_TEST_PASS RANDOM_$case")) { throw "Missing random boundary: $case" }
 }
-if (!$text.Contains('STS2MOD_TEST_PASS ART_character_native_battle_scale_312px') -or
+if (!$text.Contains('STS2MOD_TEST_PASS ART_character_layered_battle_scale_312px') -or
     $text -notmatch '(?m)^STS2MOD_RANDOM_COMBO_COMPLETE cases=11 seeded_rng=native cap=3 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Final art/random-combo suite incomplete.'
 }

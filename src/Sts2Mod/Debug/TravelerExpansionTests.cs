@@ -64,11 +64,16 @@ public partial class TravelerTestRunner
             var image = ResourceLoader.Load<Texture2D>($"res://Sts2Mod/{folder}/{asset}.png");
             Check(image is not null && image.GetWidth() >= 512 && image.GetHeight() >= 512, "ART_final_png_" + asset);
         }
-        var visual = ResourceLoader.Load<PackedScene>("res://Sts2Mod/character/traveler.tscn")!.Instantiate<Node2D>();
-        var body = visual.GetNode<Sprite2D>("Visuals/Body");
-        Check(body.Texture.ResourcePath.EndsWith("body.png") && body.Texture.GetHeight() * body.Scale.Y is >= 310 and <= 314,
-            "ART_character_native_battle_scale_312px");
-        visual.Free();
+        var rig = Presentation.CombatPresentation.Rig(_player.Creature)!;
+        rig.Advance(1);
+        var points = VisualDescendants(rig).OfType<Sprite2D>().SelectMany(sprite =>
+        {
+            var rect = sprite.GetRect();
+            return new[] { rect.Position, rect.End, new Vector2(rect.End.X, rect.Position.Y), new Vector2(rect.Position.X, rect.End.Y) }
+                .Select(point => rig.GetParent<Node2D>().ToLocal(sprite.ToGlobal(point)).Y);
+        }).ToArray();
+        Check(rig.PartCount == 11 && points.Max() - points.Min() is >= 310 and <= 314,
+            "ART_character_layered_battle_scale_312px");
         var topBarIcon = _player.Character.Icon;
         Check(topBarIcon is TextureRect topTexture && topTexture.Texture.ResourcePath.EndsWith("head_icon.png"),
             "ART_topbar_uses_face_closeup_scene");

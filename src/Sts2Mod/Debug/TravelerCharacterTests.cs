@@ -170,6 +170,7 @@ public partial class TravelerTestRunner
         compass.DisplayAmountChanged -= indicatorListener;
         await RelicCmd.Remove(compass);
         await NextTurn();
+        await TestRestSiteArt();
         GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=18 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 }

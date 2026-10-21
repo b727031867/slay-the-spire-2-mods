@@ -30,6 +30,7 @@ public static class ModEntry
 
         new HarmonyLib.Harmony("Sts2Mod.Traveler").PatchAll(typeof(ModEntry).Assembly);
         ModHelper.SubscribeForCombatStateHooks("Sts2Mod.Combo", _ => [ModelDb.Singleton<ComboLifecycle>()]);
+        ModHelper.SubscribeForCombatStateHooks("Sts2Mod.Presentation", _ => [ModelDb.Singleton<Presentation.CombatPresentationLifecycle>()]);
         if (CommandLineHelper.HasArg("sts2mod-debug") && CommandLineHelper.HasArg("sts2mod-test"))
         {
             TestSaveSandbox.Install();

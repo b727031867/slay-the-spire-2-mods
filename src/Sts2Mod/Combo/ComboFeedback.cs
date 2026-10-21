@@ -45,6 +45,9 @@ public static class ComboFeedback
         if (creature.GetCreatureNode() is not null && creature.GetVfxContainer() is { } container
             && NThoughtBubbleVfx.Create(text, creature, 1.0) is { } bubble)
             container.AddChild(bubble);
-        ElementComboVfx.Show(effectTarget, reservation.Kind, reservation.PaimonDoubles);
+        // Attack/block fusion is already placed at the authoritative native result, once per target.
+        if ((reservation.Kind == ComboKind.LightningWind && actualDraw > 0)
+            || Presentation.CombatPresentation.Rig(creature) is null)
+            ElementComboVfx.Show(effectTarget, reservation.Kind, reservation.PaimonDoubles);
     }
 }
