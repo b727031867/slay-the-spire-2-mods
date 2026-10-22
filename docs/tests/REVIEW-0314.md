@@ -10,7 +10,7 @@ The turn-end negative Dexterity effect can be blocked by Artifact. The user expl
 
 The player guide and Workshop description/images still described 0.3.13. These release documents have been updated to 0.3.14, 27 reward cards, five Powers and seven relic models. Earlier co-op playtesting is historical evidence, not validation of these new interactions.
 
-Build from clean b3764e6: zero warnings and errors. Pure combo rules: 52 passed. Log classification: 26 passed. Release packaging: 15 passed. Test entry: 11 passed. Native Full and disk results will be recorded in RELEASE-0314.md after completion.
+Build from clean b3764e6: zero warnings and errors. Pure combo rules: 52 passed. Log classification: 26 passed. Release packaging: 15 passed. Test entry: 11 passed. Clean native Full: 636 passed, including 105 expansion checks. SavePrepare: 13 passed. SaveResume after redeploying the same package: 258 passed. Workshop Load, Character (90) and Visuals (128) passed; all seven files and both CDN images match. See RELEASE-0314.md.
 
 Verdict: Ship.
 

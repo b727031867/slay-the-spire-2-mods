@@ -1,8 +1,6 @@
 # 旅行者·元素连携 / Traveler Elements
 
-0.3.14分支审查通过，新增8张卡牌、4件遗物，正在进行干净包发布验收；详见[审查报告](docs/tests/REVIEW-0314.md)。下方0.3.13记录为历史发布证据。
-
-开发中：0.3.14 卡池扩展（新增8张牌、4个遗物；奖励池27张、能力5种、遗物模型共7种）。尚未发布至工坊；验证与待确认语义见[实施记录](docs/tests/CARD-POOL-EXPANSION-0314.md)。下文0.3.13为已发布版本记录。
+**0.3.14已审查通过、快进合入main并推送，原工坊3823282901已更新，保留好友可见。** 新增8张卡牌、4件遗物；干净包Full636项、磁盘准备13项/恢复258项及实际工坊Load/Character90项/Visuals128项通过，七文件和两张CDN图片一致。详见[发布报告](docs/tests/RELEASE-0314.md)与[审查报告](docs/tests/REVIEW-0314.md)。下方0.3.13记录为历史发布证据。
 
 **0.3.13已提交、快进合入main并推送，原工坊3823282901已更新，保留好友可见设置。** 整合19张卡池平衡、无界罗盘、联机选人修复和轻量触发反馈；遗物及元素共鸣改为原图标短闪，连携改为短促小线条。干净包Full531项、实际工坊Load/Character90项/Visuals128项通过，七文件和两张图片一致，详见[发布报告](docs/tests/RELEASE-0313.md)。
 
@@ -18,7 +16,7 @@
 - [玩家安装与完整玩法](docs/player/README.zh-CN.md)
 - [更新日志](docs/player/CHANGELOG.md)：版本演进的统一入口
 - [跨PC接续](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)
-- [已发布包身份与校验值](docs/tests/RELEASE-0313.md)
+- [已发布包身份与校验值](docs/tests/RELEASE-0314.md)
 - [当前需求](STS2-Mod-Requirements-v0.1.md)、[开发操作](docs/DEVELOPMENT.md)、[协作约定](docs/COLLABORATION.md)
 - [技术基线](docs/TECH_BASELINE.md)、[接口说明](docs/API_FINDINGS.md)、[素材来源](docs/ASSETS.md)
 
@@ -50,7 +48,7 @@ if (!(Test-Path -LiteralPath .\local.settings.json)) {
 
 ## 验证与发布范围
 
-已发布0.3.13的干净包Full531项、实际工坊Character90项和Visuals128项通过，来源见发布报告。此前用户与朋友的双人联机实测反馈及联机选人修复的自动检查分别记录，不等同于本轮网络联机复测。旧档迁移与自然Boss系统性平衡未作系统验收。
+已发布0.3.14的干净包Full636项、磁盘准备13项/恢复258项、实际工坊Character90项和Visuals128项通过，来源见发布报告。此前用户与朋友的双人联机实测反馈及联机选人修复的自动检查分别记录，不等同于本轮网络联机复测。旧档迁移与自然Boss系统性平衡未作系统验收。
 
 AI游戏测试遵守[AGENTS.md](AGENTS.md)，使用无GUI、隔离存档并只清理自己的测试进程。工坊保留好友可见设置，依赖条目3737335127。
 
