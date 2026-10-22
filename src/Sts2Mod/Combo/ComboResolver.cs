@@ -23,20 +23,30 @@ namespace Sts2Mod.Combo;
 /// <summary>Reserves validated native actions and resolves rewards in their original order.</summary>
 public static class ComboResolver
 {
-    public static Reservation Reserve(CardModel card, PlayerChoiceContext context, CardPlay play, Element element)
+    public static async Task<Reservation> Reserve(CardModel card, PlayerChoiceContext context, CardPlay play, Element element)
     {
+        element = CombatCardElements.Get(card, element);
         var power = card.Owner.Creature.GetPower<ComboPower>();
-        if (play.IsAutoPlay || !play.IsFirstInSeries)
+        var chosen = CombatCardElements.Chosen.Get(card);
+        if ((play.IsAutoPlay && !chosen) || !play.IsFirstInSeries)
         {
             GD.Print($"STS2MOD_STEP player={card.Owner.NetId} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced=False reason=automatic_or_extra_resolution");
             return default;
         }
         // Only a validated, active native hand play may advance the sequence.
-        if (power is null || context is not GameActionPlayerChoiceContext { Action: PlayCardAction action }
-            || action.Player != card.Owner || action.NetCombatCard.ToCardModel() != card)
-            return default;
+        if (power is null) return default;
+        object identity;
+        uint? actionId = null;
+        if (chosen) identity = play;
+        else if (context is GameActionPlayerChoiceContext { Action: PlayCardAction action }
+            && action.Player == card.Owner && action.NetCombatCard.ToCardModel() == card)
+        { identity = action; actionId = action.Id; }
+        else return default;
         power.RefreshLimit();
-        var step = power.State.Reserve(action, element, play.IsAutoPlay, play.IsFirstInSeries);
+        var step = power.State.Reserve(identity, element);
+        if (step.Triggered)
+            foreach (var blessing in card.Owner.Relics.OfType<StatueBlessing>())
+                await blessing.OnComboTriggered(context);
         var paimonDoubles = step.Triggered
             && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false });
         var rewardAmount = ComboPresentation.Reward(step.Kind, paimonDoubles, ComboPresentation.EchoCopies(card.Owner));
@@ -48,8 +58,8 @@ public static class ComboResolver
             _ => "none"
         };
         power.Publish(step.Advanced ? "reserve" : "ignored");
-        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={action.Id} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} kind={step.Kind} reward={reward} paimonDouble={paimonDoubles}");
-        return new(step.Kind, action.Id, paimonDoubles);
+        GD.Print($"STS2MOD_STEP player={card.Owner.NetId} action={actionId} card={card.Id.Entry} auto={play.IsAutoPlay} index={play.PlayIndex} advanced={step.Advanced} before={step.Before} after={step.After} used={step.Used} kind={step.Kind} reward={reward} paimonDouble={paimonDoubles}");
+        return new(step.Kind, actionId, paimonDoubles);
     }
 
     public static async Task Resolve(CardModel card, PlayerChoiceContext context, CardPlay play, Reservation reservation)
@@ -71,7 +81,7 @@ public static class ComboResolver
             var target = play.Target;
             // Self/untargeted defensive skills use the native seeded combat-target RNG.
             // A targeted attack whose victim died still must not jump to another enemy.
-            var randomTarget = (card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy) || card is ThunderChain;
+            var randomTarget = reservation.Effect || (card.Type != CardType.Attack && card.TargetType != TargetType.AnyEnemy) || card is ThunderChain;
             if (!randomTarget && (target is null || !target.IsAlive || target.Side == creature.Side
                 || !creature.CombatState!.Creatures.Contains(target)))
             {

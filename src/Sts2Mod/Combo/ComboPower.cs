@@ -20,7 +20,7 @@ using Sts2Mod.Cards;
 
 namespace Sts2Mod.Combo;
 
-public readonly record struct Reservation(ComboKind Kind, uint? ActionId, bool PaimonDoubles);
+public readonly record struct Reservation(ComboKind Kind, uint? ActionId, bool PaimonDoubles, bool Effect = false);
 
 [CustomID("TC_COMBO")]
 public sealed class ComboPower : CustomPowerModel
@@ -63,7 +63,7 @@ public sealed class ComboPower : CustomPowerModel
     }
 
     // Stable facade for existing card models; engine orchestration lives in ComboResolver.
-    public static Reservation Reserve(CardModel card, PlayerChoiceContext context, CardPlay play, Element element)
+    public static Task<Reservation> Reserve(CardModel card, PlayerChoiceContext context, CardPlay play, Element element)
         => ComboResolver.Reserve(card, context, play, element);
 
     public static Task Resolve(CardModel card, PlayerChoiceContext context, CardPlay play, Reservation reservation)

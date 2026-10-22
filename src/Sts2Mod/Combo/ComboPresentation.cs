@@ -32,7 +32,8 @@ public static class ComboPresentation
     {
         string key;
         var power = InHand(card) ? card.Owner.Creature.GetPower<ComboPower>() : null;
-        var kind = power?.State.Preview(card.CardElement) ?? ComboKind.None;
+        var element = CombatCardElements.Get(card);
+        var kind = power?.State.Preview(element) ?? ComboKind.None;
         if (power is null) key = "generic";
         else if (RunManager.Instance.ActionQueueSynchronizer.CombatState != ActionSynchronizerCombatState.PlayPhase
             || CombatManager.Instance.PlayerActionsDisabled || !CombatManager.Instance.IsPartOfPlayerTurn(card.Owner)) key = "waiting";
@@ -46,7 +47,7 @@ public static class ComboPresentation
             ComboKind.RockLightning when card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy || card is ThunderChain => "randomAttack",
             _ => "attack"
         };
-        return new(key, kind, card.CardElement, power?.State.Remaining ?? ComboState.Limit,
+        return new(key, kind, element, power?.State.Remaining ?? ComboState.Limit,
             Reward(kind, card.IsMutable && HasPaimon(card.Owner), card.IsMutable ? EchoCopies(card.Owner) : 0));
     }
 

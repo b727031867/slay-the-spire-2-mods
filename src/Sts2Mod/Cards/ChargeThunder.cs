@@ -27,7 +27,7 @@ public sealed class ChargeThunder : ElementCardModel
     }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, CardElement);
+        var reservation = await ComboPower.Reserve(this, context, play, CardElement);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await PowerCmd.Apply<EnergyNextTurnPower>(context, Owner.Creature, DynamicVars.Energy.BaseValue, Owner.Creature, this);
         await ComboPower.Resolve(this, context, play, reservation);

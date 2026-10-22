@@ -26,7 +26,7 @@ if (!$text.Contains('STS2MOD_TEST_PASS ART_character_layered_battle_scale_312px'
     $text -notmatch '(?m)^STS2MOD_RANDOM_COMBO_COMPLETE cases=11 seeded_rng=native cap=3 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Final art/random-combo suite incomplete.'
 }
-foreach ($case in @('pool_19_types_8_7_4','rarity_8_8_3','all_ids_once','boss_native_rare_rewards',
+foreach ($case in @('pool_27_types_11_11_5','rarity_10_12_5','all_ids_once','boss_native_rare_rewards',
  'retain_keyword_survives_native_flush','plans_empty_hand_returns_without_choice','plans_upgraded_can_skip',
  'rock_heart_stacks_caps_4_plus_6','rock_heart_does_not_create_missing_block','rock_heart_does_not_restore_enemy_consumed_block',
  'power_cards_do_not_advance_and_copies_stack','guidance_two_copies_once_each','guidance_second_combo_no_second_draw',
@@ -58,10 +58,47 @@ foreach ($up in @('False','True')) {
 foreach ($id in 7..19) {
     if (!$text.Contains('STS2MOD_TEST_PASS EXP_portrait_TC_C' + $id.ToString('00'))) { throw "Missing portrait $id" }
 }
-if ($text -notmatch '(?m)^STS2MOD_EXPANSION_COMPLETE assertions=\d+ cards=19 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
+if ($text -notmatch '(?m)^STS2MOD_EXPANSION_COMPLETE assertions=\d+ cards=27 powers=5 multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
     throw 'Expansion test has not completed.'
 }
-if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions=\d+ cards=19 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
+if ($text -notmatch '(?m)^STS2MOD_POOL22_COMPLETE assertions=\d+ cards=8 relics=4 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
+    throw '2026-10-22 card/relic expansion suite incomplete.'
+}
+foreach ($case in @('x_requires_element_no_payment','burst_replay_preserves_preplay_reward_snapshot',
+ 'x_replay_preserves_element_and_payment_snapshot','x_native_chemical_x_bonus',
+ 'x_native_free_autoplay_captures_without_payment','medicine_no_exhaust_no_proc','medicine_first_status_five_block',
+ 'medicine_once_per_turn','medicine_native_ethereal_next_turn','statue_initial_record_no_proc',
+ 'statue_trigger_not_actual_reward','statue_once_per_combat','drum_third_actual_arms',
+ 'drum_ignores_aoe_random_auto_and_x_skill','drum_only_first_hit_not_combo','drum_expires_at_turn_end',
+ 'prism_plain_skill_manual_combo_entry','prism_instance_survives_discard_redraw',
+ 'prism_serialized_mark_copy_does_not_inherit','prism_next_turn_rerolls_same_instance',
+ 'prism_auto_first_assigns_without_combo','prism_auto_consumes_first_card_slot',
+ 'infusion_empty_records_only','infusion_two_copies_one_roll_two_dexterity',
+ 'infusion_accumulates_and_removes_only_own_dexterity','infusion_effect_combo_rewards_and_statue',
+ 'infusion_cap_updates_record_without_reward','infusion_turn_start_after_reset_single_roll')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS POOL22_$case")) { throw "Missing expansion boundary: $case" }
+}
+foreach ($up in @('False','True')) {
+    foreach ($case in @('cleanse_exhaust_draw','cleanse_empty','cleanse_optional','rock_cleanse_before_block_reusable',
+      'headwind_damage_then_weak','opportunist_layers_native_preview')) {
+        if (!$text.Contains("STS2MOD_TEST_PASS POOL22_${case}_$up")) { throw "Missing expansion card case: $case/$up" }
+    }
+    foreach ($count in @(0,1,2,3,4,7)) {
+        if (!$text.Contains("STS2MOD_TEST_PASS POOL22_burst_hits_${count}_$up")) { throw "Missing burst count: $count/$up" }
+    }
+    foreach ($element in @('Wind','Rock','Lightning')) {
+        foreach ($x in @(0,1,3)) {
+            if (!$text.Contains("STS2MOD_TEST_PASS POOL22_x_branch_${element}_${x}_$up")) { throw "Missing X branch: $element/$x/$up" }
+        }
+        if (!$text.Contains("STS2MOD_TEST_PASS POOL22_tuning_choice_free_exhaust_combo_${element}_$up")) {
+            throw "Missing tuning choice: $element/$up"
+        }
+    }
+    foreach ($id in 20..27) {
+        if (!$text.Contains("STS2MOD_TEST_PASS POOL22_model_locale_roundtrip_TC_C${id}_$up")) { throw "Missing expansion model: $id/$up" }
+    }
+}
+if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions=\d+ cards=27 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Focused completion marker missing.'
 }
 foreach ($case in @('chain_native_random_hits_False','chain_native_random_hits_True',
@@ -73,4 +110,4 @@ foreach ($case in @('chain_native_random_hits_False','chain_native_random_hits_T
  'compass_strength_accumulates_next_turn','new_combat_strength_reset_without_compass')) {
     if (!$text.Contains("STS2MOD_TEST_PASS BAL_$case")) { throw "Missing balance case: $case" }
 }
-Write-Output 'EXPANDED_CARDS_PASS cards=19 powers=4 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'
+Write-Output 'EXPANDED_CARDS_PASS cards=27 powers=5 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'

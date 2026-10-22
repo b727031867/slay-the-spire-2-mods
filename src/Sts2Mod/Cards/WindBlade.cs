@@ -22,7 +22,7 @@ public sealed class WindBlade : ElementCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var reservation = ComboPower.Reserve(this, choiceContext, cardPlay, Element.Wind);
+        var reservation = await ComboPower.Reserve(this, choiceContext, cardPlay, Element.Wind);
         ArgumentNullException.ThrowIfNull(cardPlay.Target);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(cardPlay.Target)
             .WithHitFx("vfx/vfx_attack_slash").Execute(choiceContext);

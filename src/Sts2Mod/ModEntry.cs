@@ -28,6 +28,7 @@ public static class ModEntry
         if (resource != "STS2MOD_RESOURCE_OK")
             throw new InvalidOperationException("Sts2Mod resource pack could not be verified.");
 
+        CombatCardElements.Initialize();
         new HarmonyLib.Harmony("Sts2Mod.Traveler").PatchAll(typeof(ModEntry).Assembly);
         ModHelper.SubscribeForCombatStateHooks("Sts2Mod.Combo", _ => [ModelDb.Singleton<ComboLifecycle>()]);
         ModHelper.SubscribeForCombatStateHooks("Sts2Mod.Presentation", _ => [ModelDb.Singleton<Presentation.CombatPresentationLifecycle>()]);

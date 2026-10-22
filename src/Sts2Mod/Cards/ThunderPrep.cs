@@ -24,7 +24,7 @@ public sealed class ThunderPrep : ElementCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, Element.Lightning);
+        var reservation = await ComboPower.Reserve(this, context, play, Element.Lightning);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await CardPileCmd.Draw(context, DynamicVars.Cards.BaseValue, Owner);
         await ComboPower.Resolve(this, context, play, reservation);

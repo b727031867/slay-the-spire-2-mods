@@ -11,5 +11,17 @@
   "TC_R02.cooldown": "On cooldown",
   "TC_R03.title": "Unbound Compass",
   "TC_R03.description": "Replaces Journey Compass. Whenever an Elemental Combo reward is actually granted, draw [blue]1[/blue] additional card. No per-turn trigger limit or turn cooldown. The shared cap of [blue]4[/blue] combos per player per turn is unchanged.",
-  "TC_R03.flavor": "Every resonance points the way onward."
+  "TC_R03.flavor": "Every resonance points the way onward.",
+  "TC_R04.title": "Traveler Medicine Chest",
+  "TC_R04.description": "The first time each turn you Exhaust a Status or Curse, gain 5 Block.",
+  "TC_R04.flavor": "The journey continues.",
+  "TC_R06.title": "Expedition Drum",
+  "TC_R06.description": "After your third actual combo reward each turn, your next manually played single-target Attack this turn deals +8 base damage on its first hit.",
+  "TC_R06.flavor": "The journey continues.",
+  "TC_R07.title": "Statue Blessing",
+  "TC_R07.description": "The first time you trigger an elemental combo each combat, gain 6 Plating.",
+  "TC_R07.flavor": "The journey continues.",
+  "TC_R05.title": "Tricolor Prism",
+  "TC_R05.description": "The first card you play each turn (including autoplay) gains a random element for this combat, replacing its previous element. Replays do not reroll.",
+  "TC_R05.flavor": "The journey continues."
 }

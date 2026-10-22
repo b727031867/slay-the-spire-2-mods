@@ -49,5 +49,7 @@
   "TC_ELEMENT_RESONANCE.title": "元素共鸣",
   "TC_ELEMENT_RESONANCE.description": "每回合第二次实际获得连携奖励后，获得{Amount}点能量。没有有效追击目标、零伤害或抽0不计入实际奖励。",
   "TC_FIRST_ELEMENT_RESONANCE.title": "元素共鸣+",
-  "TC_FIRST_ELEMENT_RESONANCE.description": "每回合第1次实际获得连携奖励后，获得{Amount}点能量。与未升级共鸣分别计数。"
+  "TC_FIRST_ELEMENT_RESONANCE.description": "每回合第1次实际获得连携奖励后，获得{Amount}点能量。与未升级共鸣分别计数。",
+  "TC_TRIPHASE_INFUSION.title": "三相灌注",
+  "TC_TRIPHASE_INFUSION.description": "每回合开始随机赋予一种元素。异元素尝试一次正常连携；同元素获得{Amount}点本回合临时敏捷。多份合并随机。"
 }

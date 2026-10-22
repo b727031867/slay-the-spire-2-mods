@@ -23,7 +23,7 @@ public sealed class PatientRampart : ElementCardModel
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, CardElement);
+        var reservation = await ComboPower.Reserve(this, context, play, CardElement);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await ComboPower.Resolve(this, context, play, reservation);
     }

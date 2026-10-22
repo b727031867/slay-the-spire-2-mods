@@ -32,7 +32,7 @@ public sealed class WindShelter : ElementCardModel
     }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, CardElement);
+        var reservation = await ComboPower.Reserve(this, context, play, CardElement);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         ArgumentNullException.ThrowIfNull(CombatState);
         var targets = CurrentUpgradeLevel > 0 ? CombatState.Enemies.Where(e => e.IsAlive).ToArray()

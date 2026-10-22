@@ -49,5 +49,7 @@
   "TC_ELEMENT_RESONANCE.title": "Element Resonance",
   "TC_ELEMENT_RESONANCE.description": "After your second actual combo reward each turn, gain {Amount} Energy. Skipped follow-ups, zero damage, and drawing zero do not count.",
   "TC_FIRST_ELEMENT_RESONANCE.title": "Element Resonance+",
-  "TC_FIRST_ELEMENT_RESONANCE.description": "After your first actual combo reward each turn, gain {Amount} Energy. Triggers separately from unupgraded Resonance."
+  "TC_FIRST_ELEMENT_RESONANCE.description": "After your first actual combo reward each turn, gain {Amount} Energy. Triggers separately from unupgraded Resonance.",
+  "TC_TRIPHASE_INFUSION.title": "Triphase Infusion",
+  "TC_TRIPHASE_INFUSION.description": "At turn start gain a random element. A different element attempts one normal combo; a matching element grants {Amount} temporary Dexterity this turn. Copies share one roll."
 }

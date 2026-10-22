@@ -9,6 +9,28 @@ namespace Sts2Mod.Combo;
 public sealed class ComboLifecycle : SingletonModel
 {
     public override bool ShouldReceiveCombatHooks => true;
+    public override Task AfterCardExhausted(PlayerChoiceContext context, CardModel card, bool causedByEthereal)
+    {
+        CombatCardElements.Exhaustions.Set(card, CombatCardElements.Exhaustions.Get(card) + 1);
+        return Task.CompletedTask;
+    }
+    public override async Task AfterCardPlayed(PlayerChoiceContext context, MegaCrit.Sts2.Core.Entities.Cards.CardPlay play)
+    {
+        if (play.Card is ElementCardModel || CombatCardElements.Assigned.Get(play.Card) == 0) return;
+        var reservation = await ComboPower.Reserve(play.Card, context, play, CombatCardElements.Get(play.Card));
+        await ComboPower.Resolve(play.Card, context, play, reservation);
+    }
+
+    public override bool ShouldPlay(CardModel card, MegaCrit.Sts2.Core.Entities.Cards.AutoPlayType autoPlayType)
+        => card is not Sts2Mod.Cards.HeavenEarthConvergence
+            || card.Owner.Creature.GetPower<ComboPower>()?.State.Last is Element.Wind or Element.Rock or Element.Lightning;
+
+    public override async Task AfterCombatEnd(MegaCrit.Sts2.Core.Rooms.CombatRoom room)
+    {
+        foreach (var player in room.CombatState.Players)
+            foreach (var card in player.Deck.Cards) CombatCardElements.Assigned.Set(card, 0);
+        await Task.CompletedTask;
+    }
     public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
     {
         if (!player.Creature.IsAlive) return;

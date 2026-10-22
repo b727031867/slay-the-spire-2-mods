@@ -1,6 +1,6 @@
 # 构建、部署与验证
 
-当前工程src/Sts2Mod，Mod ID为Sts2Mod，版本0.3.13。接续分支main，当前规则见[玩家指南](player/README.zh-CN.md)，包身份及验证范围见[发布报告](tests/RELEASE-0313.md)。下方操作示例中的历史测试范围不替代最新发布报告。
+当前工程src/Sts2Mod，Mod ID为Sts2Mod，当前开发版本0.3.14，最近发布版本0.3.13。接续分支main，当前规则见[玩家指南](player/README.zh-CN.md)，包身份及验证范围见[发布报告](tests/RELEASE-0313.md)。下方操作示例中的历史测试范围不替代最新发布报告。
 
 ## 统一测试入口
 

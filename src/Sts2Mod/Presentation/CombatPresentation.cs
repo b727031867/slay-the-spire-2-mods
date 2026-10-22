@@ -34,7 +34,7 @@ public static class CombatPresentation
         return true;
     }
     public static float Speed => SaveManager.Instance.PrefsSave.FastMode == FastModeType.Fast ? 1.6f : 1;
-    public static Element Style(CardModel? card) => card is ElementCardModel element ? element.CardElement : Element.None;
+    public static Element Style(CardModel? card) => card is null ? Element.None : CombatCardElements.Get(card);
     public static TravelerRig? Rig(Creature? creature)
     {
         if (creature?.Player?.Character is not Traveler) return null;

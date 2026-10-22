@@ -7,6 +7,8 @@ public static class TravelerContent
         typeof(WindBlade), typeof(RockGuard), typeof(LightningThrust), typeof(TailwindPrep), typeof(RockAdvance), typeof(ThunderPrep),
         typeof(WindGuidance), typeof(RockHeart), typeof(ThunderEcho), typeof(ElementResonance),
         typeof(GaleSweep), typeof(ShatteringRock), typeof(ThunderMark), typeof(TriphaseFinale),
-        typeof(WindShelter), typeof(PatientRampart), typeof(ChargeThunder), typeof(JourneyPlans), typeof(ThunderChain)
+        typeof(WindShelter), typeof(PatientRampart), typeof(ChargeThunder), typeof(JourneyPlans), typeof(ThunderChain),
+        typeof(CleansingWind), typeof(ClearRockMind), typeof(HeadwindRestraint), typeof(OpportunistLightning),
+        typeof(ElementTuning), typeof(TriphaseInfusion), typeof(ThunderBurst), typeof(HeavenEarthConvergence)
     });
 }

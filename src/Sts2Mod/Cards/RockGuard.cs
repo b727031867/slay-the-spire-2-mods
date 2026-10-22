@@ -23,7 +23,7 @@ public sealed class RockGuard : ElementCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var reservation = ComboPower.Reserve(this, choiceContext, cardPlay, Element.Rock);
+        var reservation = await ComboPower.Reserve(this, choiceContext, cardPlay, Element.Rock);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
         await ComboPower.Resolve(this, choiceContext, cardPlay, reservation);
     }

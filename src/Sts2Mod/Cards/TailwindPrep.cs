@@ -22,7 +22,7 @@ public sealed class TailwindPrep : ElementCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, Element.Wind);
+        var reservation = await ComboPower.Reserve(this, context, play, Element.Wind);
         await CardPileCmd.Draw(context, DynamicVars.Cards.BaseValue, Owner);
         await ComboPower.Resolve(this, context, play, reservation);
     }

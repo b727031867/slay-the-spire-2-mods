@@ -21,7 +21,7 @@ public sealed class GaleSweep : ElementCardModel
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, CardElement);
+        var reservation = await ComboPower.Reserve(this, context, play, CardElement);
         ArgumentNullException.ThrowIfNull(CombatState);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).TargetingAllOpponents(CombatState)
             .WithHitFx("vfx/vfx_attack_slash").Execute(context);

@@ -28,7 +28,7 @@ public sealed class RockAdvance : ElementCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, Element.Rock);
+        var reservation = await ComboPower.Reserve(this, context, play, Element.Rock);
         ArgumentNullException.ThrowIfNull(play.Target);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target)
             .WithHitFx("vfx/vfx_attack_slash").Execute(context);

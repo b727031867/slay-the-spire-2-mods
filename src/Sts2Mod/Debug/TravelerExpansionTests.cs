@@ -23,9 +23,9 @@ using Sts2Mod.Relics;
 
 namespace Sts2Mod.Debug;
 
-internal sealed class ExpansionCardSelector(int limit = int.MaxValue) : ICardSelector
+internal class ExpansionCardSelector(int limit = int.MaxValue) : ICardSelector
 {
-    public Task<IEnumerable<CardModel>> GetSelectedCards(IEnumerable<CardModel> options, int minSelect, int maxSelect)
+    public virtual Task<IEnumerable<CardModel>> GetSelectedCards(IEnumerable<CardModel> options, int minSelect, int maxSelect)
         => Task.FromResult<IEnumerable<CardModel>>(options.Take(Math.Min(maxSelect, limit)).ToArray());
     public CardRewardSelection GetSelectedCardReward(IReadOnlyList<CardCreationResult> options,
         IReadOnlyList<CardRewardAlternative> alternatives) => throw new NotSupportedException("Use the native reward fixture.");
@@ -35,7 +35,7 @@ public partial class TravelerTestRunner
 {
     private async Task FreshExpansion()
     {
-        foreach (var relic in _player.Relics.Where(r => r is PaimonCheer or JourneyCompass or UnboundJourneyCompass).ToArray())
+        foreach (var relic in _player.Relics.Where(r => r.Pool is TravelerRelicPool).ToArray())
             await RelicCmd.Remove(relic);
         await StartFreshCombat();
         foreach (var enemy in _player.Creature.CombatState!.Enemies)
@@ -56,6 +56,7 @@ public partial class TravelerTestRunner
         await TestComboHud();
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
+        await TestPoolExpansion20261022();
         foreach (var asset in new[] { "wind_guidance", "rock_heart", "thunder_echo", "element_resonance", "gale_sweep",
             "shattering_rock", "thunder_mark", "triphase_finale", "wind_shelter", "patient_rampart", "charge_thunder",
             "journey_plans", "strike", "defend", "compass", "combo", "body", "icon", "select_background", "head_icon" })
@@ -76,11 +77,11 @@ public partial class TravelerTestRunner
         await TestDefensiveRandomCombos();
         await FreshExpansion();
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Where(c => c.Rarity != CardRarity.Basic).ToArray();
-        Check(pool.Length == 19 && pool.Count(c => c.Type == CardType.Attack) == 8
-            && pool.Count(c => c.Type == CardType.Skill) == 7 && pool.Count(c => c.Type == CardType.Power) == 4,
-            "EXP_pool_19_types_8_7_4");
-        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 8 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 8
-            && pool.Count(c => c.Rarity == CardRarity.Rare) == 3, "EXP_rarity_8_8_3");
+        Check(pool.Length == 27 && pool.Count(c => c.Type == CardType.Attack) == 11
+            && pool.Count(c => c.Type == CardType.Skill) == 11 && pool.Count(c => c.Type == CardType.Power) == 5,
+            "EXP_pool_27_types_11_11_5");
+        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 10 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 12
+            && pool.Count(c => c.Rarity == CardRarity.Rare) == 5, "EXP_rarity_10_12_5");
         Check(TravelerContent.RewardCardTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "EXP_all_ids_once");
         var boss = CardFactory.CreateForReward(_player, 3, CardCreationOptions.ForRoom(_player, RoomType.Boss)).ToArray();
         Check(boss.Length == 3 && boss.All(c => c.Card.Rarity == CardRarity.Rare), "EXP_boss_native_rare_rewards");
@@ -178,7 +179,7 @@ public partial class TravelerTestRunner
         await FreshExpansion();
         Check(Power.State.Last == Element.None && Power.State.Used == 0 && Power.State.RewardsThisTurn == 0
             && !_player.Creature.Powers.OfType<TravelerAbilityPower>().Any(), "EXP_new_combat_clears_ability_and_combo_state");
-        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=19 powers=4 multiplayer=NOT_RUN rendering=NOT_RUN");
+        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=27 powers=5 multiplayer=NOT_RUN rendering=NOT_RUN");
     }
 
     private async Task TestDefensiveRandomCombos()

@@ -21,7 +21,7 @@ public sealed class LightningThrust : ElementCardModel
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, Element.Lightning);
+        var reservation = await ComboPower.Reserve(this, context, play, Element.Lightning);
         ArgumentNullException.ThrowIfNull(play.Target);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).Targeting(play.Target)
             .WithHitFx("vfx/vfx_attack_slash").Execute(context);

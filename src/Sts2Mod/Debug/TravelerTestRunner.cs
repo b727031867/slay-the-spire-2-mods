@@ -158,7 +158,7 @@ public partial class TravelerTestRunner : Node
         if (CommandLineHelper.HasArg("sts2mod-cards"))
         {
             await TestExpandedCards();
-            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=19 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
+            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=27 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
             return;
         }
         if (CommandLineHelper.HasArg("sts2mod-character"))

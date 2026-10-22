@@ -20,7 +20,7 @@ public sealed class ThunderChain : ElementCardModel
     protected override void OnUpgrade() => DynamicVars["Hits"].UpgradeValueBy(1m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var reservation = ComboPower.Reserve(this, context, play, CardElement);
+        var reservation = await ComboPower.Reserve(this, context, play, CardElement);
         ArgumentNullException.ThrowIfNull(CombatState);
         for (var hit = 0; hit < DynamicVars["Hits"].IntValue && CombatState.Enemies.Any(e => e.IsAlive); hit++)
             await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).TargetingRandomOpponents(CombatState)
