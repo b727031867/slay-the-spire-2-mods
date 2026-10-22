@@ -1,10 +1,20 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.13 · 支持单人和联机[/b]
-可选角色「旅行者」拥有19张专属奖励牌（8攻击/7技能/4能力）、10张起始牌，以及旅途罗盘、无界罗盘和派蒙的应援。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
+[b]0.3.14 · 支持单人和联机[/b]
+可选角色「旅行者」拥有27张专属奖励牌（11攻击/11技能/5能力）、10张起始牌，以及旅途罗盘、无界罗盘、派蒙的应援和4件新增遗物。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
 
 [b]已获得用户双人联机实测反馈。[/b]联机时各方须使用相同游戏、Mod和BaseLib版本。选人页头像与名字重叠问题已修复；自动化检查与用户联机实测分别记录。
 
-[h2]本次更新[/h2]
+[h2]0.3.14 卡池扩展[/h2]
+[list]
+[*]新增8张卡：风息涤尘、岩心澄明、逆风牵制、乘隙雷击、元素调律、三相灌注、雷霆迸发、天地交征。
+[*]新增4件遗物：旅人药匣、三色棱晶、远征战鼓、神像庇佑；原始起始牌组和旧牌数值保持。
+[*]元素调律从奖励池随机展示三元素各一张，选择一张免费打出并消耗，正常推进一次连携。
+[*]三相灌注即时及回合开始随机一次角色元素；同元素按能力份数获得临时敏捷，异元素尝试正常连携。人工制品可拦截回合末负敏捷，这是预期交互。
+[*]雷霆迸发按此前实际奖励追加段数，最多6段；天地交征为X费技能，按角色当前风/岩/雷执行抽牌回能、格挡或群体伤害，无元素时不可打出。
+[*]三色棱晶赋予首张牌本场战斗元素；药匣响应状态/诅咒消耗；战鼓强化下一张主动单体攻击首段；神像首次触发连携给予6覆甲。
+[*]新增内容复用现有插图，完整数值和升级效果见玩家指南。本轮自动验证为无GUI；新增内容的图形交互、联机、自然整局平衡未实测。
+[/list]
+[h2]此前更新[/h2]
 [list]
 [*]新增罕见攻击牌雷霆连锁：1费，随机攻击3次，每次3伤害；升级为4次，整张牌推进一次连携。
 [*]旅途罗盘移除抽牌，连携上限提高至4次；每回合第3次实际奖励后获得1点本场战斗力量，每回合一次。
@@ -24,13 +34,13 @@
 [*]风↔岩：额外4格挡；岩↔雷：额外4基础攻击；雷↔风：额外抽1。
 [*]双向可触发，每人每回合默认合计3次，持有任一罗盘时4次；连携后保留最新元素，元素跨回合保留，战斗结束清空。
 [*]单体攻击追击原存活目标，目标死亡不转火；无敌方目标的防御技能随机追击，无目标群攻不自动选择目标；雷霆连锁可随机追击。
-[*]派蒙只翻倍基础奖励，不翻倍能力/罗盘。能力不带元素、不推进序列；普通牌不打断元素记录。
-[*]自动打出和额外重复结算不推进序列；战斗结束跳过奖励，抽0、零伤害或无有效目标不计实际奖励次数。
+[*]派蒙只翻倍基础奖励，不翻倍能力/罗盘。能力默认无元素；灌注效果和棱晶赋予的元素可推进连携；普通未赋元素牌不打断记录。
+[*]普通自动打出和额外重复结算不推进序列，元素调律选中牌与灌注效果为例外；战斗结束跳过奖励，抽0、零伤害或无有效目标不计实际奖励次数。
 [/list]
 
 [h2]安装与验证[/h2]
 固定Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7。本Mod拒绝其他BaseLib版本；工坊依赖无法锁版本，更新后请核对。每个Mod只保留一份生效副本。
-用户已试玩轻量反馈候选并授权发布；最终包自动化验证范围单独记录，不将无GUI节点检查称为图形或联机验收。自然Boss系统性平衡与用户旧档迁移未作系统验收。条目保留既有好友可见设置。
+此前用户已试玩轻量反馈候选；0.3.14新增内容本轮图形与联机未实测。最终包自动化验证范围单独记录，不将无GUI节点检查称为图形或联机验收。自然Boss系统性平衡与用户旧档迁移未作系统验收。条目保留既有好友可见设置。
 角色、卡牌及篝火插图使用生成式素材；雷霆连锁暂复用雷元素插图。封面及规则图为说明素材，不是游戏截图；部分通用演出复用原生资源。
 
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
@@ -38,7 +48,7 @@
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.13 integrates 19 reward cards (8 Attacks, 7 Skills, 4 Powers), Thunder Chain, revised combo balance, Unbound Compass and the co-op character-selection layout fix. Journey Compass raises the shared combo cap to four and grants 1 combat Strength after the third actual reward each turn, replacing its old draw effect. Unbound Compass instead draws one extra card per actual reward and keeps the four-use cap.
+Version 0.3.14 has 27 reward cards (11 Attacks, 11 Skills, 5 Powers) and seven exclusive relic models. It retains Thunder Chain, revised combo balance, Unbound Compass and the co-op character-selection layout fix. Journey Compass raises the shared combo cap to four and grants 1 combat Strength after the third actual reward each turn, replacing its old draw effect. Unbound Compass instead draws one extra card per actual reward and keeps the four-use cap.
 Base rewards: Wind/Rock grants 4 Block, Rock/Lightning makes a 4-base-damage follow-up, Lightning/Wind draws 1. Both directions work. Elements persist across turns; ordinary cards do not interrupt them. Paimon doubles only base rewards. Thunder Echo adds 2 base attack/Block and 1 draw per copy; use the higher reward versus Paimon rather than stacking them. Wind Guidance can coexist with Paimon. Element Resonance grants energy after the second actual reward, or the first when upgraded.
 Relics and both Resonance variants now use brief flashes inside their existing icons. Combo effects are short, small line accents, without enlarged artwork or repeated text bubbles. Consecutive effects reuse a node without merging gameplay rewards. Original seven-layer, eighteen-joint character animation is retained.
 Supports singleplayer and co-op; all players need matching versions. Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Automated headless checks and user playtesting are separate evidence, not systematic natural-run/Boss balance or old-save migration validation. AI-generated illustrations are used. Existing friends-only visibility is preserved.

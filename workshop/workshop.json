@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Prepare-Workshop.ps1 从 description.bbcode.txt 填充。",
   "visibility": "private",
-  "changeNote": "0.3.13：新增雷霆连锁，整合19张卡池平衡；初始罗盘改为4次连携上限和第3次实际奖励加力量。整合无界罗盘及联机选人布局修复；遗物、元素共鸣改为图标短闪，元素连携改为轻量线条，移除放大图片和重复气泡。",
+  "changeNote": "0.3.14：新增8张卡牌、4件遗物，奖励池27张；加入元素调律、三相灌注、雷霆迸发与X费天地交征。保留旧牌数值、起始组及好友可见性。新增内容本轮图形/联机未实测。",
   "tags": [],
   "dependencies": [
     3737335127
