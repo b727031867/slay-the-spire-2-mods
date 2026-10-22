@@ -75,7 +75,7 @@ public partial class TravelerTestRunner
         await Play<WindBlade>();
         Check(Power.State.Last == Element.Wind, "TASK003_leave_unsaved_wind_before_exit");
         // Native combat-entry rollback is the supported boundary, not arbitrary mid-action continuation.
-        GD.Print($"STS2MOD_E2E_PREPARED assertions={_assertions} cards=27 upgrades=27 paimon=1 shouldSave={RunManager.Instance.ShouldSave} boundary=combat_entry");
+        GD.Print($"STS2MOD_E2E_PREPARED assertions={_assertions} cards=28 upgrades=28 paimon=1 shouldSave={RunManager.Instance.ShouldSave} boundary=combat_entry");
         await ExitThroughNativeMenu();
     }
 

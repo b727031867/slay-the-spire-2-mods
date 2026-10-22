@@ -18,12 +18,13 @@ public sealed class ComboState
     public Element Last { get; private set; }
     public int Used { get; private set; }
     public int RewardsThisTurn { get; private set; }
+    public int CombosThisCombat { get; private set; }
     public int Remaining => Math.Max(0, TurnLimit - Used);
     // Always positive: the engine removes powers whose amount reaches zero.
     public int Encoded => 1 + (int)Last + 4 * Used;
 
     public void BeginTurn() { Used = 0; RewardsThisTurn = 0; }
-    public void ClearCombat() { Last = Element.None; Used = 0; RewardsThisTurn = 0; }
+    public void ClearCombat() { Last = Element.None; Used = 0; RewardsThisTurn = 0; CombosThisCombat = 0; }
     public int MarkRewardGranted() => ++RewardsThisTurn;
 
     // Read-only: hovering must never reserve an action or spend a combo use.
@@ -49,7 +50,7 @@ public sealed class ComboState
             return new(true, ComboKind.None, before, Last, Used);
         }
         var kind = Preview(element);
-        if (kind != ComboKind.None) Used++;
+        if (kind != ComboKind.None) { Used++; CombosThisCombat++; }
         Last = element;
         return new(true, kind, before, Last, Used);
     }

@@ -1,4 +1,5 @@
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -8,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Cards;
@@ -22,12 +24,29 @@ internal sealed class TuningCardSelector(Element element) : ExpansionCardSelecto
 {
     public CardModel[] Candidates { get; private set; } = [];
     public CardModel? Selected { get; private set; }
-    public override Task<IEnumerable<CardModel>> GetSelectedCards(IEnumerable<CardModel> options, int minSelect, int maxSelect)
+    public bool HandInputBlocked { get; private set; }
+    public override async Task<IEnumerable<CardModel>> GetSelectedCards(IEnumerable<CardModel> options, int minSelect, int maxSelect)
     {
+        var hand = NPlayerHand.Instance!;
+        await hand.ToSignal(hand.GetTree(), SceneTree.SignalName.ProcessFrame);
+        var holder = hand.ActiveHolders.First();
+        hand.Call(NPlayerHand.MethodName.OnHolderPressed, holder);
+        HandInputBlocked = hand == ElementTuningHandInputPatch.ChoosingHand && !hand.InCardPlay && !hand.IsAwaitingPlay(holder);
+        var shortcuts = (StringName[])AccessTools.Field(typeof(NPlayerHand), "_selectCardShortcuts").GetValue(hand)!;
+        using var shortcut = new InputEventAction { Action = shortcuts[0], Pressed = true };
+        hand._UnhandledInput(shortcut);
+        HandInputBlocked &= !hand.InCardPlay && !hand.IsAwaitingPlay(holder);
+        hand.CancelAllCardPlay();
         Candidates = options.ToArray();
         Selected = Candidates.OfType<ElementCardModel>().First(c => c.CardElement == element);
-        return Task.FromResult<IEnumerable<CardModel>>([Selected]);
+        return [Selected];
     }
+}
+
+internal sealed class InterruptedTuningSelector : ExpansionCardSelector
+{
+    public override Task<IEnumerable<CardModel>> GetSelectedCards(IEnumerable<CardModel> options, int minSelect, int maxSelect)
+        => Task.FromException<IEnumerable<CardModel>>(new OperationCanceledException("tuning-choice-test"));
 }
 
 public partial class TravelerTestRunner
@@ -125,13 +144,17 @@ public partial class TravelerTestRunner
                 await PlayerCmd.SetEnergy(x, _player);
                 var hpBefore = _player.Creature.CombatState!.Enemies.Select(e => e.CurrentHp).ToArray();
                 await Queue(new PlayCardAction(card, null));
-                var wind = Math.Max(0, x - (up ? 0 : 1));
+                var wind = x + (up ? 1 : 0);
                 Check(_player.PlayerCombatState!.Energy == (element == Element.Wind ? wind : 0)
                     && PileType.Hand.GetPile(_player).Cards.Count == (element == Element.Wind ? wind : 0)
-                    && _player.Creature.Block == (element == Element.Rock ? (up ? 9 : 6) * x : 0)
+                    && _player.Creature.Block == 0
+                    && (_player.Creature.GetPower<PlatingPower>()?.Amount ?? 0) == (element == Element.Rock ? (up ? 4 : 3) * x : 0)
+                    && _player.Creature.CombatState!.Enemies.All(e => (e.GetPower<VulnerablePower>()?.Amount ?? 0)
+                        == (element == Element.Lightning ? x + (up ? 1 : 0) : 0))
                     && _player.Creature.CombatState.Enemies.Select((e, i) => hpBefore[i] - e.CurrentHp)
-                        .All(d => d == (element == Element.Lightning ? (up ? 7 : 5) * x : 0))
-                    && card.Pile?.Type == PileType.Discard && Power.State.Last == element && Power.State.Used == 0,
+                        .All(d => d == (element == Element.Lightning ? (up ? 8 : 6) * x : 0))
+                    && card.Keywords.Contains(CardKeyword.Exhaust) && card.Pile?.Type == PileType.Exhaust
+                    && !card.GainsBlock && card.Type == CardType.Skill && Power.State.Last == element && Power.State.Used == 0,
                     "POOL22_x_branch_" + element + "_" + x + "_" + up);
             }
         }
@@ -145,14 +168,15 @@ public partial class TravelerTestRunner
         await RelicCmd.Obtain<MegaCrit.Sts2.Core.Models.Relics.ChemicalX>(_player);
         await PlayerCmd.SetEnergy(3, _player);
         await Play<HeavenEarthConvergence>(true);
-        Check(_player.PlayerCombatState!.Energy == 5 && PileType.Hand.GetPile(_player).Cards.Count == 5,
+        Check(_player.PlayerCombatState!.Energy == 6 && PileType.Hand.GetPile(_player).Cards.Count == 6,
             "POOL22_x_native_chemical_x_bonus");
         await RelicCmd.Remove(_player.GetRelic<MegaCrit.Sts2.Core.Models.Relics.ChemicalX>()!);
         await FreshExpansion(); SetExpansionElement(Element.Rock);
         var freeX = await Add<HeavenEarthConvergence>();
         await PlayerCmd.SetEnergy(3, _player);
         await CardCmd.AutoPlay(ExpansionContext(), freeX, null);
-        Check(_player.PlayerCombatState!.Energy == 3 && _player.Creature.Block == 18,
+        Check(_player.PlayerCombatState!.Energy == 3 && _player.Creature.Block == 0
+            && _player.Creature.GetPower<PlatingPower>()?.Amount == 9 && freeX.Pile?.Type == PileType.Exhaust,
             "POOL22_x_native_free_autoplay_captures_without_payment");
         await FreshExpansion(); SetExpansionElement(Element.Rock);
         await PowerCmd.Apply<DuplicationPower>(ExpansionContext(), _player.Creature, 1, _player.Creature, null);
@@ -167,14 +191,32 @@ public partial class TravelerTestRunner
         await PlayerCmd.SetEnergy(3, _player);
         repeatedHp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
         await Queue(new PlayCardAction(repeatedX, null));
-        Check(_player.Creature.Block == 36 && _player.PlayerCombatState!.Energy == 0
+        Check(_player.Creature.Block == 0 && _player.Creature.GetPower<PlatingPower>()?.Amount == 18
+            && repeatedX.Pile?.Type == PileType.Exhaust && _player.PlayerCombatState!.Energy == 0
             && repeatedHp - _player.Creature.CombatState.Enemies.Sum(e => e.CurrentHp) == 4 && Power.State.Used == 1,
             "POOL22_x_replay_preserves_element_and_payment_snapshot");
 
+        foreach (var up in new[] { false, true })
+        {
+            await FreshExpansion(); SetExpansionElement(Element.Lightning);
+            var enemies = _player.Creature.CombatState!.Enemies.ToArray();
+            var protectedEnemy = enemies.Last();
+            await PowerCmd.Apply<ArtifactPower>(ExpansionContext(), protectedEnemy, 1, protectedEnemy, null);
+            _target.SetCurrentHpInternal(1);
+            await PlayerCmd.SetEnergy(1, _player);
+            var card = await Add<HeavenEarthConvergence>(up);
+            await Queue(new PlayCardAction(card, null));
+            Check(!_target.IsAlive && _target.GetPower<VulnerablePower>() is null
+                && protectedEnemy.IsAlive && protectedEnemy.GetPower<VulnerablePower>() is null
+                && protectedEnemy.GetPower<ArtifactPower>() is null && card.Pile?.Type == PileType.Exhaust,
+                "POOL22_x_lightning_dead_targets_and_artifact_" + up);
+        }
+
+        await TestEchoingBlight();
         await TestExpansion22Relics();
         await TestExpansion22Tuning();
         await TestExpansion22Infusion();
-        GD.Print($"STS2MOD_POOL22_COMPLETE assertions={_assertions - start} cards=8 relics=4 rendering=NOT_RUN multiplayer=NOT_RUN");
+        GD.Print($"STS2MOD_POOL22_COMPLETE assertions={_assertions - start} cards=9 relics=4 rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 
     private async Task TestExpansion22Relics()
@@ -214,6 +256,7 @@ public partial class TravelerTestRunner
         SetExpansionElement(Element.Lightning);
         await Play<HeavenEarthConvergence>();
         Check(_player.GetRelic<ExpeditionDrum>()!.Ready, "POOL22_drum_ignores_aoe_random_auto_and_x_skill");
+        await PowerCmd.Remove<VulnerablePower>(_target);
         await PlayerCmd.SetEnergy(10, _player);
         var hp = _target.CurrentHp;
         // Resetting the input state also resets the burst's count; two hits should gain +8 only once.
@@ -278,8 +321,11 @@ public partial class TravelerTestRunner
             SetExpansionElement(element == Element.Rock ? Element.Lightning : Element.Rock);
             await RelicCmd.Obtain<StatueBlessing>(_player);
             var selector = new TuningCardSelector(element);
+            await Add<WindBlade>();
             var energy = _player.PlayerCombatState!.Energy;
             using (CardSelectCmd.PushSelector(selector)) await Play<ElementTuning>(up);
+            Check(selector.HandInputBlocked && ElementTuningHandInputPatch.ChoosingHand is null,
+                "POOL22_tuning_blocks_hand_input_and_restores_" + element + "_" + up);
             Check(selector.Candidates.Length == 3 && selector.Candidates.OfType<ElementCardModel>().Select(c => c.CardElement).Distinct().Count() == 3
                 && selector.Candidates.All(c => TravelerContent.RewardCardTypes.Contains(c.GetType()) && c.CurrentUpgradeLevel == (up ? 1 : 0))
                 && selector.Candidates.Where(c => c != selector.Selected).All(c => c.Pile is null)
@@ -295,9 +341,24 @@ public partial class TravelerTestRunner
         var chosenElement = assigned == Element.Wind ? Element.Rock : Element.Wind;
         SetExpansionElement(chosenElement);
         var selected = new TuningCardSelector(chosenElement);
+        await Add<WindBlade>();
         using (CardSelectCmd.PushSelector(selected)) await Play<ElementTuning>();
         Check(Power.State.Used == 2 && Power.State.Last == chosenElement,
             "POOL22_prism_tuning_two_distinct_combo_events");
+
+        await FreshExpansion();
+        var interrupted = await Add<ElementTuning>();
+        var play = new CardPlay { Card = interrupted, Target = null, ResultPile = PileType.Discard,
+            Resources = new ResourceInfo { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
+            IsAutoPlay = true, PlayIndex = 0, PlayCount = 1 };
+        var cancelled = false;
+        using (CardSelectCmd.PushSelector(new InterruptedTuningSelector()))
+        {
+            try { await (Task)AccessTools.Method(typeof(ElementTuning), "OnPlay").Invoke(interrupted, [ExpansionContext(), play])!; }
+            catch (OperationCanceledException ex) when (ex.Message == "tuning-choice-test") { cancelled = true; }
+        }
+        Check(cancelled && ElementTuningHandInputPatch.ChoosingHand is null,
+            "POOL22_tuning_interrupted_choice_restores_hand_input");
     }
 
     private async Task TestExpansion22Infusion()

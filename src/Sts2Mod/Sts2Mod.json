@@ -3,7 +3,7 @@
   "name": "STS2 Mod - Traveler Elements",
   "author": "b727031867",
   "description": "Playable Traveler with 27 exclusive reward cards, 5 Powers and 7 relic models including the starter compass upgrade. Adds cleansing, elemental card generation, infusion and X-cost branches. Supports singleplayer and co-op.",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "has_pck": true,
   "has_dll": true,
   "affects_gameplay": true,

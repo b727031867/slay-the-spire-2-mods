@@ -6,7 +6,7 @@ param(
 )
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'ModTestSuites.ps1')
-if (!$PSBoundParameters.ContainsKey('TimeoutSeconds') -and $Suite -in @('Full','SaveResume')) { $TimeoutSeconds=1800 }
+if (!$PSBoundParameters.ContainsKey('TimeoutSeconds') -and $Suite -in @('Cards','Full','SaveResume')) { $TimeoutSeconds=1800 }
 $definition=Get-ModTestSuite $Suite
 $launch=& (Join-Path $PSScriptRoot 'Start-ModTest.ps1') -Suite $Suite -SandboxDirectory $SandboxDirectory
 # Retain this process object, so a reused PID can never cause another process to be stopped.

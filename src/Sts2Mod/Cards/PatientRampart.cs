@@ -19,7 +19,7 @@ public sealed class PatientRampart : ElementCardModel
     public override string CustomPortraitPath => "res://Sts2Mod/art/patient_rampart.png";
     public override bool GainsBlock => true;
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain];
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5m, ValueProp.Move)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6m, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {

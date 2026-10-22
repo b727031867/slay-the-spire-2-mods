@@ -17,7 +17,7 @@ public sealed class TriphaseInfusionPower : TravelerAbilityPower
 {
     private CardModel? _source;
     private int _temporaryDexterity;
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/thunder_echo.png";
+    public override string CustomPackedIconPath => "res://Sts2Mod/art/drafts/TC_C25.svg";
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext context, Player player)
     {
         if (player == Owner.Player && _source is not null) await Trigger(context, _source, null);
@@ -41,6 +41,7 @@ public sealed class TriphaseInfusionPower : TravelerAbilityPower
         }
         if (!step.Triggered) return;
         foreach (var blessing in Owner.Player.Relics.OfType<StatueBlessing>()) await blessing.OnComboTriggered(context);
+        foreach (var compass in Owner.Player.Relics.OfType<UnboundJourneyCompass>()) await compass.OnComboTriggered(context);
         var reservation = new Reservation(step.Kind, null, ComboPresentation.HasPaimon(Owner.Player), Effect: true);
         var effectPlay = play ?? new CardPlay { Card = source, Target = null, ResultPile = PileType.None,
             Resources = new ResourceInfo { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 }, IsAutoPlay = true, PlayIndex = 0, PlayCount = 1 };

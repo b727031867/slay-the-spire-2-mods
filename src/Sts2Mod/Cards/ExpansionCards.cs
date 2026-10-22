@@ -18,7 +18,7 @@ public sealed class CleansingWind() : ElementCardModel(1, CardType.Skill, CardRa
 {
     public override bool GainsBlock => true;
     public override Element CardElement => Element.Wind;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/wind_shelter.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C20.svg";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -42,7 +42,7 @@ public sealed class ClearRockMind() : ElementCardModel(1, CardType.Skill, CardRa
 {
     public override bool GainsBlock => true;
     public override Element CardElement => Element.Rock;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/rock_heart.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C21.svg";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move), new DynamicVar("Cleanse", 1)];
     protected override void OnUpgrade() { DynamicVars.Block.UpgradeValueBy(2); DynamicVars["Cleanse"].UpgradeValueBy(1); }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -59,7 +59,7 @@ public sealed class ClearRockMind() : ElementCardModel(1, CardType.Skill, CardRa
 public sealed class HeadwindRestraint() : ElementCardModel(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     public override Element CardElement => Element.Wind;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/wind.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C22.svg";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move), new DynamicVar("Weak", 2)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -76,7 +76,7 @@ public sealed class HeadwindRestraint() : ElementCardModel(1, CardType.Attack, C
 public sealed class OpportunistLightning() : ElementCardModel(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_mark.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C23.svg";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(6), new ExtraDamageVar(2),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (_, target) =>
             Math.Max(0, target?.GetPower<WeakPower>()?.Amount ?? 0) + Math.Max(0, target?.GetPower<VulnerablePower>()?.Amount ?? 0))];
@@ -96,7 +96,7 @@ public sealed class ThunderBurst() : ElementCardModel(2, CardType.Attack, CardRa
 {
     private int _hits;
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/lightning.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C26.svg";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1);
     protected override void AddExtraArgsToDescription(LocString description)
@@ -121,12 +121,18 @@ public sealed class HeavenEarthConvergence() : ElementCardModel(0, CardType.Skil
 {
     private Element _element;
     private int _x;
-    public override bool GainsBlock => true;
     public override Element CardElement => Element.None;
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override bool HasEnergyCostX => true;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/triphase_finale.png";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("RockBlock", 6), new DynamicVar("LightningDamage", 5), new DynamicVar("WindPenalty", 1)];
-    protected override void OnUpgrade() { DynamicVars["RockBlock"].UpgradeValueBy(3); DynamicVars["LightningDamage"].UpgradeValueBy(2); DynamicVars["WindPenalty"].UpgradeValueBy(-1); }
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C27.svg";
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("RockPlating", 3), new DynamicVar("LightningDamage", 6), new DynamicVar("ExtraX", 0)];
+    protected override void OnUpgrade() { DynamicVars["RockPlating"].UpgradeValueBy(1); DynamicVars["LightningDamage"].UpgradeValueBy(2); DynamicVars["ExtraX"].UpgradeValueBy(1); }
+    protected override void AddExtraArgsToDescription(LocString description)
+    {
+        base.AddExtraArgsToDescription(description);
+        var bonus = DynamicVars["ExtraX"].IntValue;
+        description.Add("BonusX", bonus == 0 ? "X" : $"X+{bonus}");
+    }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         if (play.IsFirstInSeries)
@@ -137,14 +143,19 @@ public sealed class HeavenEarthConvergence() : ElementCardModel(0, CardType.Skil
         switch (_element)
         {
             case Element.Wind:
-                var amount = Math.Max(0, _x - DynamicVars["WindPenalty"].IntValue);
+                var amount = _x + DynamicVars["ExtraX"].IntValue;
                 if (amount > 0) { await CardPileCmd.Draw(context, amount, Owner); await PlayerCmd.GainEnergy(amount, Owner); }
                 break;
             case Element.Rock:
-                if (_x > 0) await CreatureCmd.GainBlock(Owner.Creature, DynamicVars["RockBlock"].BaseValue * _x, ValueProp.Move, play);
+                if (_x > 0) await PowerCmd.Apply<PlatingPower>(context, Owner.Creature, DynamicVars["RockPlating"].BaseValue * _x, Owner.Creature, this);
                 break;
             case Element.Lightning:
+                var enemies = CombatState!.Enemies.Where(enemy => enemy.IsAlive).ToArray();
                 if (_x > 0) await DamageCmd.Attack(DynamicVars["LightningDamage"].BaseValue * _x).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
+                var vulnerable = _x + DynamicVars["ExtraX"].IntValue;
+                if (vulnerable > 0)
+                    foreach (var enemy in enemies.Where(enemy => enemy.IsAlive))
+                        await PowerCmd.Apply<VulnerablePower>(context, enemy, vulnerable, Owner.Creature, this);
                 break;
         }
         var reservation = await ComboPower.Reserve(this, context, play, CardElement);

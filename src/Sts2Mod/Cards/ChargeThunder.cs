@@ -18,13 +18,8 @@ public sealed class ChargeThunder : ElementCardModel
     public override Element CardElement => Element.Lightning;
     public override string CustomPortraitPath => "res://Sts2Mod/art/charge_thunder.png";
     public override bool GainsBlock => true;
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(4m, ValueProp.Move), new EnergyVar(1)];
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Block.UpgradeValueBy(2m);
-        RemoveKeyword(CardKeyword.Exhaust);
-    }
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6m, ValueProp.Move), new EnergyVar(1)];
+    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var reservation = await ComboPower.Reserve(this, context, play, CardElement);

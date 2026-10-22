@@ -1,6 +1,8 @@
 using BaseLib.Utils;
 using BaseLib.Utils.Attributes;
 using Godot;
+using HarmonyLib;
+using System.Reflection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
@@ -27,7 +29,7 @@ namespace Sts2Mod.Cards;
 public sealed class ElementTuning() : ElementCardModel(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     public override Element CardElement => Element.None;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/element_resonance.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C24.svg";
     protected override void OnUpgrade() { }
     protected override void AddExtraArgsToDescription(LocString description)
     {
@@ -48,14 +50,27 @@ public sealed class ElementTuning() : ElementCardModel(1, CardType.Skill, CardRa
             if (CurrentUpgradeLevel > 0) CardCmd.Upgrade(candidate);
             return candidate;
         }).ToArray();
-        var selected = await CardSelectCmd.FromChooseACardScreen(context, candidates, Owner, canSkip: false);
-        foreach (var candidate in candidates.Where(c => c != selected)) candidate.RemoveFromState();
-        if (selected is null)
+        CardModel? selected;
+        Creature? target;
+        var hand = LocalContext.IsMe(Owner) ? NPlayerHand.Instance : null;
+        var previousHand = ElementTuningHandInputPatch.ChoosingHand;
+        if (hand is not null) ElementTuningHandInputPatch.ChoosingHand = hand;
+        try
         {
-            if (CombatManager.Instance.IsOverOrEnding) return;
-            throw new InvalidOperationException("Element Tuning requires one card.");
+            hand?.CancelAllCardPlay();
+            selected = await CardSelectCmd.FromChooseACardScreen(context, candidates, Owner, canSkip: false);
+            foreach (var candidate in candidates.Where(c => c != selected)) candidate.RemoveFromState();
+            if (selected is null)
+            {
+                if (CombatManager.Instance.IsOverOrEnding) return;
+                throw new InvalidOperationException("Element Tuning requires one card.");
+            }
+            target = selected.TargetType == TargetType.AnyEnemy ? await SelectEnemy(context, selected) : null;
         }
-        var target = selected.TargetType == TargetType.AnyEnemy ? await SelectEnemy(context, selected) : null;
+        finally
+        {
+            if (hand is not null) ElementTuningHandInputPatch.ChoosingHand = previousHand;
+        }
         if (CombatManager.Instance.IsOverOrEnding) { selected.RemoveFromState(); return; }
         selected.ExhaustOnNextPlay = true;
         await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Play, Owner);
@@ -109,4 +124,16 @@ public sealed class ElementTuning() : ElementCardModel(1, CardType.Skill, CardRa
             context.PopModel(selected);
         }
     }
+}
+
+[HarmonyPatch]
+internal static class ElementTuningHandInputPatch
+{
+    internal static NPlayerHand? ChoosingHand;
+    private static IEnumerable<MethodBase> TargetMethods()
+        => new[] { AccessTools.Method(typeof(NPlayerHand), "OnHolderPressed"),
+            AccessTools.Method(typeof(NPlayerHand), nameof(NPlayerHand._UnhandledInput)) };
+
+    // Shortcuts cancel native targeting before checking whether another card can be played.
+    private static bool Prefix(NPlayerHand __instance) => __instance != ChoosingHand;
 }

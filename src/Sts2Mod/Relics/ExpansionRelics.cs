@@ -22,7 +22,7 @@ public sealed class TravelerMedicineChest : CustomRelicModel
 {
     private bool _spent;
     public override RelicRarity Rarity => RelicRarity.Common;
-    public override string PackedIconPath => "res://Sts2Mod/art/rock_heart.png";
+    public override string PackedIconPath => "res://Sts2Mod/art/drafts/TC_R04.svg";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
     public override Task BeforeCombatStart() { _spent = false; return Task.CompletedTask; }
@@ -42,7 +42,7 @@ public sealed class TricolorPrism : CustomRelicModel
 {
     private bool _spent;
     public override RelicRarity Rarity => RelicRarity.Uncommon;
-    public override string PackedIconPath => "res://Sts2Mod/art/element_resonance.png";
+    public override string PackedIconPath => "res://Sts2Mod/art/drafts/TC_R05.svg";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
     public override Task BeforeCombatStart() { _spent = false; return Task.CompletedTask; }
@@ -64,7 +64,7 @@ public sealed class ExpeditionDrum : CustomRelicModel, IComboRewardRelic
     public bool Ready { get; private set; }
     private CardModel? _attack;
     public override RelicRarity Rarity => RelicRarity.Rare;
-    public override string PackedIconPath => "res://Sts2Mod/art/shattering_rock.png";
+    public override string PackedIconPath => "res://Sts2Mod/art/drafts/TC_R06.svg";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
     public override bool ShowCounter => true;
@@ -102,7 +102,7 @@ public sealed class StatueBlessing : CustomRelicModel
 {
     public bool Spent { get; private set; }
     public override RelicRarity Rarity => RelicRarity.Rare;
-    public override string PackedIconPath => "res://Sts2Mod/art/rock.png";
+    public override string PackedIconPath => "res://Sts2Mod/art/drafts/TC_R07.svg";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
     public override Task BeforeCombatStart() { Spent = false; return Task.CompletedTask; }
