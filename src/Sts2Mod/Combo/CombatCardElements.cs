@@ -41,7 +41,8 @@ internal static class CombatCardDescriptionPatch
         if (!__instance.IsMutable) return;
         if (CombatCardElements.Permanent.Get(__instance) != 0 || CombatCardElements.Assigned.Get(__instance) != 0)
         {
-            var text = new LocString("cards", "TC_PRISM.assignedElement");
+            var text = new LocString("cards", CombatCardElements.Assigned.Get(__instance) != 0
+                ? "TC_PRISM.assignedElement" : "TC_SURVEY.permanentElement");
             text.Add("Element", new LocString("powers", "TC_ELEMENT_" + CombatCardElements.Get(__instance).ToString().ToUpperInvariant()));
             __result += "\n" + text.GetFormattedText();
         }

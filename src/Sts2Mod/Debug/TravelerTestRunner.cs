@@ -94,7 +94,7 @@ public partial class TravelerTestRunner : Node
     }
     private static bool ReadyToPlay => RunManager.Instance.ActionQueueSynchronizer.CombatState == ActionSynchronizerCombatState.PlayPhase;
 
-    private async Task StartFreshCombat()
+    private async Task StartFreshCombat(bool clearHand = true)
     {
         if (CombatManager.Instance.IsInProgress)
         {
@@ -109,7 +109,7 @@ public partial class TravelerTestRunner : Node
         _target = _player.Creature.CombatState!.Enemies.First();
         _target.SetMaxHpInternal(3000m);
         _target.SetCurrentHpInternal(3000m);
-        await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
+        if (clearHand) await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(30m, _player);
     }
 

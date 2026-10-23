@@ -135,11 +135,15 @@ public partial class TravelerTestRunner
 
         if (!_player.Relics.Any(r => r is JourneyCompass or UnboundJourneyCompass)) await RelicCmd.Obtain<JourneyCompass>(_player);
         var hpBeforeStart = _player.Creature.CurrentHp;
-        await StartFreshCombat();
+        await StartFreshCombat(clearHand: false);
         Check(_player.Creature.CurrentHp == hpBeforeStart - 2, "EVENT_letter_native_start_cost2");
         Check(Power.State.TurnLimit == 5, "EVENT_watch_compass_limit5");
         var permanent = new[] { PileType.Hand, PileType.Draw, PileType.Discard, PileType.Exhaust }.SelectMany(p => p.GetPile(_player).Cards).First(c => c.DeckVersion == original);
         Check(CombatCardElements.Get(permanent) == Element.Wind, "EVENT_deck_element_enters_combat");
+        var expectedDescription = new MegaCrit.Sts2.Core.Localization.LocString("cards", "TC_SURVEY.permanentElement");
+        expectedDescription.Add("Element", new MegaCrit.Sts2.Core.Localization.LocString("powers", "TC_ELEMENT_WIND"));
+        Check(original.GetDescriptionForPile(PileType.Deck).Contains(expectedDescription.GetFormattedText()), "EVENT_permanent_description_run_scope");
+        await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         var context = new BlockingPlayerChoiceContext();
         var address = _player.Relics.OfType<AddressCorrection>().Single();
         Check(address.ModifyHandDraw(_player, 5) == 4, "EVENT_address_first_turn_draw_minus1");
