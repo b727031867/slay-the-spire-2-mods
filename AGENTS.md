@@ -15,6 +15,14 @@ The user requested on 2026-10-20 that game testing must not interfere with their
 - Track the process ID returned by each test launch. After collecting results, clean up only the test process you started; do not stop an existing user game or other user applications. Do not restart the game graphically after testing.
 - Headless logic results do not prove graphical rendering, manual UI, or natural playthrough correctness. Record these validation scopes separately.
 
+## Select tests by change impact
+
+- Follow [docs/TESTING-SOP.md](docs/TESTING-SOP.md). Before editing, identify changed behavior, callers/shared state, affected resources/fixtures/validators, required tests and reasons for skipping others.
+- Daily development uses core checks plus affected suites, not Full by default. Retain all existing cases and strict validators; do not weaken assertions or unknown-error handling to shorten a run.
+- Reuse loading evidence included in focused suites. Full already covers focused gameplay suites; do not rerun them separately without a specific uncovered concern. Disk prepare/resume remains separate when persistence is affected.
+- Run Full for shared combat/lifecycle changes, broad or uncertain impact, and once per release candidate. Reuse evidence only when core hashes, relevant environment and coverage match; do not treat a new build with the same commit as the tested package.
+- Documentation-only changes need consistency/link review, not a game launch. Manual/graphical/multiplayer testing remains optional and requires the user's explicit request.
+
 ## TASK-003 disk acceptance
 
 - Automated test launches create a unique, marked metadata directory under `.local/task003-saves`. Native save data lives in the matching `user://sts2mod-acceptance/<id>` namespace using the real `SaveManager` and `GodotFileIo`, with no Steam cloud backend. Never copy a user's saves into it.

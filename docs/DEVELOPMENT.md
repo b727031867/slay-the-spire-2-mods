@@ -4,10 +4,10 @@
 
 ## 统一测试入口
 
-自动运行、等待完成、严格验收并清理自己的测试进程：
+先按[影响范围验证SOP](TESTING-SOP.md)评估本次改动，日常默认“核心检查＋受影响专项”，Full用于共享机制等高风险改动和发布候选。自动运行、等待完成、严格验收并清理自己的测试进程，例如局部卡牌改动：
 
 ```powershell
-.\scripts\Invoke-ModTests.ps1 -Suite Full -CodeCommit '<实际程序集身份S>'
+.\scripts\Invoke-ModTests.ps1 -Suite Cards -CodeCommit '<实际程序集身份S>'
 ```
 
 Suite支持Load、Visuals、Cards、Character、Full、SavePrepare和SaveResume。统一入口强制无GUI，返回Suite、Status、Assertions、Cases、CodeCommit、LogFile、SandboxDirectory和PID；结果JSON保存到日志旁。Rendering和Multiplayer标明NOT_RUN，不把节点测试视作图形验收。
@@ -20,7 +20,7 @@ $launch = .\scripts\Start-ModTest.ps1 -Suite Visuals
 .\scripts\Test-ModRun.ps1 -Suite Visuals -LogFile $launch.LogFile -CodeCommit '<S>'
 ```
 
-分步启动由调用方等待并只清理该PID。Invoke-ModTests自动等待套件完成标记，超时或失败也清理本轮进程。各套件保留严格检查器和断言，Full同时检查基础、角色、扩展卡池及视觉证据；旧脚本作为兼容入口保留。
+分步启动由调用方等待并只清理该PID。Invoke-ModTests自动等待套件完成标记，超时或失败也清理本轮进程。各套件保留严格检查器和断言，Full同时检查基础、角色、扩展卡池及视觉证据；旧脚本作为兼容入口保留。专项含加载检查，Cards含视觉检查，Full含这些专项及事件；已有覆盖不额外启动相同套件，磁盘恢复仍独立执行。
 
 | Suite | 范围 |
 | --- | --- |
@@ -138,7 +138,7 @@ $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
 
 ## 发布准备：测试、冻结与工坊目录
 
-先提交源码，用Build-Mod从干净提交构建核心包。已验收核心可继续使用；新入口仍会对本轮部署运行Full，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。
+先提交源码，用Build-Mod从干净提交构建核心包。以下入口适用于尚未完成候选验收的核心，会对本轮部署运行Full，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。同一核心已有覆盖完整、环境匹配的通过证据时，按SOP核对哈希后使用下文独立冻结入口，避免重复Full。
 
 ```powershell
 .\scripts\Invoke-ReleasePreparation.ps1 -PackageDirectory '<干净核心目录>/Sts2Mod'

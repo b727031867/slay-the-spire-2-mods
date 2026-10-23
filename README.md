@@ -9,6 +9,7 @@
 - [当前状态](docs/STATUS.md)
 - [玩家安装与完整玩法](docs/player/README.zh-CN.md)
 - [开发操作与发布准备](docs/DEVELOPMENT.md)、[工坊上传与下载验收](workshop/README.md)
+- [按改动影响范围验证SOP](docs/TESTING-SOP.md)
 - [跨PC接续](docs/handoffs/NEXT-PC-CONTINUE-PROMPT.md)、[协作约定](docs/COLLABORATION.md)
 - [需求](STS2-Mod-Requirements-v0.1.md)、[技术基线](docs/TECH_BASELINE.md)、[接口说明](docs/API_FINDINGS.md)、[素材来源](docs/ASSETS.md)
 

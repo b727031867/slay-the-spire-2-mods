@@ -1,6 +1,6 @@
 # 验证入口
 
-在PowerShell 7、项目根目录运行：
+先读[影响范围验证SOP](../docs/TESTING-SOP.md)，改动前记录影响与选测理由。以下为可选检查清单，按范围取并集，不要求每次全部执行。在PowerShell 7、项目根目录运行：
 
 ```powershell
 . .\scripts\Enter-DevEnvironment.ps1
