@@ -76,6 +76,10 @@ public partial class TravelerTestRunner
         await RelicCmd.Obtain<OutsideLetter>(_player);
         await RelicCmd.Obtain<AddressCorrection>(_player);
         await RelicCmd.Obtain<UnclaimedMail>(_player);
+        await RelicCmd.Obtain<CompanionLetter>(_player);
+        await RelicCmd.Obtain<CompanionAddress>(_player);
+        Check(_player.GetRelic<CompanionLetter>() is not null && _player.GetRelic<CompanionAddress>() is not null,
+            "EVENT_disk_prepare_companion_contracts");
         await EnterOrdinaryMapCombat();
         await SaveManager.Instance.SaveRun(null);
         Check(SaveManager.Instance.HasRunSave, "TASK003_native_disk_save_exists");
@@ -204,7 +208,9 @@ public partial class TravelerTestRunner
         {
             Check(expected.PermanentElements.SequenceEqual(actual.PermanentElements!)
                 && _player.Deck.Cards.Any(c => c is Homeward)
-                && _player.Relics.OfType<TravelerEventRelic>().Count() == 6, "EVENT_disk_reload_permanent_elements_curse_six_relics");
+                && _player.Relics.OfType<TravelerEventRelic>().Count(r => r is not CompanionLetter and not CompanionAddress) == 6, "EVENT_disk_reload_permanent_elements_curse_six_relics");
+            Check(_player.GetRelic<CompanionLetter>()?.Owner == _player && _player.GetRelic<CompanionAddress>()?.Owner == _player
+                && _player.Relics.OfType<TravelerEventRelic>().Count() == 8, "EVENT_disk_reload_companion_contracts");
             Check(Power.State.TurnLimit == 5, "EVENT_disk_reload_watch_limit5");
         }
         Check(_player.Relics.Count(r => r is PaimonCheer) == 1 && Power.State.Last == Element.None && Power.State.Used == 0,

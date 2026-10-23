@@ -227,6 +227,7 @@ public partial class TravelerTestRunner
             Check(current.IsFinished, "EVENT_native_room_finish_" + model.Id.Entry);
         }
         foreach (var relic in _player.Relics.OfType<TravelerEventRelic>().ToArray()) await RelicCmd.Remove(relic);
+        await TestCompanionEvents();
         GD.Print($"STS2MOD_EVENTS_COMPLETE assertions={_assertions - start} logic=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 }

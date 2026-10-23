@@ -12,7 +12,8 @@ $required=if ($Phase -eq 'Prepare') {
       'TASK003_sold_card_slot_not_stocked','TASK003_native_shop_paimon_purchase',
       'TASK003_sold_paimon_slot_not_stocked','TASK003_obtained_paimon_absent_from_both_bags',
       'TASK003_paimon_not_offered_again_0','TASK003_paimon_not_offered_again_1','TASK003_paimon_not_offered_again_2',
-      'TASK008_save_fixture_eighteen_base_and_upgrades','TASK003_native_disk_save_exists','TASK003_leave_unsaved_wind_before_exit')
+      'TASK008_save_fixture_eighteen_base_and_upgrades','TASK003_native_disk_save_exists','TASK003_leave_unsaved_wind_before_exit',
+      'EVENT_disk_prepare_companion_contracts')
 } else {
     @('TASK003_native_saved_run_read','TASK003_disk_reload_exact_deck_and_upgrades',
       'TASK003_disk_reload_exact_relics_and_gold','TASK003_reload_no_duplicate_relic_or_stale_combo',
@@ -32,6 +33,7 @@ if ($Phase -eq 'Prepare') {
     foreach ($case in $required[0..5]) {
         if ([regex]::Matches($text,'(?m)^STS2MOD_TEST_PASS '+[regex]::Escape($case)+'\r?$').Count -ne 2) { throw "Expected two native reload checks: $case" }
     }
+    if ([regex]::Matches($text,'(?m)^STS2MOD_TEST_PASS EVENT_disk_reload_companion_contracts\r?$').Count -ne 2) { throw 'Expected companion contracts on both native disk reloads.' }
     if ($text -notmatch '(?m)^STS2MOD_E2E_COMPLETE assertions=\d+ acquisition=PASS disk_restart=PASS soak=PASS multiplayer=NOT_RUN ui=NOT_RUN\r?$' -or
         $text -notmatch '(?m)^STS2MOD_SOAK_COMPLETE seed=TASK003A battles=6 turns=\d+ actions=\d+ combos=\d+ natural_wins=\d+ energy_injection=false hand_injection=false bounded_turns=4\r?$') { throw 'Resume/soak phase incomplete.' }
 }

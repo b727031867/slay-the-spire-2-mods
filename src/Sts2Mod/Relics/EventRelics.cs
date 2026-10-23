@@ -1,6 +1,7 @@
 using BaseLib.Abstracts;
 using BaseLib.Utils;
 using BaseLib.Utils.Attributes;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -90,17 +91,21 @@ public sealed class OutsideLetter : TravelerEventRelic, IEventComboRelic
 }
 
 [CustomID("TC_R12")]
-public sealed class AddressCorrection : TravelerEventRelic
+public class AddressCorrection : TravelerEventRelic
 {
+    protected virtual IEnumerable<CardModel> Candidates => ModelDb.AllCards.OfType<ElementCardModel>()
+        .Where(c => c.CardElement != Element.None && TravelerContent.RewardCardTypes.Contains(c.GetType()));
     public override decimal ModifyHandDraw(Player player, decimal count) => !IsMelted && player == Owner
         && player.PlayerCombatState!.TurnNumber == 1 ? Math.Max(0, count - 1) : count;
     public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
     {
         if (IsMelted || player != Owner || player.PlayerCombatState!.TurnNumber != 1) return;
-        var pool = ModelDb.AllCards.OfType<ElementCardModel>().Where(c => c.CardElement != Element.None && TravelerContent.RewardCardTypes.Contains(c.GetType())).ToArray();
+        var pool = Candidates.ToArray();
+        if (pool.Length == 0) return;
         var card = Owner.Creature.CombatState!.CreateCard(Owner.RunState.Rng.CombatCardGeneration.NextItem(pool)!, Owner);
         CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
         card.EnergyCost.SetThisTurn(0);
+        card.SetStarCostThisTurn(0);
         await CardPileCmd.Add(card, PileType.Hand);
         Flash();
     }
@@ -108,3 +113,34 @@ public sealed class AddressCorrection : TravelerEventRelic
 
 [CustomID("TC_R13")]
 public sealed class UnclaimedMail : TravelerEventRelic;
+
+[CustomID("TC_R14")]
+public sealed class CompanionLetter : TravelerEventRelic
+{
+    private bool _healed;
+    public override string PackedIconPath => "res://Sts2Mod/art/events/TC_R11.svg";
+    public override Task BeforeCombatStart() { _healed = false; return Task.CompletedTask; }
+    public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
+    {
+        if (IsMelted || player != Owner || player.PlayerCombatState!.TurnNumber != 1) return;
+        Flash();
+        await CreatureCmd.Damage(context, Owner.Creature, 2, ValueProp.Unblockable | ValueProp.Unpowered, null, null);
+    }
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext context, CombatSide side, IEnumerable<Creature> participants)
+    {
+        if (IsMelted || _healed || side != Owner.Creature.Side || !participants.Contains(Owner.Creature)
+            || !Owner.Creature.IsAlive || Owner.PlayerCombatState!.TurnNumber != 3) return;
+        _healed = true;
+        Flash();
+        await CreatureCmd.Heal(Owner.Creature, 3);
+    }
+}
+
+[CustomID("TC_R15")]
+public sealed class CompanionAddress : AddressCorrection
+{
+    public override string PackedIconPath => "res://Sts2Mod/art/events/TC_R12.svg";
+    protected override IEnumerable<CardModel> Candidates => Owner.Character.CardPool.GetUnlockedCards(Owner.UnlockState, 0)
+        .Where(c => c.Rarity is CardRarity.Common or CardRarity.Uncommon
+            && !c.EnergyCost.CostsX && !c.HasStarCostX && c.EnergyCost.Canonical >= 0 && !c.Keywords.Contains(CardKeyword.Unplayable));
+}

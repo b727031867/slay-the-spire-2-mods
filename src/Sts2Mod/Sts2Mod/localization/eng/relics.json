@@ -41,5 +41,11 @@
   "TC_R12.flavor": "Previous address: Outside the Spire.",
   "TC_R13.title": "Unclaimed Mail",
   "TC_R13.description": "Normal combat card rewards have 1 extra option. Taking a card costs 15 Gold; insufficient Gold prevents taking it. Skipping grants 10 Gold.",
-  "TC_R13.flavor": "Every returned letter bears your name."
+  "TC_R13.flavor": "Every returned letter bears your name.",
+  "TC_R14.title": "Outside Letter",
+  "TC_R15.title": "Address Correction",
+  "TC_R14.description": "Lose 2 HP at the start of each combat. Heal 3 HP at the end of your third turn, once per combat.",
+  "TC_R15.description": "Draw 1 fewer card on the first turn of each combat. Add a random unupgraded non-Rare reward card for your character to your hand, Ethereal and free this turn. It is not added to your deck. Excludes X-cost and Unplayable cards. Normal cost returns on later turns.",
+  "TC_R14.flavor": "Postage payable by the recipient.",
+  "TC_R15.flavor": "Previous address: Outside the Spire."
 }
