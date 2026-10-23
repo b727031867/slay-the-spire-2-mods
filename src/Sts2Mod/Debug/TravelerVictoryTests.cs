@@ -16,6 +16,7 @@ public partial class TravelerTestRunner
 {
     private async Task TestArchitectVictory()
     {
+        Check(_player.Character is Traveler, "VICTORY_traveler_fixture");
         var dialogues = ModelDb.Event<TheArchitect>().DialogueSet;
         foreach (var wins in new[] { 0, 1, 2, 10, 100 })
         {

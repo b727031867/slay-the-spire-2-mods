@@ -61,7 +61,7 @@ if($Focused -and $text -notmatch '(?m)^STS2MOD_CHARACTER_COMPLETE assertions=\d+
 foreach($wins in @(0,1,2,10,100)) {
  if(!$text.Contains("STS2MOD_TEST_PASS VICTORY_dialogue_available_$wins")){throw "Missing Architect dialogue: $wins wins"}
 }
-foreach($case in @('isolated_unsaved_fixture','native_architect_room','native_win_and_summary')) {
+foreach($case in @('traveler_fixture','isolated_unsaved_fixture','native_architect_room','native_win_and_summary')) {
  if(!$text.Contains("STS2MOD_TEST_PASS VICTORY_$case")){throw "Missing victory case: $case"}
 }
 if(!$text.Contains('STS2MOD_VICTORY_COMPLETE dialogue=PASS animations=PASS summary=PASS shouldSave=False rendering=NOT_RUN multiplayer=NOT_RUN')){

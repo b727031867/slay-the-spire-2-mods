@@ -25,6 +25,7 @@ foreach ($id in 8..15) {
 }
 if (!$text.Contains('STS2MOD_TEST_PASS EVENT_curse_portrait')) { throw 'Missing Homeward portrait.' }
 if (!$text.Contains('STS2MOD_COMPANION_EVENTS_COMPLETE characters=5 rewards=owner_scoped multiplayer=NOT_RUN')) { throw 'Companion event suite incomplete.' }
+if (!$text.Contains('STS2MOD_TEST_PASS EVENT_companion_restores_traveler_fixture')) { throw 'Companion tests did not restore the Traveler fixture.' }
 foreach ($character in @('IRONCLAD','SILENT','REGENT','NECROBINDER','DEFECT')) {
     foreach ($case in @('guest_path_own_pool','guest_path_rare_curse','guest_upgrade_free','guest_upgrade_cancel_no_charge',
         'guest_upgrade_second_once','guest_upgrade_insufficient_gold','guest_upgrade_empty','guest_guide_native_candidates',

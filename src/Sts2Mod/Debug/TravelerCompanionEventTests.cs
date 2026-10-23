@@ -197,6 +197,17 @@ public partial class TravelerTestRunner
             await CombatManager.Instance.CheckWinCondition();
             await Until(() => !CombatManager.Instance.IsInProgress, "companion final cleanup");
         }
+        // Guest runs replace the active run; rebuild the Traveler fixture for subsequent suites.
+        await NGame.Instance!.ReturnToMainMenu();
+        var restoredRun = await NGame.Instance.StartNewSingleplayerRun(ModelDb.Character<Traveler>(), false,
+            [ModelDb.Act<Overgrowth>(), ModelDb.Act<Hive>(), ModelDb.Act<Glory>()], [], "TC001A", GameMode.Standard);
+        _player = restoredRun.Players[0];
+        _player.Creature.SetMaxHpInternal(5000m);
+        _player.Creature.SetCurrentHpInternal(5000m);
+        await StartFreshCombat();
+        Check(_player.Character is Traveler && Power.Owner == _player.Creature && Power.State.Used == 0
+            && _target.CombatState == _player.Creature.CombatState && !RunManager.Instance.ShouldSave,
+            "EVENT_companion_restores_traveler_fixture");
         GD.Print("STS2MOD_COMPANION_EVENTS_COMPLETE characters=5 rewards=owner_scoped multiplayer=NOT_RUN");
     }
 }
