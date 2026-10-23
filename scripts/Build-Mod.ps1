@@ -1,5 +1,8 @@
-param([Parameter(Mandatory)][ValidateSet('PC-A','PC-B')][string]$DeviceId, [switch]$AllowDirty)
+param([Parameter(Mandatory)][ValidateSet('PC-A','PC-B')][string]$DeviceId, [switch]$AllowDirty, [switch]$Archive)
 $ErrorActionPreference = 'Stop'
+$total=[Diagnostics.Stopwatch]::StartNew()
+$stage=[Diagnostics.Stopwatch]::StartNew()
+$timings=[ordered]@{}
 . (Join-Path $PSScriptRoot 'Enter-DevEnvironment.ps1')
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Push-Location $projectRoot
@@ -36,15 +39,20 @@ try {
     $env:SourceRevisionId = $sourceIdentity
     $env:ContinuousIntegrationBuild = 'true'
     $project = Join-Path $projectRoot 'src/Sts2Mod/Sts2Mod.csproj'
+    $timings.ValidateSeconds=$stage.Elapsed.TotalSeconds; $stage.Restart()
     & dotnet restore $project --locked-mode -p:Configuration=ExportRelease --runtime win-x64
     if ($LASTEXITCODE -ne 0) { throw 'Locked restore failed.' }
+    $timings.RestoreSeconds=$stage.Elapsed.TotalSeconds; $stage.Restart()
     & dotnet build $project --configuration ExportRelease --runtime win-x64 --no-restore --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Mod build failed.' }
+    $timings.BuildSeconds=$stage.Elapsed.TotalSeconds; $stage.Restart()
     $godotProject = Join-Path $projectRoot 'src/Sts2Mod'
     & $env:STS2_GODOT_EXE --headless --path $godotProject --editor --import
     if ($LASTEXITCODE -ne 0) { throw 'Godot import failed.' }
+    $timings.ImportSeconds=$stage.Elapsed.TotalSeconds; $stage.Restart()
     & $env:STS2_GODOT_EXE --headless --path $godotProject --export-pack ModPack (Join-Path $modOutput 'Sts2Mod.pck')
     if ($LASTEXITCODE -ne 0) { throw 'Godot export failed.' }
+    $timings.ExportSeconds=$stage.Elapsed.TotalSeconds; $stage.Restart()
     Copy-Item -LiteralPath (Join-Path $godotProject '.godot/mono/temp/bin/ExportRelease/win-x64/Sts2Mod.dll') -Destination $modOutput -Force
     Copy-Item -LiteralPath (Join-Path $godotProject 'Sts2Mod.json') -Destination $modOutput -Force
     $fileHashes = @{}
@@ -55,13 +63,19 @@ try {
     }
     @{ schemaVersion=1; modId='Sts2Mod'; modVersion=$manifest.version; codeCommit=$commit; dirty=$dirty; buildDevice=$DeviceId; gameVersion=$gameInfo.version; gameBuild=$actualBuild; gameAssemblySha256=(Get-FileHash -LiteralPath (Join-Path $env:STS2_GAME_DIR 'data_sts2_windows_x86_64/sts2.dll')).Hash; baseLibVersion=$dependencies.baseLib.version; files=$fileHashes } |
         ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $modOutput 'build-info.txt') -Encoding utf8
-    $zipPath = "$output.zip"
-    Compress-Archive -LiteralPath $modOutput -DestinationPath $zipPath -Force
-    $zipHash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash
-    "$zipHash  $([IO.Path]::GetFileName($zipPath))" | Set-Content -LiteralPath "$zipPath.sha256" -Encoding ascii
     Write-Output "PackageDirectory=$modOutput"
-    Write-Output "Package=$zipPath"
-    Write-Output "SHA256=$zipHash"
+    if ($Archive) {
+        $zipPath = "$output.zip"
+        Compress-Archive -LiteralPath $modOutput -DestinationPath $zipPath -Force
+        $zipHash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash
+        "$zipHash  $([IO.Path]::GetFileName($zipPath))" | Set-Content -LiteralPath "$zipPath.sha256" -Encoding ascii
+        Write-Output "Package=$zipPath"
+        Write-Output "SHA256=$zipHash"
+    }
+    $timings.FinalizeSeconds=$stage.Elapsed.TotalSeconds
+    $timings.TotalSeconds=$total.Elapsed.TotalSeconds
+    $timings | ConvertTo-Json | Set-Content -LiteralPath "$output.timings.json" -Encoding utf8
+    Write-Output "Timings=$output.timings.json"
 } finally {
     $env:SourceRevisionId = $previousRevision
     $env:ContinuousIntegrationBuild = $previousCI

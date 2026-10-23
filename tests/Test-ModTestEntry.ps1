@@ -18,7 +18,7 @@ $withProcess=& (Join-Path $root 'scripts/Test-ModRun.ps1') -Suite Load -LogFile 
 $saved=Get-Content -Raw (Join-Path $fixture 'process-result.json') | ConvertFrom-Json
 if($saved.GameProcessId -ne 123 -or $saved.SandboxDirectory -ne 'fixture-only'){throw 'Process identity lost in structured result'}
 $count=2
-foreach($suite in @('Visuals','Cards','Character','Full','SavePrepare','SaveResume')){
+foreach($suite in @('Visuals','Cards','Character','Events','Full','SavePrepare','SaveResume')){
     $failed=$false
     try {& (Join-Path $root 'scripts/Test-ModRun.ps1') -Suite $suite -LogFile $log -CodeCommit $identity | Out-Null} catch {$failed=$true}
     if(!$failed){throw "Incomplete suite incorrectly passed: $suite"}
@@ -38,7 +38,7 @@ $failed=$false
 try {& (Join-Path $root 'scripts/Start-ModTest.ps1') -Suite SaveResume | Out-Null}catch{$failed=$true}
 if(!$failed){throw 'Resume without sandbox accepted'}
 $count++
-foreach($suite in @('Load','Visuals','Cards','Character','Full','SavePrepare','SaveResume')){
+foreach($suite in @('Load','Visuals','Cards','Character','Events','Full','SavePrepare','SaveResume')){
     if(!(Get-ModTestSuite $suite).Marker){throw "Missing completion marker: $suite"}
 }
 Write-Output "MOD_TEST_ENTRY_PASS assertions=$count fixture=$fixture (synthetic logs only; no game launched)"

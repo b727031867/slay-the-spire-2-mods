@@ -4,7 +4,7 @@
 
 开发版本、已发布版本、分支、包身份与验证范围统一见[当前状态](../docs/STATUS.md)。后续开发和上传更新统一显式使用friends_only；若用户要求好友联机测试，同样保持该可见性。历史发布报告中的visibility=null仅记录当时保留远端好友可见状态的做法，不再作为后续上传配置。
 
-1. 使用PowerShell 7，新代码先从干净提交运行Build-Mod.ps1，再将核心目录交给 `scripts/Invoke-ReleasePreparation.ps1 -PackageDirectory '<核心目录>/Sts2Mod'`，自动部署、运行无GUIFull、冻结快照并准备上传目录。该入口不编译、不上传，PREPARED不代表发布完成；详见[开发说明](../docs/DEVELOPMENT.md)。磁盘专项按改动范围执行；人工试玩和联机验证仅在用户明确要求时执行，不是发布前置条件。
+1. 使用PowerShell 7，汇总本轮改动后从干净提交运行Build-Mod.ps1一次，默认不生成中间ZIP。将核心目录交给 `scripts/Invoke-ReleasePreparation.ps1 -PackageDirectory '<核心目录>/Sts2Mod'`，默认部署并运行无GUIFull，再冻结快照和准备上传目录。已具备同包schemaVersion=2通过报告时加`-TestResultFile`复用，避免重新部署和测试；明确免完整回归的小修复按累计影响传`-Suite`。报告绑定方法、覆盖限制及阶段耗时见[开发说明](../docs/DEVELOPMENT.md)。入口不编译、不上传，PREPARED不代表发布完成。磁盘专项按改动范围执行；人工试玩和联机验证仅在用户明确要求时执行，不是发布前置条件。
 2. 如已独立验收核心，可用Build-ReleaseCandidate.ps1 -PackageDirectory冻结，再运行 `scripts/Prepare-Workshop.ps1 -SnapshotDirectory <快照目录>`，生成 `.local/workshop/<完整源码提交>-<快照哈希前12位>/`。该入口只读快照中的核心、文档、配置和图片，不读取仓库补充内容；旧候选须重新冻结。仅生成的工作目录用于上传，保留快照ZIP、SHA256及准备报告。
 3. 从官方发行页下载 Mega Crit ModUploader v0.2.0 Windows x64，保存其ZIP哈希。查看生成的workshop.json、image.png、previews/rules.png及content。
 4. Steam登录拥有本游戏的账号。使用官方 `ModUploader.exe upload -w <工作目录>` 进行仅限好友上传（visibility必须为friends_only）；此动作会向Steam提交内容。若平台要求同意法律条款，交由账号持有人完成。

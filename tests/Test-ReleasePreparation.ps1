@@ -20,7 +20,7 @@ if((Get-Content (Join-Path $PSScriptRoot '../mode.txt')).Trim() -eq 'deploy-fail
 '@ | Set-Content (Join-Path $scripts 'Deploy-Mod.ps1')
 @'
 param($Suite,$CodeCommit)
-Add-Content (Join-Path $PSScriptRoot '../stages.txt') 'Full'
+Add-Content (Join-Path $PSScriptRoot '../stages.txt') $Suite
 $mode=(Get-Content (Join-Path $PSScriptRoot '../mode.txt')).Trim()
 if($mode -eq 'throw'){throw 'synthetic native failure'}
 if($mode -eq 'change-core'){Add-Content (Join-Path $PSScriptRoot '../core/build-info.txt') ' '}
@@ -42,6 +42,7 @@ Set-Content (Join-Path $fixture 'mode.txt') 'pass'
 $result=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -OutputDirectory (Join-Path $fixture 'candidate')
 Check ($result.Status -eq 'PREPARED' -and !$result.Uploaded) 'pipeline prepares without claiming upload'
 Check (((Get-Content (Join-Path $fixture 'stages.txt')) -join ',') -eq 'deploy,Full') 'deploy precedes headless Full'
+Check (!$result.ReusedTests -and $result.Timings.TotalSeconds -ge 0 -and $result.Timings.FreezeSeconds -ge 0) 'stage timings and fresh testing recorded'
 Check ($result.Rendering -eq 'NOT_RUN' -and $result.Multiplayer -eq 'NOT_RUN' -and $result.DiskResume -eq 'NOT_RUN') 'unrun scopes remain explicit'
 $saved=Get-Content -Raw ($result.SnapshotDirectory+'.preparation.json') | ConvertFrom-Json
 Check ($saved.CoreFiles.'Sts2Mod.dll' -eq $hashes.'Sts2Mod.dll' -and $saved.Full.Status -eq 'PASS') 'summary binds Full result to core hashes'
@@ -119,4 +120,107 @@ foreach($mode in @('deploy-fail','fail','throw','identity','gui','change-core'))
 }
 Set-Content $configPath '{"visibility":"private"}'
 Reject {& (Join-Path $scripts 'Build-ReleaseCandidate.ps1') -PackageDirectory $core -OutputDirectory (Join-Path $fixture 'private-candidate')} 'invalid repository Workshop visibility rejected at freeze'
+Copy-Item -LiteralPath (Join-Path $root 'workshop/workshop.json') -Destination $configPath -Force
+
+# These fixtures exercise evidence validation without Steam or native game launches.
+@'
+[pscustomobject]@{MachineName='fixture';GameAssemblySha256='fixture-game';BaseLibDllSha256='fixture-base'}
+'@ | Set-Content (Join-Path $scripts 'Get-ModTestEnvironment.ps1')
+@'
+param($Suite,$LogFile,$CodeCommit)
+if((Get-Content -Raw $LogFile).Trim() -ne 'PASS fixture'){throw 'synthetic strict log rejection'}
+[pscustomobject]@{Suite=$Suite;Status='PASS';CodeCommit=$CodeCommit}
+'@ | Set-Content (Join-Path $scripts 'Test-ModRun.ps1')
+$nativeLog=Join-Path $fixture 'native.log'
+Set-Content $nativeLog 'PASS fixture'
+$package=& (Join-Path $scripts 'Get-ModPackage.ps1') -PackageDirectory $core
+$validEvidence=@{
+    SchemaVersion=2;Suite='Full';Status='PASS';Headless=$true;CodeCommit=$commit
+    CoreFiles=$package.Hashes;Environment=(& (Join-Path $scripts 'Get-ModTestEnvironment.ps1'))
+    LogFile=$nativeLog;LogSHA256=(Get-FileHash $nativeLog).Hash
+}
+$evidenceFile=Join-Path $fixture 'evidence.json'
+$validEvidence | ConvertTo-Json -Depth 8 | Set-Content $evidenceFile
+$stagesBefore=Get-Content -Raw (Join-Path $fixture 'stages.txt')
+$reused=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -TestResultFile $evidenceFile -Suite Cards,Events -OutputDirectory (Join-Path $fixture 'reuse')
+Check ($reused.ReusedTests -and $reused.Status -eq 'PREPARED' -and $reused.Tests.Count -eq 1) 'matching Full evidence reused for required focused coverage'
+Check ((Get-Content -Raw (Join-Path $fixture 'stages.txt')) -eq $stagesBefore) 'reuse neither deploys nor starts native tests'
+foreach($mode in @('legacy','core','metadata','environment','fail','gui','identity','coverage','loghash','missing-log','invalid-log')) {
+    $evidence=$validEvidence | ConvertTo-Json -Depth 8 | ConvertFrom-Json
+    switch($mode) {
+        legacy {$evidence.SchemaVersion=1}
+        core {$evidence.CoreFiles.'Sts2Mod.pck'='different'}
+        metadata {$evidence.CoreFiles.'build-info.txt'='different'}
+        environment {$evidence.Environment.GameAssemblySha256='different'}
+        fail {$evidence.Status='FAIL'}
+        gui {$evidence.Headless=$false}
+        identity {$evidence.CodeCommit='b'*40}
+        coverage {$evidence.Suite='Cards'}
+        loghash {$evidence.LogSHA256='different'}
+        missing-log {$evidence.LogFile=Join-Path $fixture 'missing.log'}
+        invalid-log {
+            Set-Content $nativeLog 'unknown gameplay error'
+            $evidence.LogSHA256=(Get-FileHash $nativeLog).Hash
+        }
+    }
+    $evidence | ConvertTo-Json -Depth 8 | Set-Content $evidenceFile
+    $output=Join-Path $fixture "reuse-reject-$mode"
+    Reject {& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -TestResultFile $evidenceFile -OutputDirectory $output} "invalid reusable evidence rejected: $mode"
+    Check (!(Test-Path $output)) "no freeze after invalid reusable evidence: $mode"
+    Set-Content $nativeLog 'PASS fixture'
+}
+Set-Content (Join-Path $fixture 'mode.txt') 'pass'
+Set-Content (Join-Path $fixture 'docs/player/README.zh-CN.md') 'focused candidate documentation'
+$focused=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -Suite Cards,Events -OutputDirectory (Join-Path $fixture 'focused')
+Check (($focused.Tests.Suite -join ',') -eq 'Cards,Events' -and !$focused.Full) 'explicit focused suites do not silently run Full'
+
+# Exercise the real evidence recorder with a disposable hidden shell, never the game.
+foreach($name in @('Invoke-ModTests','ModTestSuites')) {
+    Copy-Item -LiteralPath (Join-Path $root "scripts/$name.ps1") -Destination $scripts -Force
+}
+$info.gameAssemblySha256='fixture-game'
+$info | ConvertTo-Json -Depth 4 | Set-Content $buildInfo
+$installed=Join-Path $fixture 'game/mods/Sts2Mod'
+New-Item -ItemType Directory -Path $installed -Force | Out-Null
+@'
+$env:STS2_GAME_DIR=Join-Path $PSScriptRoot '../game'
+$changed=(Get-Content (Join-Path $PSScriptRoot '../mode.txt')).Trim() -eq 'environment-changed'
+[pscustomobject]@{MachineName='fixture';GameVersion='v0.107.1';GameBuild='23811903';GameAssemblySha256=$(if($changed){'changed'}else{'fixture-game'});BaseLibVersion='3.4.7'}
+'@ | Set-Content (Join-Path $scripts 'Get-ModTestEnvironment.ps1')
+@'
+param($Suite,$SandboxDirectory)
+$log=Join-Path $PSScriptRoot ('../bound-'+[guid]::NewGuid().ToString('N')+'.log')
+Set-Content $log '[Startup] Time to main menu: fixture'
+Set-Content (Join-Path $PSScriptRoot '../last-log.txt') $log
+$process=Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList '-NoProfile','-Command','Start-Sleep -Seconds 30' -WindowStyle Hidden -PassThru
+[pscustomobject]@{Process=$process;GameProcessId=$process.Id;LogFile=$log;SandboxDirectory='fixture'}
+'@ | Set-Content (Join-Path $scripts 'Start-ModTest.ps1')
+@'
+param($Suite,$LogFile,$CodeCommit,$GameProcessId,$SandboxDirectory)
+$mode=(Get-Content (Join-Path $PSScriptRoot '../mode.txt')).Trim()
+switch($mode){
+ 'change-core' {Add-Content (Join-Path $PSScriptRoot '../core/build-info.txt') ' '}
+ 'change-installed' {Add-Content (Join-Path $PSScriptRoot '../game/mods/Sts2Mod/build-info.txt') ' '}
+ 'change-env' {Set-Content (Join-Path $PSScriptRoot '../mode.txt') 'environment-changed'}
+ 'fail-log' {throw 'synthetic log failure'}
+}
+[pscustomobject]@{SchemaVersion=1;Suite=$Suite;Status='PASS';CodeCommit=$CodeCommit;Headless=$true;LogFile=$LogFile}
+'@ | Set-Content (Join-Path $scripts 'Test-ModRun.ps1')
+foreach($mode in @('pass','change-core','change-installed','change-env','fail-log')) {
+    $info | ConvertTo-Json -Depth 4 | Set-Content $buildInfo
+    foreach($name in @('Sts2Mod.dll','Sts2Mod.pck','Sts2Mod.json','build-info.txt')) {
+        Copy-Item -LiteralPath (Join-Path $core $name) -Destination $installed -Force
+    }
+    Set-Content (Join-Path $fixture 'mode.txt') $mode
+    if($mode -eq 'pass') {
+        $bound=& (Join-Path $scripts 'Invoke-ModTests.ps1') -Suite Load -CodeCommit $commit -PackageDirectory $core
+        Check ($bound.SchemaVersion -eq 2 -and $bound.CoreFiles.'Sts2Mod.pck' -eq $hashes.'Sts2Mod.pck' -and
+            $bound.LogSHA256 -eq (Get-FileHash $bound.LogFile).Hash -and $bound.DurationSeconds -ge 0) 'test recorder binds core environment stable log and duration'
+    } else {
+        Reject {& (Join-Path $scripts 'Invoke-ModTests.ps1') -Suite Load -CodeCommit $commit -PackageDirectory $core} "test recorder rejects $mode"
+        $lastLog=(Get-Content (Join-Path $fixture 'last-log.txt')).Trim()
+        $failed=Get-Content -Raw ($lastLog+'.result.json') | ConvertFrom-Json
+        Check ($failed.Status -eq 'FAIL') "recorder persists failure instead of PASS: $mode"
+    }
+}
 Write-Output "RELEASE_PREPARATION_PASS assertions=$count fixture=$fixture"

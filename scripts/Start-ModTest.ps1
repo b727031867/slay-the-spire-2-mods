@@ -1,5 +1,5 @@
 param(
-    [Parameter(Mandatory)][ValidateSet('Load','Visuals','Cards','Character','Full','SavePrepare','SaveResume')][string]$Suite,
+    [Parameter(Mandatory)][ValidateSet('Load','Visuals','Cards','Character','Events','Full','SavePrepare','SaveResume')][string]$Suite,
     [string]$SandboxDirectory
 )
 $ErrorActionPreference='Stop'

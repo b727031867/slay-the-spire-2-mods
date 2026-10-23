@@ -63,7 +63,7 @@ AI执行的游戏测试一律使用无GUI模式，避免影响其他工作。加
 
 PC-B使用`-DeviceId PC-B`。构建默认要求所有源码和配置已提交；开发中可显式加`-AllowDirty`生成带dirty标记的本地调试包，这类包不能作为指定干净提交的交接产物。
 
-脚本核对游戏版本和Steam构建号，执行锁定依赖还原、ExportRelease/win-x64编译、Godot导入与PCK导出，并输出包含源码提交的目录、ZIP和SHA256文件。还原和导出统一配置，避免Godot的Debug编辑器依赖改写发布锁文件。构建不会自动复制文件到游戏。正式交接必须从实际代码提交S的干净工作区执行。
+脚本核对游戏版本和Steam构建号，执行锁定依赖还原、ExportRelease/win-x64编译、Godot导入与PCK导出，默认只输出包含源码提交的四文件核心目录，避免和最终候选重复压缩。需要独立交接核心ZIP时显式加`-Archive`，会输出ZIP及SHA256；正式发布仍由Build-ReleaseCandidate生成完整快照ZIP。构建目录旁的`.timings.json`记录校验、还原、编译、导入、导出和收尾耗时。还原和导出统一配置，避免Godot的Debug编辑器依赖改写发布锁文件。构建不会自动复制文件到游戏。正式交接必须从实际代码提交S的干净工作区执行。
 
 构建输出的核心目录包含四文件；发布准备另附玩家指南、更新日志和素材说明，共七文件：
 
@@ -138,15 +138,26 @@ $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
 
 ## 发布准备：测试、冻结与工坊目录
 
-先提交源码，用Build-Mod从干净提交构建核心包。以下入口适用于尚未完成候选验收的核心，会对本轮部署运行Full，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。同一核心已有覆盖完整、环境匹配的通过证据时，按SOP核对哈希后使用下文独立冻结入口，避免重复Full。
+先汇总本轮代码和资源改动，再提交、构建并测试同一包。以下入口默认对尚未完成候选验收的核心部署并运行Full，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。低风险修复按影响评估和用户授权显式使用`-Suite Cards,Events`等范围；入口不会自动猜测或缩减测试范围。
 
 ```powershell
 .\scripts\Invoke-ReleasePreparation.ps1 -PackageDirectory '<干净核心目录>/Sts2Mod'
 ```
 
-入口依次校验核心、Deploy-Mod部署（已有BaseLib须匹配）、Invoke-ModTests运行无GUIFull、核对核心未变化、Build-ReleaseCandidate冻结快照、Prepare-Workshop准备上传目录。已有工坊重复副本须在部署前按原流程可恢复备份，避免双重加载。新入口的部署备份行为与Deploy-Mod相同，不自动恢复本地Mod；结束后本机保留候选供后续使用。
+未传报告时入口依次校验核心、Deploy-Mod部署（已有BaseLib须匹配）、Invoke-ModTests运行所选无GUI专项、核对核心未变化、Build-ReleaseCandidate冻结快照、Prepare-Workshop准备上传目录。已有工坊重复副本须在部署前按原流程可恢复备份，避免双重加载。部署备份行为与Deploy-Mod相同，不自动恢复本地Mod；结束后本机保留候选供后续使用。
 
-输出PREPARED、核心身份/哈希、Full结果、快照/ZIP哈希与上传目录，保存为快照目录旁的.preparation.json。失败直接终止，保留日志及已生成产物便于排查；不会继续上传。磁盘专项按改动范围使用上文SavePrepare/SaveResume。人工试玩、图形、联机和自然整局验证均为可选，不构成提交、合并、打包或发布门槛；仅在用户明确要求时执行并单列结果。
+已完成测试时传报告即可复用，不部署、不启动游戏、不重新构建：
+
+```powershell
+# 独立测试时绑定实际四文件包；本地部署必须与它逐字节一致。
+$test = .\scripts\Invoke-ModTests.ps1 -Suite Cards -CodeCommit '<包S>' -PackageDirectory '<核心目录>/Sts2Mod'
+# Events也支持同样入口，所需范围取整批改动的并集。
+.\scripts\Invoke-ReleasePreparation.ps1 -PackageDirectory '<同一核心目录>/Sts2Mod' -Suite Cards -TestResultFile ($test.LogFile+'.result.json')
+```
+
+`-TestResultFile`可接收多个报告。新报告schemaVersion=2绑定核心四文件SHA256、机器、游戏构建/程序集、BaseLib三文件哈希及稳定日志哈希；测试前后检查源包、本地部署与环境不变，结束本轮进程后才校验并哈希日志。复用时重新核对当前环境及严格日志检查器，并检查所需套件覆盖；Full报告可覆盖各普通专项，Cards不能冒充Full或Events。没有绑定的旧报告、丢失/改变的日志、不同包或环境会拒绝复用，不自动重跑耗时测试。省略`-PackageDirectory`仍可生成旧式报告，但不能用于自动复用。需要同一机器只有一份可识别BaseLib安装，避免混淆本地和工坊依赖。
+
+输出PREPARED、核心身份/哈希、所选范围、测试结果及是否复用、阶段耗时、快照/ZIP哈希与上传目录，保存为快照目录旁的.preparation.json。测试报告另含DurationSeconds。失败直接终止，保留日志及已生成产物便于排查；不会继续上传。磁盘专项按改动范围使用上文SavePrepare/SaveResume。人工试玩、图形、联机和自然整局验证均为可选，不构成提交、合并、打包或发布门槛；仅在用户明确要求时执行并单列结果。
 
 如已完成对应验收，只需独立冻结和准备：
 

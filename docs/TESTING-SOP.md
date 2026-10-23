@@ -44,7 +44,7 @@
 
 表内“＋”取并集，已覆盖的套件只跑一次。修Bug至少保留一个能识别该Bug的回归用例；非平凡新逻辑补正向与关键边界检查。已有用例足以证明时直接复用，不为数量增加重复测试。
 
-当前入口粒度是套件，尚无单卡/单用例过滤。Cards虽然执行角色夹具和视觉专项，focused检查器不等价于Character的完整验收；同时改角色获取/注册时仍应补Character或Full。不要把尚未实现的细粒度筛选写成已支持。
+当前入口粒度是套件，尚无单卡/单用例过滤。Cards虽然执行角色夹具和视觉专项，focused检查器不等价于Character的完整验收；同时改角色获取/注册时仍应补Character或Full。Events已接入统一入口。不要把尚未实现的细粒度筛选写成已支持。
 
 ## 4. 执行：开发、集成、发布分别处理
 
@@ -52,15 +52,15 @@
 2. 同一批相关改动可合并验证一次；覆盖范围取整批改动的并集。新提交、分支合并或冲突修复后重新评估相对已验证基线的累计差异，不能只看最后一次提交。
 3. 若失败，先保留失败日志并修复根因，再重跑失败范围及修复新增的影响范围。超时、缺完成标记、未知ERROR均不算通过，不能靠减断言或放宽过滤转绿。
 4. 局部开发和合入main以选定范围通过为门槛；共享机制、依赖/工具链升级或范围不明时执行Full。Full包含大量专项，不再额外串行跑Load、Visuals、Cards、Character和事件专项。Full不包含两进程磁盘恢复。
-5. 正式发布候选保留一次Full。多个小功能集中到候选验收，避免每个小功能各跑一次。磁盘专项按累计改动范围补充。当前Invoke-ReleasePreparation仍固定执行Full，适用于尚未验收的候选。
-6. 同一核心四文件哈希、游戏/依赖/相关环境一致，且现有报告覆盖全部改动时，可复用通过证据；文档提交、换分支名称或重新包装不使核心证据自动失效。用Build-ReleaseCandidate＋Prepare-Workshop独立冻结即可，不再调用会重跑Full的发布准备入口。
+5. 正式发布候选默认保留一次Full。多个小功能集中到候选验收，避免每个小功能各跑一次。磁盘专项按累计改动范围补充。Invoke-ReleasePreparation默认Full；用户明确免完整回归的低风险修复按累计影响显式传入-Suite，不自动推断范围。
+6. 同一核心四文件哈希、游戏/依赖/相关环境一致，且现有报告覆盖全部改动时，可复用通过证据；文档提交、换分支名称或重新包装不使核心证据自动失效。优先在Invoke-ModTests传-PackageDirectory生成绑定包和环境的schemaVersion=2报告，再向Invoke-ReleasePreparation传-TestResultFile复用。复用只重新检查包、环境、日志与覆盖，不部署或重跑游戏；旧报告不自动补绑定。独立Build-ReleaseCandidate＋Prepare-Workshop仍可用于已审阅的冻结操作。
 7. 同提交重新构建、测试期间核心变化、环境变化或证据不全，均不能仅凭提交号复用通过结果，须按变化重做相应验证。跨PC证据保留原设备归属；需要宣称另一台PC加载通过时，在该PC跑Load，不重跑无关专项。
 
 运行时文本/翻译/资源在PCK内，不能当成纯仓库文档跳过构建。仅更新玩家说明或工坊封面时，复核新快照/上传字节、配置及friends_only，无需重跑未改变核心的玩法测试。
 
 ## 5. 使用现有命令
 
-统一入口支持Load、Visuals、Cards、Character、Full、SavePrepare、SaveResume，专项按评估选择一个或多个：
+统一入口支持Load、Visuals、Cards、Character、Events、Full、SavePrepare、SaveResume，专项按评估选择一个或多个：
 
 ```powershell
 . .\scripts\Enter-DevEnvironment.ps1
@@ -70,7 +70,7 @@ dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
 .\scripts\Invoke-ModTests.ps1 -Suite Cards -CodeCommit '<实际包S>'
 ```
 
-事件专项目前未纳入统一Suite枚举，继续使用现有入口；在同一PowerShell会话中等待标记、严格检查并始终清理本次进程：
+事件专项优先使用`Invoke-ModTests.ps1 -Suite Events -CodeCommit '<包S>' -PackageDirectory '<核心目录>'`，可生成同样的复用证据；以下手动入口保留用于排查，在同一PowerShell会话中等待标记、严格检查并始终清理本次进程：
 
 ```powershell
 $launch = .\scripts\Start-ModGame.ps1 -Headless -TravelerEvents -PassThru
