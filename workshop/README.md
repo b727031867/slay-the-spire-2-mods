@@ -2,17 +2,17 @@
 
 标题：旅行者·元素连携 / Traveler Elements。工程及存档ID仍为Sts2Mod。封面和规则图是原创说明设计图，不是实机截图；不能代替图形验收。
 
-开发版本、已发布版本、分支、包身份与验证范围统一见[当前状态](../docs/STATUS.md)。后续开发、上传更新和好友联机测试统一显式使用friends_only；历史发布报告中的visibility=null仅记录当时保留远端好友可见状态的做法，不再作为后续上传配置。
+开发版本、已发布版本、分支、包身份与验证范围统一见[当前状态](../docs/STATUS.md)。后续开发和上传更新统一显式使用friends_only；若用户要求好友联机测试，同样保持该可见性。历史发布报告中的visibility=null仅记录当时保留远端好友可见状态的做法，不再作为后续上传配置。
 
-1. 使用PowerShell 7，新代码先从干净提交运行Build-Mod.ps1，再将核心目录交给 `scripts/Invoke-ReleasePreparation.ps1 -PackageDirectory '<核心目录>/Sts2Mod'`，自动部署、运行无GUIFull、冻结快照并准备上传目录。该入口不编译、不上传，PREPARED不代表发布完成；详见[开发说明](../docs/DEVELOPMENT.md)。磁盘及人工专项另行完成。
+1. 使用PowerShell 7，新代码先从干净提交运行Build-Mod.ps1，再将核心目录交给 `scripts/Invoke-ReleasePreparation.ps1 -PackageDirectory '<核心目录>/Sts2Mod'`，自动部署、运行无GUIFull、冻结快照并准备上传目录。该入口不编译、不上传，PREPARED不代表发布完成；详见[开发说明](../docs/DEVELOPMENT.md)。磁盘专项按改动范围执行；人工试玩和联机验证仅在用户明确要求时执行，不是发布前置条件。
 2. 如已独立验收核心，可用Build-ReleaseCandidate.ps1 -PackageDirectory冻结，再运行 `scripts/Prepare-Workshop.ps1 -SnapshotDirectory <快照目录>`，生成 `.local/workshop/<完整源码提交>-<快照哈希前12位>/`。该入口只读快照中的核心、文档、配置和图片，不读取仓库补充内容；旧候选须重新冻结。仅生成的工作目录用于上传，保留快照ZIP、SHA256及准备报告。
 3. 从官方发行页下载 Mega Crit ModUploader v0.2.0 Windows x64，保存其ZIP哈希。查看生成的workshop.json、image.png、previews/rules.png及content。
 4. Steam登录拥有本游戏的账号。使用官方 `ModUploader.exe upload -w <工作目录>` 进行仅限好友上传（visibility必须为friends_only）；此动作会向Steam提交内容。若平台要求同意法律条款，交由账号持有人完成。
 5. 成功后保存工作目录内mod_id.txt；跨PC继续更新时传递同一条目ID，不重复创建条目。不要把个人日志或凭据入库。后续更新使用同一ID和新候选内容。
 6. 通过Steam订阅下载，比较Steam实际安装目录中文件SHA256和候选包，暂存本地副本后以无GUI从工坊加载。对BaseLib也检查真实下载版本；3.4.7以外目前会被本Mod拒绝。
-7. 无GUI不验证排版、鼠标操作及自然整局。订阅/更新/取消订阅与PC-B独立验收分别记录。条目保持仅限好友，作者与Steam好友一起测试联机；跨PC与跨账号验收分别记录。
+7. 无GUI不验证排版、鼠标操作及自然整局。人工试玩、图形和联机验证均为可选；未要求时记录NOT_RUN即可。若用户要求联机测试，条目保持仅限好友，并将跨PC与跨账号结果分别记录。
 8. 上传后使用 `WorkshopProbe inspect <id>` 获取封面和全部相册图地址，逐一确认 HTTP 200、图片格式及下载文件 SHA-256 与源文件一致。上传成功回调不等于图片可读取。相册断图时按 `tools/WorkshopProbe/README.md` 定点替换，并重新检查新地址。
 
 所有图片小于1MB。配置按[官方v0.2.0模板](https://github.com/megacrit/sts2-mod-uploader/blob/v0.2.0/template/README.md)准备，dependencies为BaseLib的工坊ID3737335127；该字段无法固定依赖版本。tags暂留空，不擅用Tools & APIs标签。分支支持字段按官方提示在网页核查，不虚构版本兼容范围。
 
-自2026-10-21起，按用户要求，后续开发、上传更新和好友联机测试均保持仅限好友（friends_only），复用条目3823282901。只有用户明确另行要求时才能更改可见性。上传前检查实际工作目录内workshop.json，旧候选目录的private配置不得直接复用；上传后用WorkshopProbe inspect 3823282901确认远端为FriendsOnly。联机计划不代表多人兼容性已验收。发布前仍须解决实际依赖兼容问题并审阅报告。无需为本任务改动卡牌数值或升级BaseLib基线。
+后续开发和上传更新保持仅限好友（friends_only），复用条目3823282901。只有用户明确另行要求时才能更改可见性。上传前检查实际工作目录内workshop.json，旧候选目录的private配置不得直接复用；上传后用WorkshopProbe inspect 3823282901确认远端为FriendsOnly。试玩和联机验证不是发布门槛；如执行，计划本身也不代表多人兼容性已验收。发布前仍须解决实际依赖兼容问题并审阅报告。无需为本任务改动卡牌数值或升级BaseLib基线。

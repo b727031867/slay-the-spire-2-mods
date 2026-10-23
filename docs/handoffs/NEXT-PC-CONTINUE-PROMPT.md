@@ -6,6 +6,6 @@
 
 正式核心来自干净提交S。复用同一包跨PC测试时核对SHA256；重新构建必须记录新包身份。发布快照同时冻结核心、玩家文档、工坊配置与图片；Prepare-Workshop只接收SnapshotDirectory，不读取当前仓库补充发布内容。使用[发布准备入口](../DEVELOPMENT.md)时，PREPARED只表示上传目录已准备。
 
-统一测试使用Invoke-ModTests，无GUI与本轮进程清理由入口保证。磁盘变更另跑SavePrepare/SaveResume，图形和真实联机结果单独记录。游戏测试不复制用户存档、不手工写Steam缓存。
+统一测试使用Invoke-ModTests，无GUI与本轮进程清理由入口保证。磁盘变更按范围另跑SavePrepare/SaveResume。人工试玩、图形和真实联机验证均为可选，不阻塞交付，仅在用户明确要求时执行并单独记录。游戏测试不复制用户存档、不手工写Steam缓存。
 
 后续上传保持原工坊ID3823282901及friends_only；上传前检查实际workshop.json，上传后用WorkshopProbe确认FriendsOnly。历史报告的private或visibility=null不作为当前操作。实际上传及Steam下载验收见[工坊说明](../../workshop/README.md)。

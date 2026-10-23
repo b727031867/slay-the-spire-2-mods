@@ -17,7 +17,7 @@ dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
 
 Cards、Full和SaveResume默认1800秒，其余默认300秒，可显式设置TimeoutSeconds。超时仍是失败。独立启动使用Start-ModTest，已有日志检查使用Test-ModRun。
 
-磁盘流程先SavePrepare，等待原生退出后重新部署同一包，以返回的SandboxDirectory调用SaveResume。不复制用户存档、不启用Steam云。图形、多人、自然Boss平衡单列验证。
+磁盘流程先SavePrepare，等待原生退出后重新部署同一包，以返回的SandboxDirectory调用SaveResume。不复制用户存档、不启用Steam云。人工试玩、图形、多人和自然Boss平衡均为可选，仅在用户明确要求时执行并单列结果；NOT_RUN不阻塞交付。
 
 旧Test-*Run脚本作为严格检查器保留，统一入口不减少必需用例或忽略未知错误。
 

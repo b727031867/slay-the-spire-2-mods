@@ -142,9 +142,9 @@ $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
 .\scripts\Invoke-ReleasePreparation.ps1 -PackageDirectory '<干净核心目录>/Sts2Mod'
 ```
 
-入口依次校验核心、Deploy-Mod部署（已有BaseLib须匹配）、Invoke-ModTests运行无GUIFull、核对核心未变化、Build-ReleaseCandidate冻结快照、Prepare-Workshop准备上传目录。已有工坊重复副本须在部署前按原流程可恢复备份，避免双重加载。新入口的部署备份行为与Deploy-Mod相同，不自动恢复本地Mod；结束后本机保留候选供试玩。
+入口依次校验核心、Deploy-Mod部署（已有BaseLib须匹配）、Invoke-ModTests运行无GUIFull、核对核心未变化、Build-ReleaseCandidate冻结快照、Prepare-Workshop准备上传目录。已有工坊重复副本须在部署前按原流程可恢复备份，避免双重加载。新入口的部署备份行为与Deploy-Mod相同，不自动恢复本地Mod；结束后本机保留候选供后续使用。
 
-输出PREPARED、核心身份/哈希、Full结果、快照/ZIP哈希与上传目录，保存为快照目录旁的.preparation.json。失败直接终止，保留日志及已生成产物便于排查；不会继续上传。磁盘专项、图形、联机和自然整局不由Full代替；需要时使用上文SavePrepare/SaveResume和单列的人工验证。
+输出PREPARED、核心身份/哈希、Full结果、快照/ZIP哈希与上传目录，保存为快照目录旁的.preparation.json。失败直接终止，保留日志及已生成产物便于排查；不会继续上传。磁盘专项按改动范围使用上文SavePrepare/SaveResume。人工试玩、图形、联机和自然整局验证均为可选，不构成提交、合并、打包或发布门槛；仅在用户明确要求时执行并单列结果。
 
 如已完成对应验收，只需独立冻结和准备：
 
@@ -167,6 +167,6 @@ Get-ReleaseSnapshot校验快照身份、全部文件清单/哈希、固定工坊
 .\tests\Test-ModTestEntry.ps1
 ```
 
-## 工坊可见性与好友联机测试
+## 工坊可见性与可选联机测试
 
-按2026-10-21用户要求，后续开发和测试与朋友一起进行，工坊条目3823282901始终保持“仅限好友”。上传配置使用 `friends_only`，准备入口拒绝其他值；上传前核对实际工作目录，上传后读取远端确认FriendsOnly。历史发布报告中的private是当时记录，不再作为后续上传策略。只有用户明确另行要求才更改可见性。多人兼容性与联机结果单独记录，不能用无GUI单人验收替代。
+工坊条目3823282901始终保持“仅限好友”。上传配置使用 `friends_only`，准备入口拒绝其他值；上传前核对实际工作目录，上传后读取远端确认FriendsOnly。历史发布报告中的private是当时记录，不再作为后续上传策略。只有用户明确另行要求才更改可见性。人工试玩和联机验证不是开发或发布的强制条件；用户明确要求联机测试时再与朋友执行，并将结果与无GUI单人验收分开记录。
