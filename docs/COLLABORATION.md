@@ -2,7 +2,7 @@
 
 本说明落实[当前协作约定](DECISIONS.md)：PC-A 和 PC-B 都可开发、构建、打包和测试，按任务接续工作，通过同一个 [GitHub 仓库](https://github.com/b727031867/slay-the-spire-2-mods) 同步成果。
 
-接续分支main，当前版本、包身份及逐设备验证范围见[STATUS](STATUS.md)与[发布报告](tests/TASK-011-PC-B-release-035.md)。
+开发/稳定分支、当前版本、已发布包身份、待办与逐设备验证范围统一从[STATUS](STATUS.md)进入；本页只维护协作规则。
 
 ## 1. 每台 PC 各自准备环境
 

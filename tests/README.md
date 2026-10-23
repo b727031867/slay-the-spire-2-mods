@@ -7,10 +7,11 @@
 dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release
 .\tests\Test-LogClassification.ps1
 .\tests\Test-ReleasePackaging.ps1
+.\tests\Test-ReleasePreparation.ps1
 .\tests\Test-ModTestEntry.ps1
 ```
 
-前两项验证纯连携规则和严格日志分类；包装用例使用合成文件，入口用例使用合成日志，不证明游戏加载。夹具留在忽略目录.local，便于检查。
+前两项验证纯连携规则和严格日志分类；包装用例使用合成文件，入口用例使用合成日志，不证明游戏加载。发布准备用例仅在.local夹具中替换部署/游戏测试脚本，验证步骤顺序、失败停止、冻结内容复用、哈希与覆盖保护；不会部署真实Mod、启动游戏或访问Steam。夹具留在忽略目录.local，便于检查。
 
 真实游戏使用scripts/Invoke-ModTests.ps1，Suite为Load、Visuals、Cards、Character、Full、SavePrepare或SaveResume，给出实际包的程序集身份CodeCommit。入口强制Headless，等待并校验完成标记，成功或失败后只清理自己启动的进程。日志和结构化JSON留在.local/logs。
 

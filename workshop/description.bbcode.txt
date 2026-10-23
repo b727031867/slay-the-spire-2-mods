@@ -40,7 +40,7 @@
 
 [h2]安装与验证[/h2]
 固定Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7。本Mod拒绝其他BaseLib版本；工坊依赖无法锁版本，更新后请核对。每个Mod只保留一份生效副本。
-此前用户已试玩轻量反馈候选；0.3.14新增内容本轮图形与联机未实测。最终包自动化验证范围单独记录，不将无GUI节点检查称为图形或联机验收。自然Boss系统性平衡与用户旧档迁移未作系统验收。条目保留既有好友可见设置。
+此前用户已试玩轻量反馈候选；0.3.14新增内容本轮图形与联机未实测。最终包自动化验证范围单独记录，不将无GUI节点检查称为图形或联机验收。自然Boss系统性平衡与用户旧档迁移未作系统验收。条目在后续开发、上传更新和好友联机测试期间保持仅限好友；仅在用户明确另行要求时更改可见性。
 角色、卡牌及篝火插图使用生成式素材；雷霆连锁暂复用雷元素插图。封面及规则图为说明素材，不是游戏截图；部分通用演出复用原生资源。
 
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
@@ -51,6 +51,6 @@
 Version 0.3.14 has 27 reward cards (11 Attacks, 11 Skills, 5 Powers) and seven exclusive relic models. It retains Thunder Chain, revised combo balance, Unbound Compass and the co-op character-selection layout fix. Journey Compass raises the shared combo cap to four and grants 1 combat Strength after the third actual reward each turn, replacing its old draw effect. Unbound Compass instead draws one extra card per actual reward and keeps the four-use cap.
 Base rewards: Wind/Rock grants 4 Block, Rock/Lightning makes a 4-base-damage follow-up, Lightning/Wind draws 1. Both directions work. Elements persist across turns; ordinary cards do not interrupt them. Paimon doubles only base rewards. Thunder Echo adds 2 base attack/Block and 1 draw per copy; use the higher reward versus Paimon rather than stacking them. Wind Guidance can coexist with Paimon. Element Resonance grants energy after the second actual reward, or the first when upgraded.
 Relics and both Resonance variants now use brief flashes inside their existing icons. Combo effects are short, small line accents, without enlarged artwork or repeated text bubbles. Consecutive effects reuse a node without merging gameplay rewards. Original seven-layer, eighteen-joint character animation is retained.
-Supports singleplayer and co-op; all players need matching versions. Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Automated headless checks and user playtesting are separate evidence, not systematic natural-run/Boss balance or old-save migration validation. AI-generated illustrations are used. Existing friends-only visibility is preserved.
+Supports singleplayer and co-op; all players need matching versions. Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Automated headless checks and user playtesting are separate evidence, not systematic natural-run/Boss balance or old-save migration validation. AI-generated illustrations are used. Friends-only visibility is preserved throughout development, updates and testing, unless the user explicitly requests a change.
 
 非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。

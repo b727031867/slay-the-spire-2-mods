@@ -1,13 +1,11 @@
-# 接续说明 / 0.3.13
+# 跨PC接续入口
 
-当前0.3.13已提交、快进合入main并推送，原工坊3823282901更新完成并保留好友可见。核心干净源码S=b8f6bd270240e711b210d2dab46d8dc21bec0a7e，Full531项、实际工坊Load/Character90项/Visuals128项通过，七文件与两张图片一致；完整来源和边界见[当前发布报告](../tests/RELEASE-0313.md)。整合19张卡池平衡、无界罗盘、联机选人修复及遗物/元素共鸣短闪与轻量连携。PC-A实际从工坊加载，本地重复副本备份于.local/release0313/local-overrides；用户平衡分析草稿仍未跟踪，勿误提交。后续文档提交不改变S核心包，所有测试/上传进程已结束。以下为旧版接续背景，不代表当前版本。
+先读[当前状态](../STATUS.md)，从中取得开发版本、任务分支、已发布包身份、验证范围和下一步。版本演进见[更新日志](../player/CHANGELOG.md)，不在本页重复维护版本或测试数字。
 
-0.3.9已提交、快进合入main并推送，原工坊3823282901更新完成；干净源码S=565c671ef9598e54a00c55e6dda7308c6a60190a，后续文档提交不改变核心包。战斗角色为同母稿七层网格与18关节，按已评审草图实现前突刺、双手防御、后仰受击和连续攻防；最终来源、Full474项及实际Steam下载与工坊加载结果见[发布报告](../tests/RELEASE-039.md)及STATUS。
+保留未提交改动；git fetch后检查分支差异，仅在干净且无分叉时快进同步，不硬重置或强推。每台PC使用自己的local.settings.json、合法游戏安装和[技术基线](../TECH_BASELINE.md)，环境或游戏结果不能跨PC直接计为通过。完整协作规则见[协作说明](../COLLABORATION.md)。
 
-稳定接续分支为main。保留未提交改动，git fetch后仅快进同步，不硬重置、强推或覆盖本机配置。各PC独立核对游戏v0.107.1/build23811903、BaseLib精确3.4.7、SDK10.0.402、Godot.NET4.5.1和PowerShell7。
+正式核心来自干净提交S。复用同一包跨PC测试时核对SHA256；重新构建必须记录新包身份。发布快照同时冻结核心、玩家文档、工坊配置与图片；Prepare-Workshop只接收SnapshotDirectory，不读取当前仓库补充发布内容。使用[发布准备入口](../DEVELOPMENT.md)时，PREPARED只表示上传目录已准备。
 
-正式包来自干净源码提交S，后续文档提交不改变S核心包。Build-ReleaseCandidate只包装已校验核心，不隐式构建。工坊保持同一ID和依赖3737335127；本轮API实测为好友可见，与旧文档的private不同，更新配置visibility=null保留实际状态。通过正常Steam下载核对文件，不手工写Steam缓存、不复制用户存档。
+统一测试使用Invoke-ModTests，无GUI与本轮进程清理由入口保证。磁盘变更另跑SavePrepare/SaveResume，图形和真实联机结果单独记录。游戏测试不复制用户存档、不手工写Steam缓存。
 
-统一测试使用Invoke-ModTests，Headless及本轮Process对象清理由入口保证。SavePrepare/SaveResume只在涉及磁盘行为时使用隔离命名空间。图形反馈来自用户试玩，开发和发布授权不自动视为图形测试许可。
-
-开发候选和中间失败见[自然动作验证](../tests/NATURAL-MOTION-039.md)。0.3.9干净包Full474项、实际工坊Load/Character77项/Visuals95项分别记录；不能混用开发包结果。完整回归首次入口的CodeCommit参数误填导致身份校验失败，已按包元数据对同一原生日志重新严格验证，初始失败记录保留；不要放宽检查器。PC-A从实际工坊加载，本地重复副本备份在.local/release039/local-overrides；主工作区未跟踪的平衡分析文档未纳入发布。原始母稿未修改。离线动作评审页与无GUI测试不能替代游戏光照、特效和UI下的实机验收。
+后续上传保持原工坊ID3823282901及friends_only；上传前检查实际workshop.json，上传后用WorkshopProbe确认FriendsOnly。历史报告的private或visibility=null不作为当前操作。实际上传及Steam下载验收见[工坊说明](../../workshop/README.md)。

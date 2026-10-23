@@ -1,29 +1,24 @@
-param([Parameter(Mandatory)][string]$PackageDirectory)
+param([Parameter(Mandatory)][string]$SnapshotDirectory, [string]$OutputDirectory)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
-$package = & (Join-Path $PSScriptRoot 'Get-ModPackage.ps1') -PackageDirectory $PackageDirectory
-$packagePath = $package.PackageDirectory
-$info = $package.Info
-$names = @('Sts2Mod.dll','Sts2Mod.json','Sts2Mod.pck','build-info.txt')
-$workspace = Join-Path $projectRoot ('.local/workshop/' + $info.codeCommit)
+$snapshot = & (Join-Path $PSScriptRoot 'Get-ReleaseSnapshot.ps1') -SnapshotDirectory $SnapshotDirectory
+if (!$OutputDirectory) {
+    $OutputDirectory = Join-Path $projectRoot ('.local/workshop/' + $snapshot.Info.codeCommit + '-' + $snapshot.SnapshotSHA256.Substring(0,12))
+}
+$workspace = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputDirectory)
 if (Test-Path -LiteralPath $workspace) { throw 'Workspace already exists; preserve its mod_id.txt and review before refreshing it.' }
-New-Item -ItemType Directory -Force -Path (Join-Path $workspace 'content'),(Join-Path $workspace 'previews') | Out-Null
-foreach ($name in $names) { Copy-Item -LiteralPath (Join-Path $packagePath $name) -Destination (Join-Path $workspace 'content') }
-Copy-Item -LiteralPath (Join-Path $projectRoot 'workshop/assets/image.png') -Destination $workspace
-Copy-Item -LiteralPath (Join-Path $projectRoot 'workshop/assets/rules.png') -Destination (Join-Path $workspace 'previews')
-foreach ($file in @((Join-Path $workspace 'image.png'),(Join-Path $workspace 'previews/rules.png'))) {
-    if ((Get-Item -LiteralPath $file).Length -ge 1000000) { throw 'Workshop image must be less than 1MB.' }
+if ($workspace.StartsWith($snapshot.SnapshotDirectory + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+    throw 'Workshop output must be outside the frozen snapshot.'
 }
-$config = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/workshop.json') | ConvertFrom-Json
-if ($config.visibility -ne 'private') { throw 'Acceptance preparation requires private visibility.' }
-$config.description = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/description.bbcode.txt')
-$config | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $workspace 'workshop.json') -Encoding utf8
-$itemFile = Join-Path $projectRoot 'workshop/item-id.txt'
-if (Test-Path -LiteralPath $itemFile) {
-    $itemId = (Get-Content -Raw -LiteralPath $itemFile).Trim()
-    if ($itemId -notmatch '^[0-9]+$') { throw 'Invalid workshop item identity.' }
-    Set-Content -LiteralPath (Join-Path $workspace 'mod_id.txt') -Value $itemId -Encoding ascii
+Copy-Item -LiteralPath (Join-Path $snapshot.SnapshotDirectory 'workshop') -Destination $workspace -Recurse
+$content = Join-Path $workspace 'content'
+Copy-Item -LiteralPath $snapshot.Package.PackageDirectory -Destination $content -Recurse
+foreach ($name in @('README.zh-CN.md','CHANGELOG.md','ASSETS.md')) {
+    Copy-Item -LiteralPath (Join-Path $snapshot.SnapshotDirectory $name) -Destination $content
 }
-Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/player/README.zh-CN.md'),(Join-Path $projectRoot 'docs/player/CHANGELOG.md'),(Join-Path $projectRoot 'docs/ASSETS.md') -Destination (Join-Path $workspace 'content')
-Write-Output "WorkshopDirectory=$workspace"
-Write-Output 'Prepared private workspace only. No Steam upload or subscription has been performed.'
+foreach ($group in @(@{Path=$content;Hashes=$snapshot.Info.coreFiles},@{Path=$content;Hashes=$snapshot.Info.documents},@{Path=$workspace;Hashes=$snapshot.Info.workshopFiles})) {
+    foreach ($entry in $group.Hashes.PSObject.Properties) {
+        if ((Get-FileHash -LiteralPath (Join-Path $group.Path $entry.Name)).Hash -ne $entry.Value) { throw "Copied snapshot differs: $($entry.Name)" }
+    }
+}
+[pscustomobject]@{ WorkshopDirectory=$workspace; CodeCommit=$snapshot.Info.codeCommit; SnapshotSHA256=$snapshot.SnapshotSHA256 }

@@ -21,3 +21,12 @@ The user requested on 2026-10-20 that game testing must not interfere with their
 - `-TravelerEndToEnd` prepares a fresh fixture and exits through the native menu/quit path. Redeploy the same package, then use `-ResumeTask003 -SandboxDirectory <the returned directory>` to resume that disk save in a new process. Both flags force headless mode.
 - Test display/audio settings use explicit fixture defaults; run/progress/prefs data uses native disk persistence. This is not a test of user graphics settings persistence.
 - Continuous-battle acceptance uses a controlled deck, high player HP and a four-turn budget per combat. Record forced cleanup separately from natural victories; do not present it as a natural full-run or balance validation.
+
+## Workshop visibility and friend multiplayer testing
+
+User instruction dated 2026-10-21: subsequent playtests will be multiplayer sessions with friends.
+
+- Keep the existing Workshop item `3823282901` set to **Friends Only** throughout development, uploads/updates and testing. The official uploader configuration value is `friends_only`.
+- Change visibility only if the user explicitly requests a different setting later. Do not restore the older private/hidden policy from historical acceptance reports or cached upload directories.
+- Before every upload, verify the actual upload workspace `workshop.json` uses `friends_only`; regenerate or deliberately refresh stale workspace metadata. After uploading, verify remote visibility with `WorkshopProbe inspect 3823282901` (expected `k_ERemoteStoragePublishedFileVisibilityFriendsOnly`).
+- Keep multiplayer results separate from headless logic and rendering checks. Planning friend sessions does not establish multiplayer compatibility; graphical/manual testing still requires the user's explicit request under the headless policy above.
