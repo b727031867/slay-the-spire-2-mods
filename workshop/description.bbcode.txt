@@ -1,10 +1,18 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.15 · 支持单人和联机[/b]
-可选角色「旅行者」拥有28张专属奖励牌（11攻击/12技能/5能力）、10张起始牌及7种专属遗物模型。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
+[b]0.3.17 · 支持单人和联机[/b]
+可选角色「旅行者」拥有28张专属奖励牌（11攻击/12技能/5能力）、10张起始牌及7种原有专属遗物模型，另有4个主题事件、6种旅行者事件遗物/契约、2种同伴契约和归途诅咒。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
 
 [b]此前本地候选已获得用户双人联机实测反馈。[/b]联机各方须使用相同游戏、Mod和BaseLib版本；本次新增平衡的自动化验证为无GUI，不能替代新版本联机与真实UI验收。
 
-[h2]0.3.15 更新[/h2]
+[h2]0.3.17 更新[/h2]
+[list]
+[*]新增四个主题事件：岔路冒险、元素测绘、塔外来信与引路人，带来分层探索、永久元素改造、持续契约和免费遗物选择。
+[*]队伍中至少有一名旅行者即可遇到这些事件；各玩家独立选择并领取奖励。
+[*]其他角色获得本角色牌、战斗外升级、适用的原生普通遗物及通用契约，不引入旅行者元素机制。
+[*]包含0.3.15的全部卡牌平衡、雷蚀回响、元素调律输入修复和独立占位插图。
+[/list]
+
+[h2]0.3.15 卡牌与平衡[/h2]
 [list]
 [*]修复元素调律选候选牌/目标时点击或快捷键选择手牌导致卡住的问题，结算结束或中断后恢复手牌输入。
 [*]三相终击2（1）费、10（12）基础伤害，本场战斗每成功占用一次连携额度增加2伤害，跨回合累计、无累计上限。
@@ -37,6 +45,6 @@ Windows x64、游戏v0.107.1/build23811903、BaseLib3.4.7。本Mod拒绝其他Ba
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.15 includes 28 reward cards, five Powers and seven exclusive relic models. It fixes hand input during Element Tuning selection, updates card balance, and adds Echoing Blight: a Lightning Uncommon Skill that doubles an enemy's stackable debuffs, including negative Strength and Dexterity, through native power hooks. It costs 1 and is Ethereal; upgrading reduces its cost to 0 and removes Ethereal. Unbound Compass now grants 1 combat Strength on the third combo trigger each turn while retaining its draw bonus. Heaven and Earth now Exhausts and grants draw/Energy, Plating, or AoE damage followed by Vulnerable. Journey Plans upgrades selected combat cards and Exhausts. Previous multiplayer feedback and new headless checks are separate evidence. Use matching game/mod/BaseLib versions on all clients.
+Version 0.3.17 adds four themed events, persistent event rewards and mixed-character party support: a party needs at least one Traveler, while each player chooses independently and receives character-appropriate rewards. It includes the 0.3.15 balance update with 28 reward cards, five Powers and seven exclusive relic models. It fixes hand input during Element Tuning selection, updates card balance, and adds Echoing Blight: a Lightning Uncommon Skill that doubles an enemy's stackable debuffs, including negative Strength and Dexterity, through native power hooks. It costs 1 and is Ethereal; upgrading reduces its cost to 0 and removes Ethereal. Unbound Compass now grants 1 combat Strength on the third combo trigger each turn while retaining its draw bonus. Heaven and Earth now Exhausts and grants draw/Energy, Plating, or AoE damage followed by Vulnerable. Journey Plans upgrades selected combat cards and Exhausts. Previous multiplayer feedback and new headless checks are separate evidence. Use matching game/mod/BaseLib versions on all clients.
 
 条目在开发、更新和测试期间保持仅限好友，除非用户明确要求更改。Friends-only visibility is preserved unless explicitly changed by the user.

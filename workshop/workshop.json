@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "friends_only",
-  "changeNote": "0.3.15：新增雷蚀回响，奖励池28张；调整卡牌与无界罗盘，修复元素调律选牌期间手牌输入，替换重复资源为独立草图。暂未发布工坊；保留仅限好友。",
+  "changeNote": "0.3.17：新增四个旅行者主题事件及持久奖励；队伍至少一名旅行者即可出现，其他角色独立获得本角色牌、升级、普通遗物和通用契约。包含0.3.15卡牌平衡、雷蚀回响与元素调律输入修复。保持仅限好友。",
   "tags": [],
   "dependencies": [
     3737335127
