@@ -168,6 +168,7 @@ public partial class TravelerTestRunner : Node
         }
         if (CommandLineHelper.HasArg("sts2mod-character"))
         {
+            await TestArchitectVictory();
             GD.Print($"STS2MOD_CHARACTER_COMPLETE assertions={_assertions} singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave={RunManager.Instance.ShouldSave}");
             return;
         }
@@ -256,6 +257,7 @@ public partial class TravelerTestRunner : Node
         await TestContinuousCombos();
         await TestExpandedCards();
         await TestTravelerEvents();
+        await TestArchitectVictory();
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=NOT_RUN shouldSave={RunManager.Instance.ShouldSave}");
     }
 

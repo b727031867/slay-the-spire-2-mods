@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "friends_only",
-  "changeNote": "0.3.17 显示修复：TC_C19–TC_C28的10张竖版卡图改为居中25:19卡面取景，修复左右留黑；原始图片完整保留。同步修复中英文伤害描述，切换怪物时显示原生计算的预计伤害。未改玩法数值，仅验证相关显示专项，不跑完整回归。保持仅限好友。",
+  "changeNote": "0.3.17 通关修复：补齐旅行者与建筑师的中英文结局对话，修复通关后无动画、无法进入胜利结算的问题；首胜和重复通关均可选择有效对话，恢复原生结局动画及结算流程。包含此前卡图取景与动态伤害预览修复。保持仅限好友。",
   "tags": [],
   "dependencies": [
     3737335127

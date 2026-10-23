@@ -58,4 +58,13 @@ if($text -notmatch '(?m)^STS2MOD_MERCHANT_COMPLETE assertions=\d+ scene=PASS cle
  throw 'Merchant presentation suite incomplete'
 }
 if($Focused -and $text -notmatch '(?m)^STS2MOD_CHARACTER_COMPLETE assertions=\d+ singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave=False'){throw 'Focused run incomplete'}
+foreach($wins in @(0,1,2,10,100)) {
+ if(!$text.Contains("STS2MOD_TEST_PASS VICTORY_dialogue_available_$wins")){throw "Missing Architect dialogue: $wins wins"}
+}
+foreach($case in @('isolated_unsaved_fixture','native_architect_room','native_win_and_summary')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS VICTORY_$case")){throw "Missing victory case: $case"}
+}
+if(!$text.Contains('STS2MOD_VICTORY_COMPLETE dialogue=PASS animations=PASS summary=PASS shouldSave=False rendering=NOT_RUN multiplayer=NOT_RUN')){
+ throw 'Native victory flow incomplete'
+}
 Write-Output 'TRAVELER_CHARACTER_PASS starter=10 exclusive_cards=28 starter_relic=1 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'
