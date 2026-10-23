@@ -1,6 +1,6 @@
 # 素材来源与分发说明
 
-当前运行时卡牌、能力、遗物及角色插图使用本项目生成式PNG；后续重复的9张卡牌和5件遗物改用本项目SVG占位草图，元素状态图标使用本项目SVG。docs/art中的创建提示和哈希作为来源证明保留，不作为玩法或发布状态说明。
+当前运行时卡牌、能力、遗物及角色插图使用项目生成式PNG；TC_C19–TC_C28已换为用户在云盘中确认的卡牌PNG，5种能力使用独立透明PNG状态图标，5件遗物仍用SVG占位草图，元素连携状态图标使用本项目SVG。docs/art中的来源和哈希保留，不作为玩法或发布状态说明。
 
 0.3.9本地候选的战斗角色直接引用原有character/body.png，以相同UV制作七层网格和18关节；未生成或修改栅格图片。旧11部件atlas保留历史，当前开发控制器不再使用它。见[同母稿方案](design/TRAVELER-NATURAL-MOTION.md)。
 
@@ -14,7 +14,8 @@
 | character/merchant.tscn | 商店角色场景复用本项目已生成body.png，等比缩放并校准脚底基线；未新增图片或复制原生角色素材 |
 | ui/element_none、wind、rock、lightning.svg | 项目代码绘制的正式小尺寸状态图标，无外部图片输入 |
 | ui/reward_block、attack、draw.svg及旧插图SVG | 项目矢量源码，当前没有常驻面板使用奖励图标；运行时卡牌和角色插图使用PNG |
-| art/drafts/TC_C19–TC_C27.svg、TC_R03–TC_R07.svg | 本项目以独立几何轮廓和文字描边绘制的14张占位草图；保留每组图片首次用途，后续重复项改用独立文件。中文标签转为矢量路径，不分发字体；三相灌注状态图标沿用其对应新草图 |
+| art/TC_C19–TC_C28.png、ui/powers/*.png | 用户2026-10-23生成、上传云盘并确认替换的10张卡牌封面和5张Buff图标；原始PNG字节直接接入，来源、对应关系与SHA256见[导入记录](art/CLOUD-ART-20261023.md) |
+| art/drafts/TC_C19–TC_C28.svg、TC_R03–TC_R07.svg | 本项目独立几何占位草图，中文标签转为矢量路径，不分发字体；卡牌SVG保留历史，运行时卡牌及三相灌注状态已改用上述PNG，遗物仍引用SVG |
 | 连携特效 | ElementComboVfx.cs使用Godot基本线条绘制，无外部纹理或音频 |
 | 普通攻防、受击及六套元素特效 | TravelerRig控制分层关节；CombatElementVfx以Godot曲线、多边形及折线绘制特效，无新增外部音频或纹理 |
 | 工坊image.png及rules.png | New-WorkshopArtwork.ps1以几何线条、色块、系统字体绘制的封面/规则图，非游戏截图、非生成式图片 |

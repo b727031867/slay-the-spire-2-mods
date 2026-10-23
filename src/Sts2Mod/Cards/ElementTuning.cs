@@ -29,7 +29,7 @@ namespace Sts2Mod.Cards;
 public sealed class ElementTuning() : ElementCardModel(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 {
     public override Element CardElement => Element.None;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C24.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C24.png";
     protected override void OnUpgrade() { }
     protected override void AddExtraArgsToDescription(LocString description)
     {

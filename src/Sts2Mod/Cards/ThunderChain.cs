@@ -15,7 +15,7 @@ public sealed class ThunderChain : ElementCardModel
 {
     public ThunderChain() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C19.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C19.png";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(5m, ValueProp.Move), new DynamicVar("Hits", 2m)];
     protected override void OnUpgrade() => DynamicVars["Hits"].UpgradeValueBy(1m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

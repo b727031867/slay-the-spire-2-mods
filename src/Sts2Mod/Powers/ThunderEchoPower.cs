@@ -5,5 +5,5 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_THUNDER_ECHO")]
 public sealed class ThunderEchoPower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/thunder_echo.png";
+    public override string CustomPackedIconPath => "res://Sts2Mod/ui/powers/thunder_echo.png";
 }

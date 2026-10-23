@@ -13,7 +13,7 @@ namespace Sts2Mod.Cards;
 public sealed class EchoingBlight() : ElementCardModel(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/drafts/TC_C28.svg";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C28.png";
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];
     protected override void OnUpgrade()
     {

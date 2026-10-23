@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "friends_only",
-  "changeNote": "0.3.17：新增四个旅行者主题事件及持久奖励；队伍至少一名旅行者即可出现，其他角色独立获得本角色牌、升级、普通遗物和通用契约。包含0.3.15卡牌平衡、雷蚀回响与元素调律输入修复。保持仅限好友。",
+  "changeNote": "0.3.17 素材更新：替换TC_C19–TC_C28的10张卡牌封面，并为风的指引、磐岩之心、雷霆余响、元素共鸣、三相灌注接入5张独立透明Buff图标。用户已确认游戏内显示正常；本次未改玩法，按用户要求不跑回归测试。保持仅限好友。",
   "tags": [],
   "dependencies": [
     3737335127

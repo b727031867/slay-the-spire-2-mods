@@ -9,7 +9,7 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_ROCK_HEART")]
 public sealed class RockHeartPower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/rock_heart.png";
+    public override string CustomPackedIconPath => "res://Sts2Mod/ui/powers/rock_heart.png";
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext context, Player player)
     {
         if (player != Owner.Player || !CanReward) return;

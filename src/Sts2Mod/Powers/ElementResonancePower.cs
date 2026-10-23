@@ -9,7 +9,7 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_ELEMENT_RESONANCE")]
 public sealed class ElementResonancePower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/element_resonance.png";
+    public override string CustomPackedIconPath => "res://Sts2Mod/ui/powers/element_resonance.png";
     protected override object InitInternalData() => new List<int>();
     private List<int> EnergyOrder => GetInternalData<List<int>>();
     public void AddCopy(int energy) { EnergyOrder.Add(energy); InvokeDisplayAmountChanged(); }

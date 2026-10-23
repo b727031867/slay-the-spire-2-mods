@@ -36,7 +36,7 @@ if ($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR') { throw 'Expanded c
 if (!$text.Contains('STS2MOD_TEST_PASS ART_card_relic_portraits_unique')) { throw 'Card/relic portraits are not unique.' }
 foreach ($id in @('TC_C19','TC_C20','TC_C21','TC_C22','TC_C23','TC_C24','TC_C25','TC_C26','TC_C27','TC_C28',
     'TC_R03','TC_R04','TC_R05','TC_R06','TC_R07')) {
-    if (!$text.Contains("STS2MOD_TEST_PASS ART_draft_$id")) { throw "Missing draft texture: $id" }
+    if (!$text.Contains("STS2MOD_TEST_PASS ART_portrait_$id")) { throw "Missing portrait texture: $id" }
 }
 if (!$text.Contains('STS2MOD_TEST_PASS ART_topbar_uses_face_closeup_scene')) { throw 'Native top-bar portrait is not wired to the face close-up.' }
 foreach ($asset in @('wind_guidance','rock_heart','thunder_echo','element_resonance','gale_sweep','shattering_rock',

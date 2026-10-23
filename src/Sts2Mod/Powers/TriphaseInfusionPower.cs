@@ -17,7 +17,7 @@ public sealed class TriphaseInfusionPower : TravelerAbilityPower
 {
     private CardModel? _source;
     private int _temporaryDexterity;
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/drafts/TC_C25.svg";
+    public override string CustomPackedIconPath => "res://Sts2Mod/ui/powers/triphase_infusion.png";
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext context, Player player)
     {
         if (player == Owner.Player && _source is not null) await Trigger(context, _source, null);

@@ -9,7 +9,7 @@ namespace Sts2Mod.Powers;
 [CustomID("TC_FIRST_ELEMENT_RESONANCE")]
 public sealed class FirstElementResonancePower : TravelerAbilityPower
 {
-    public override string CustomPackedIconPath => "res://Sts2Mod/art/element_resonance.png";
+    public override string CustomPackedIconPath => "res://Sts2Mod/ui/powers/element_resonance.png";
     public override async Task OnComboReward(PlayerChoiceContext context, ComboKind kind, int actualRewardNumber)
     {
         if (!CanReward || actualRewardNumber != 1) return;

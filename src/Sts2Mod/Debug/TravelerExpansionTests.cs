@@ -64,11 +64,11 @@ public partial class TravelerTestRunner
             .Concat(ModelDb.RelicPool<TravelerRelicPool>().AllRelics.Select(relic => relic.PackedIconPath)).ToArray();
         Check(portraits.Length == 37 && portraits.All(path => !string.IsNullOrEmpty(path))
             && portraits.Distinct().Count() == portraits.Length, "ART_card_relic_portraits_unique");
-        foreach (var path in portraits.OfType<string>().Where(path => path.Contains("/drafts/")))
+        foreach (var path in portraits.OfType<string>())
         {
             var texture = ResourceLoader.Load<Texture2D>(path);
             Check(texture is not null && texture.GetWidth() >= 128 && texture.GetHeight() >= 128,
-                "ART_draft_" + System.IO.Path.GetFileNameWithoutExtension(path));
+                "ART_portrait_" + System.IO.Path.GetFileNameWithoutExtension(path));
         }
         foreach (var asset in new[] { "wind_guidance", "rock_heart", "thunder_echo", "element_resonance", "gale_sweep",
             "shattering_rock", "thunder_mark", "triphase_finale", "wind_shelter", "patient_rampart", "charge_thunder",
