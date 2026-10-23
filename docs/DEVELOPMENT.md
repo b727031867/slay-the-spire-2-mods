@@ -35,6 +35,8 @@ $launch = .\scripts\Start-ModTest.ps1 -Suite Visuals
 
 纯规则和日志分类检查：
 
+四事件专项可单独运行 `Start-ModGame.ps1 -Headless -TravelerEvents -PassThru`，记录返回进程与日志；完成 `STS2MOD_EVENTS_COMPLETE` 后使用 `Test-TravelerEventsRun.ps1 -LogFile <日志> -CodeCommit <包身份>` 严格校验，并只清理该次返回的进程。Full也执行此专项，且要求事件完成证据。SavePrepare/SaveResume夹具额外验证永久元素、归途和六种事件遗物的真实磁盘恢复；持续战斗前明确移除这些夹具增益以保留原有soak基线。
+
 ```powershell
 . .\scripts\Enter-DevEnvironment.ps1
 dotnet run --project tests/ComboRules/ComboRules.csproj --configuration Release

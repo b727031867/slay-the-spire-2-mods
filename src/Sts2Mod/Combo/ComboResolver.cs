@@ -101,6 +101,9 @@ public static class ComboResolver
                 var receiver = results.FirstOrDefault()?.Receiver;
                 if (receiver is not null && results.Any(result => result.TotalDamage > 0)) ComboFeedback.ShowReward(creature, receiver, reservation);
                 awarded = results.Any(result => result.TotalDamage > 0);
+                if (awarded && receiver is not null)
+                    foreach (var nail in card.Owner.Relics.OfType<WallPiercingNail>())
+                        await nail.OnHit(context, receiver);
                 GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} kind=RockLightning target_mode={(randomTarget ? "random" : "selected")} target={receiver?.CombatId} bonus={bonus}");
             }
         }
@@ -122,6 +125,9 @@ public static class ComboResolver
             awarded = creature.Block > before;
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} block_before={before} block_after={creature.Block} bonus={bonus}");
         }
+        if (awarded && creature.IsAlive)
+            foreach (var relic in card.Owner.Relics.OfType<IEventComboRelic>().ToArray())
+                await relic.OnReward(context, reservation.Kind);
         if (awarded && creature.IsAlive && CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsEnding
             && creature.CombatState?.Enemies.Any(enemy => enemy.IsAlive) == true)
         {

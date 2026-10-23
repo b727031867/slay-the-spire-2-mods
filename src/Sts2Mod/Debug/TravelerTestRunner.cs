@@ -148,6 +148,11 @@ public partial class TravelerTestRunner : Node
         _target.SetMaxHpInternal(2000m); _target.SetCurrentHpInternal(2000m);
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(20m, _player);
+        if (CommandLineHelper.HasArg("sts2mod-events"))
+        {
+            await TestTravelerEvents();
+            return;
+        }
         if (CommandLineHelper.HasArg("sts2mod-visuals"))
         {
             await TestComboHud();
@@ -250,6 +255,7 @@ public partial class TravelerTestRunner : Node
         await TestPresentation();
         await TestContinuousCombos();
         await TestExpandedCards();
+        await TestTravelerEvents();
         await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
         GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
     }

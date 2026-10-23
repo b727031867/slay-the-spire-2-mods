@@ -49,7 +49,8 @@ public sealed class ComboPower : CustomPowerModel
     public override LocString Title => WithState(DisplayAmount == 0 ? "exhaustedTitle" : "title");
     public override LocString Description => WithState(DisplayAmount == 0 ? "exhaustedDescription" : "description");
 
-    internal void RefreshLimit() => State.SetTurnLimit(Owner.Player?.Relics.Any(r => (r is JourneyCompass or UnboundJourneyCompass) && !r.IsMelted) == true ? 4 : ComboState.Limit);
+    internal void RefreshLimit() => State.SetTurnLimit((Owner.Player?.Relics.Any(r => (r is JourneyCompass or UnboundJourneyCompass) && !r.IsMelted) == true ? 4 : ComboState.Limit)
+        + (Owner.Player?.Relics.Any(r => r is ReverseWatch && !r.IsMelted) == true ? 1 : 0));
     public void BeginTurn() { RefreshLimit(); State.BeginTurn(); Publish("turn_start"); }
     private void Clear(string reason) { State.ClearCombat(); Publish(reason); }
     internal void FlashReward() => Flash();

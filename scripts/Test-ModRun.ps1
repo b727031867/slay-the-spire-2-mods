@@ -19,6 +19,7 @@ try {
         Full {
             & (Join-Path $PSScriptRoot 'Test-TravelerRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Task003 -Headless
             & (Join-Path $PSScriptRoot 'Test-ExpandedCardRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Full
+            & (Join-Path $PSScriptRoot 'Test-TravelerEventsRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit
         }
         SavePrepare { & (Join-Path $PSScriptRoot 'Test-Task003EndToEnd.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Phase Prepare }
         SaveResume { & (Join-Path $PSScriptRoot 'Test-Task003EndToEnd.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Phase Resume }

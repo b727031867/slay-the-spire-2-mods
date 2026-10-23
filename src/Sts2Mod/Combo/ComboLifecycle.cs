@@ -16,7 +16,7 @@ public sealed class ComboLifecycle : SingletonModel
     }
     public override async Task AfterCardPlayed(PlayerChoiceContext context, MegaCrit.Sts2.Core.Entities.Cards.CardPlay play)
     {
-        if (play.Card is ElementCardModel || CombatCardElements.Assigned.Get(play.Card) == 0) return;
+        if (play.Card is ElementCardModel || CombatCardElements.Get(play.Card) == Element.None) return;
         var reservation = await ComboPower.Reserve(play.Card, context, play, CombatCardElements.Get(play.Card));
         await ComboPower.Resolve(play.Card, context, play, reservation);
     }

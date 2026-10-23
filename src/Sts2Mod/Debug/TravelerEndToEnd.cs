@@ -31,13 +31,15 @@ namespace Sts2Mod.Debug;
 
 public partial class TravelerTestRunner
 {
-    private sealed record SaveExpectation(string[] Cards, string[] Relics, int Gold);
+    private sealed record SaveExpectation(string[] Cards, string[] Relics, int Gold, string[]? PermanentElements = null);
     private static readonly Type[] ThemeTypes = TravelerContent.RewardCardTypes.ToArray();
     private static bool IsTheme(CardModel card) => ThemeTypes.Contains(card.GetType());
     private string ExpectationPath => Path.Combine(TestSaveSandbox.Root, "expectation.json");
     private SaveExpectation Snapshot() => new(
         _player.Deck.Cards.Select(c => $"{c.Id.Entry}:{c.CurrentUpgradeLevel}").Order().ToArray(),
-        _player.Relics.Select(r => r.Id.Entry).Order().ToArray(), _player.Gold);
+        _player.Relics.Select(r => r.Id.Entry).Order().ToArray(), _player.Gold,
+        _player.Deck.Cards.Where(c => CombatCardElements.Permanent.Get(c) != 0)
+            .Select(c => $"{c.Id.Entry}:{CombatCardElements.Permanent.Get(c)}").Order().ToArray());
 
     private async Task RunEndToEnd()
     {
@@ -66,6 +68,14 @@ public partial class TravelerTestRunner
         }
         Check(ThemeTypes.All(t => _player.Deck.Cards.Any(c => c.GetType() == t && c.CurrentUpgradeLevel == 0)
             && _player.Deck.Cards.Any(c => c.GetType() == t && c.CurrentUpgradeLevel == 1)), "TASK008_save_fixture_eighteen_base_and_upgrades");
+        CombatCardElements.Permanent.Set(_player.Deck.Cards.First(c => c is TravelerStrike), (int)Element.Wind);
+        await CardPileCmd.Add(run.CreateCard<Homeward>(_player), PileType.Deck);
+        await RelicCmd.Obtain<WallPiercingNail>(_player);
+        await RelicCmd.Obtain<EchoSpool>(_player);
+        await RelicCmd.Obtain<ReverseWatch>(_player);
+        await RelicCmd.Obtain<OutsideLetter>(_player);
+        await RelicCmd.Obtain<AddressCorrection>(_player);
+        await RelicCmd.Obtain<UnclaimedMail>(_player);
         await EnterOrdinaryMapCombat();
         await SaveManager.Instance.SaveRun(null);
         Check(SaveManager.Instance.HasRunSave, "TASK003_native_disk_save_exists");
@@ -190,6 +200,13 @@ public partial class TravelerTestRunner
         Check(expected.Cards.SequenceEqual(actual.Cards), "TASK003_disk_reload_exact_deck_and_upgrades");
         Check(expected.Relics.SequenceEqual(actual.Relics) && actual.Gold == expected.Gold,
             "TASK003_disk_reload_exact_relics_and_gold");
+        if (expected.PermanentElements is not null)
+        {
+            Check(expected.PermanentElements.SequenceEqual(actual.PermanentElements!)
+                && _player.Deck.Cards.Any(c => c is Homeward)
+                && _player.Relics.OfType<TravelerEventRelic>().Count() == 6, "EVENT_disk_reload_permanent_elements_curse_six_relics");
+            Check(Power.State.TurnLimit == 5, "EVENT_disk_reload_watch_limit5");
+        }
         Check(_player.Relics.Count(r => r is PaimonCheer) == 1 && Power.State.Last == Element.None && Power.State.Used == 0,
             "TASK003_reload_no_duplicate_relic_or_stale_combo");
         Check(ThemeTypes.All(t => _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Count(c => c.GetType() == t) == 1)
@@ -207,6 +224,12 @@ public partial class TravelerTestRunner
         await SaveManager.Instance.SaveRun(null);
         await NGame.Instance!.ReturnToMainMenu();
         await LoadSavedRun();
+        // Event persistence was verified above; restore the existing controlled soak's original mechanics.
+        foreach (var relic in _player.Relics.OfType<TravelerEventRelic>().ToArray()) await RelicCmd.Remove(relic);
+        foreach (var card in _player.Deck.Cards) CombatCardElements.Permanent.Set(card, 0);
+        foreach (var card in new[] { PileType.Hand, PileType.Draw, PileType.Discard, PileType.Exhaust }.SelectMany(p => p.GetPile(_player).Cards))
+            CombatCardElements.Permanent.Set(card, 0);
+        Power.RefreshLimit();
         await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
         await PlayerCmd.SetEnergy(3m, _player);
         await Play<RockGuard>();
