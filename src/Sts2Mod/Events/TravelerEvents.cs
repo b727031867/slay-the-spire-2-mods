@@ -27,7 +27,7 @@ public abstract class TravelerEvent : CustomEventModel
     public override LocString InitialDescription => Owner is not null && !IsTraveler
         ? new LocString("events", $"{Id.Entry}.pages.INITIAL_GUEST.description") : base.InitialDescription;
     protected EventOption Pick(string key, Func<Task>? chosen) => new(this, chosen, $"{Id.Entry}.pages.INITIAL.options.{key}");
-    protected void Page(string key, params EventOption[] options) => SetEventState(PageDescription(key), options);
+    protected void Page(string key, params EventOption[] options) => SetEventState(key == "INITIAL" ? InitialDescription : PageDescription(key), options);
     protected Task Leave() { SetEventFinished(PageDescription("LEAVE")); return Task.CompletedTask; }
     protected bool IsTraveler => Owner!.Character is Traveler;
     protected async Task Give<T>() where T : RelicModel

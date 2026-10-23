@@ -24,7 +24,7 @@ foreach ($character in @('IRONCLAD','SILENT','REGENT','NECROBINDER','DEFECT')) {
     foreach ($case in @('guest_path_own_pool','guest_path_rare_curse','guest_upgrade_free','guest_upgrade_cancel_no_charge',
         'guest_upgrade_second_once','guest_upgrade_insufficient_gold','guest_upgrade_empty','guest_guide_native_candidates',
         'guest_guide_free_once','guest_guide_no_owned','guest_contract_serialization','guest_contract_native_start',
-        'guest_address_own_temporary_free','guest_letter_no_early_heal','guest_address_exhaust_cost_reset',
+        'guest_address_own_temporary_free','guest_contract_ignores_other_owner','guest_letter_no_early_heal','guest_address_exhaust_cost_reset',
         'guest_letter_no_repeat','guest_mail_own_pool_four','guest_mail_pay15')) {
         if (!$text.Contains("STS2MOD_TEST_PASS EVENT_${case}_$character")) { throw "Missing companion case: $case/$character" }
     }

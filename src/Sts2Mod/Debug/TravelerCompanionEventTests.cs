@@ -108,7 +108,8 @@ public partial class TravelerTestRunner
                 Check(first.CurrentUpgradeLevel == 1 && CombatCardElements.Permanent.Get(first) == 0 && _player.Gold == 60,
                     "EVENT_guest_upgrade_free_" + tag);
                 using (CardSelectCmd.PushSelector(new ExpansionCardSelector(0))) await survey.CurrentOptions[0].Chosen();
-                Check(_player.Gold == 60 && !survey.IsFinished, "EVENT_guest_upgrade_cancel_no_charge_" + tag);
+                Check(_player.Gold == 60 && !survey.IsFinished && survey.Description!.GetFormattedText() == survey.InitialDescription.GetFormattedText(),
+                    "EVENT_guest_upgrade_cancel_no_charge_" + tag);
                 var paid = survey.CurrentOptions[0];
                 await paid.Chosen(); await paid.Chosen();
                 Check(survey.IsFinished && _player.Gold == 0 && recorder.Candidates.First().CurrentUpgradeLevel == 1,
@@ -159,6 +160,11 @@ public partial class TravelerTestRunner
                 "EVENT_guest_address_own_temporary_free_" + tag);
             var context = new BlockingPlayerChoiceContext();
             var hpBefore = _player.Creature.CurrentHp;
+            var handBefore = PileType.Hand.GetPile(_player).Cards.Count;
+            await letterRelic.AfterPlayerTurnStartEarly(context, traveler);
+            await address.AfterPlayerTurnStartEarly(context, traveler);
+            Check(_player.Creature.CurrentHp == hpBefore && PileType.Hand.GetPile(_player).Cards.Count == handBefore
+                && address.ModifyHandDraw(traveler, 5) == 5, "EVENT_guest_contract_ignores_other_owner_" + tag);
             await letterRelic.AfterSideTurnEnd(context, _player.Creature.Side, [_player.Creature]);
             Check(_player.Creature.CurrentHp == hpBefore, "EVENT_guest_letter_no_early_heal_" + tag);
             // Native end-turn actions prove the contract is wired into the real turn lifecycle.
