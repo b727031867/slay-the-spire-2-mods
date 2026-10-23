@@ -27,7 +27,7 @@ public interface IEventComboRelic
 public abstract class TravelerEventRelic : CustomRelicModel
 {
     public override RelicRarity Rarity => RelicRarity.Event;
-    public override string PackedIconPath => $"res://Sts2Mod/art/events/{Id.Entry}.svg";
+    public override string PackedIconPath => $"res://Sts2Mod/art/events/{Id.Entry}.png";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
 }
@@ -118,7 +118,7 @@ public sealed class UnclaimedMail : TravelerEventRelic;
 public sealed class CompanionLetter : TravelerEventRelic
 {
     private bool _healed;
-    public override string PackedIconPath => "res://Sts2Mod/art/events/TC_R11.svg";
+    public override string PackedIconPath => "res://Sts2Mod/art/events/TC_R14.png";
     public override Task BeforeCombatStart() { _healed = false; return Task.CompletedTask; }
     public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
     {
@@ -139,7 +139,7 @@ public sealed class CompanionLetter : TravelerEventRelic
 [CustomID("TC_R15")]
 public sealed class CompanionAddress : AddressCorrection
 {
-    public override string PackedIconPath => "res://Sts2Mod/art/events/TC_R12.svg";
+    public override string PackedIconPath => "res://Sts2Mod/art/events/TC_R15.png";
     protected override IEnumerable<CardModel> Candidates => Owner.Character.CardPool.GetUnlockedCards(Owner.UnlockState, 0)
         .Where(c => c.Rarity is CardRarity.Common or CardRarity.Uncommon
             && !c.EnergyCost.CostsX && !c.HasStarCostX && c.EnergyCost.Canonical >= 0 && !c.Keywords.Contains(CardKeyword.Unplayable));

@@ -17,8 +17,13 @@ foreach ($case in @('act_range_0','act_range_1','act_range_2','low_hp_entry_lock
     if (!$text.Contains("STS2MOD_TEST_PASS EVENT_$case")) { throw "Missing event case: $case" }
 }
 foreach ($id in @('TC_E01','TC_E02','TC_E03','TC_E04')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS EVENT_portrait_$id")) { throw "Missing event portrait: $id" }
     if (!$text.Contains("STS2MOD_TEST_PASS EVENT_native_room_finish_$id")) { throw "Missing native event room: $id" }
 }
+foreach ($id in 8..15) {
+    if (!$text.Contains('STS2MOD_TEST_PASS EVENT_icon_TC_R' + $id.ToString('00'))) { throw "Missing event relic icon: $id" }
+}
+if (!$text.Contains('STS2MOD_TEST_PASS EVENT_curse_portrait')) { throw 'Missing Homeward portrait.' }
 if (!$text.Contains('STS2MOD_COMPANION_EVENTS_COMPLETE characters=5 rewards=owner_scoped multiplayer=NOT_RUN')) { throw 'Companion event suite incomplete.' }
 foreach ($character in @('IRONCLAD','SILENT','REGENT','NECROBINDER','DEFECT')) {
     foreach ($case in @('guest_path_own_pool','guest_path_rare_curse','guest_upgrade_free','guest_upgrade_cancel_no_charge',

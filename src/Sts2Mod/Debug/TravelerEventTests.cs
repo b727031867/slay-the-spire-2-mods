@@ -33,7 +33,8 @@ public partial class TravelerTestRunner
         foreach (var model in ModelDb.AllEvents.OfType<TravelerEvent>())
         {
             Check(!model.Title.GetFormattedText().Contains(".title"), "EVENT_title_" + model.Id.Entry);
-            Check(ResourceLoader.Exists(model.CustomInitialPortraitPath), "EVENT_portrait_" + model.Id.Entry);
+            Check(ResourceLoader.Load<Texture2D>(model.CustomInitialPortraitPath) is { } portrait
+                && portrait.GetWidth() > 0 && portrait.GetHeight() > 0, "EVENT_portrait_" + model.Id.Entry);
             Check(model.IsAllowed(_player.RunState) == (model is UnmappedPath or MisalignedSurvey), "EVENT_act1_filter_" + model.Id.Entry);
         }
         foreach (var type in new[] { typeof(WallPiercingNail), typeof(EchoSpool), typeof(ReverseWatch), typeof(OutsideLetter), typeof(AddressCorrection), typeof(UnclaimedMail) })
@@ -42,6 +43,11 @@ public partial class TravelerTestRunner
             Check(RelicModel.FromSerializable(relic.ToMutable().ToSerializable()).GetType() == type, "EVENT_relic_save_" + relic.Id.Entry);
             Check(!new MegaCrit.Sts2.Core.Localization.LocString("relics", relic.Id.Entry + ".description").GetFormattedText().Contains(".description"), "EVENT_relic_text_" + relic.Id.Entry);
         }
+        foreach (var relic in ModelDb.AllRelics.OfType<TravelerEventRelic>())
+            Check(ResourceLoader.Load<Texture2D>(relic.PackedIconPath) is { } icon
+                && icon.GetWidth() > 0 && icon.GetHeight() > 0, "EVENT_icon_" + relic.Id.Entry);
+        Check(ResourceLoader.Load<Texture2D>(ModelDb.Card<Homeward>().CustomPortraitPath) is { } cursePortrait
+            && cursePortrait.GetWidth() > 0 && cursePortrait.GetHeight() > 0, "EVENT_curse_portrait");
         var actField = AccessTools.Field(typeof(RunState), "_currentActIndex");
         var oldAct = _player.RunState.CurrentActIndex;
         try

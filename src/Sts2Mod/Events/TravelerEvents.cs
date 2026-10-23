@@ -23,7 +23,7 @@ public abstract class TravelerEvent : CustomEventModel
     protected abstract bool EarlyActs { get; }
     public override bool IsAllowed(IRunState run) => run.Players.Any(p => p.Character is Traveler)
         && run.CurrentActIndex >= (EarlyActs ? 0 : 1) && run.CurrentActIndex <= (EarlyActs ? 1 : 2);
-    public override string CustomInitialPortraitPath => $"res://Sts2Mod/art/events/{Id.Entry}.svg";
+    public override string CustomInitialPortraitPath => $"res://Sts2Mod/art/events/{Id.Entry}.png";
     public override LocString InitialDescription => Owner is not null && !IsTraveler
         ? new LocString("events", $"{Id.Entry}.pages.INITIAL_GUEST.description") : base.InitialDescription;
     protected EventOption Pick(string key, Func<Task>? chosen) => new(this, chosen, $"{Id.Entry}.pages.INITIAL.options.{key}");
