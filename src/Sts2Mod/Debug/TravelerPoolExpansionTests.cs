@@ -212,6 +212,34 @@ public partial class TravelerTestRunner
                 "POOL22_x_lightning_dead_targets_and_artifact_" + up);
         }
 
+        foreach (var up in new[] { false, true })
+        foreach (var x in new[] { 0, 1, 3 })
+        foreach (var weak in new[] { false, true })
+        {
+            await FreshExpansion(); SetExpansionElement(Element.Lightning);
+            await PowerCmd.Apply<StrengthPower>(ExpansionContext(), _player.Creature, 2, _player.Creature, null);
+            if (weak) await PowerCmd.Apply<WeakPower>(ExpansionContext(), _player.Creature, 1, _target, null);
+            await PowerCmd.Apply<VulnerablePower>(ExpansionContext(), _target, 3, _player.Creature, null);
+            var card = await Add<HeavenEarthConvergence>(up);
+            var enemies = _player.Creature.CombatState!.Enemies.ToArray();
+            var hpBefore = enemies.Select(e => e.CurrentHp).ToArray();
+            var perHit = (up ? 10m : 8m) * (weak ? 0.75m : 1m);
+            var expected = enemies.Select(e => Math.Floor(perHit * (e == _target ? 1.5m : 1m))).ToArray();
+            var damage = (MegaCrit.Sts2.Core.Localization.DynamicVars.DamageVar)card.DynamicVars["LightningDamage"];
+            Check(enemies.Select((enemy, i) =>
+            {
+                damage.UpdateCardPreview(card, CardPreviewMode.Normal, enemy, true);
+                return Math.Floor(damage.PreviewValue) == expected[i];
+            }).All(matches => matches), $"POOL22_x_lightning_preview_{x}_{weak}_{up}");
+            await PlayerCmd.SetEnergy(x, _player);
+            await Queue(new PlayCardAction(card, null));
+            Check(enemies.Select((enemy, i) => hpBefore[i] - enemy.CurrentHp == expected[i] * x
+                    && (enemy.GetPower<VulnerablePower>()?.Amount ?? 0) == (enemy == _target ? 3 : 0) + x + (up ? 1 : 0))
+                    .All(matches => matches)
+                && _player.PlayerCombatState!.Energy == 0 && card.Pile?.Type == PileType.Exhaust,
+                $"POOL22_x_lightning_native_multihit_{x}_{weak}_{up}");
+        }
+
         await TestEchoingBlight();
         await TestExpansion22Relics();
         await TestExpansion22Tuning();

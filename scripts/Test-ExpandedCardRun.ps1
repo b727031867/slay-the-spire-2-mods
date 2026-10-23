@@ -15,6 +15,15 @@ foreach ($case in @('finale_new_combat_resets','finale_counts_trigger_without_re
     if (!$text.Contains("STS2MOD_TEST_PASS BAL15_$case")) { throw "Missing balance boundary: $case" }
 }
 foreach ($up in @('False','True')) {
+    foreach ($x in @(0,1,3)) {
+        foreach ($weak in @('False','True')) {
+            foreach ($case in @('preview','native_multihit')) {
+                if (!$text.Contains("STS2MOD_TEST_PASS POOL22_x_lightning_${case}_${x}_${weak}_$up")) {
+                    throw "Missing lightning X attack: $case/$x/$weak/$up"
+                }
+            }
+        }
+    }
     foreach ($case in @('finale_combat_count_survives_turn','finale_uncapped_combat_scaling')) {
         if (!$text.Contains("STS2MOD_TEST_PASS BAL15_${case}_$up")) { throw "Missing combat scaling: $case/$up" }
     }

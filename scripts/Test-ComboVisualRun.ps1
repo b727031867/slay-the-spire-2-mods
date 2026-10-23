@@ -2,6 +2,22 @@ param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$Cod
 $ErrorActionPreference='Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 $text=Get-Content -Raw -LiteralPath $LogFile
+foreach($language in @('eng','zhs')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS GOOPY_block_format_$language")){throw "Missing Goopy block format: $language"}
+}
+foreach($upgraded in @('False','True')) {
+ foreach($case in @('native_enchantment','serialized_growth')) {
+  if(!$text.Contains("STS2MOD_TEST_PASS GOOPY_${case}_$upgraded")){throw "Missing Goopy case: $case/$upgraded"}
+ }
+ foreach($played in 0..2) {
+  foreach($case in @('preview','actual_block_and_growth')) {
+   if(!$text.Contains("STS2MOD_TEST_PASS GOOPY_${case}_${upgraded}_$played")){throw "Missing Goopy play: $case/$upgraded/$played"}
+  }
+ }
+}
+if(!$text.Contains('STS2MOD_GOOPY_COMPLETE preview=PASS actual_block=PASS growth=PASS rendering=NOT_RUN')){
+ throw 'Goopy block preview suite incomplete'
+}
 foreach($id in 19..28) {
  if(!$text.Contains("STS2MOD_TEST_PASS PORTRAIT_fills_native_frame_TC_C$id")){throw "Missing portrait framing check: $id"}
 }

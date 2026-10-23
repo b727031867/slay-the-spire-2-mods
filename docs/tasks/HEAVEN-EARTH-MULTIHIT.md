@@ -1,0 +1,9 @@
+# 天地交征雷分支多段攻击 · 2026-10-24
+
+- 基线：bcc2526工作区，包含此前尚未部署的格挡预览、元素标签和遗物名称修改；本次仅调整TC_C27相关实现、翻译和回归用例。
+- 影响：HeavenEarthConvergence原来将6/8基础伤害乘X后进行一次原生攻击，力量只叠加一次。原生StrengthPower和VulnerablePower均处理ValueProp.Move，不要求卡牌类型为Attack；现有代码本身没有禁用易伤。
+- 修改：每段6/8基础伤害、WithHitCount(X)，每段走原生伤害修正和取整；LightningDamage改为同名DamageVar，使用diff()显示修正预览。风/岩、X快照、重放、Chemical X、攻击后施加易伤、消耗及卡牌技能类型不变。
+- 风险：局部多段伤害会逐段触发原生受击机制，例如格挡、无实体和反伤；这是多段攻击的预期行为。没有新增保存字段或更改模型ID。
+- 验证范围：编译、两语言JSON/占位符及严格检查器语法；Cards专项补24项断言，覆盖普通/升级、X=0/1/3、力量+2、有无虚弱、不同敌人易伤与非易伤、逐段取整、预览、付款、消耗和攻击后易伤。已有分支/死亡敌人/人工制品/X重放边界用例保留。
+- 不运行：按当前仅修改代码的范围，不部署、不发布、不启动游戏；原生Cards专项与UI验证为NOT_RUN，不宣称新增运行时断言已通过。完整回归不涉及本次局部修改。
+- 实际结果：PC-A ExportRelease/win-x64编译PASS（0警告、0错误）；eng/zhs JSON及TC_C27描述参数检查PASS；Test-ExpandedCardRun.ps1语法PASS；git diff --check PASS。代码处于dirty工作区，未生成或替换安装包。

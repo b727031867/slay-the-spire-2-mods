@@ -125,7 +125,7 @@ public sealed class HeavenEarthConvergence() : ElementCardModel(0, CardType.Skil
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override bool HasEnergyCostX => true;
     public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C27.tres";
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("RockPlating", 3), new DynamicVar("LightningDamage", 6), new DynamicVar("ExtraX", 0)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("RockPlating", 3), new DamageVar("LightningDamage", 6, ValueProp.Move), new DynamicVar("ExtraX", 0)];
     protected override void OnUpgrade() { DynamicVars["RockPlating"].UpgradeValueBy(1); DynamicVars["LightningDamage"].UpgradeValueBy(2); DynamicVars["ExtraX"].UpgradeValueBy(1); }
     protected override void AddExtraArgsToDescription(LocString description)
     {
@@ -151,7 +151,8 @@ public sealed class HeavenEarthConvergence() : ElementCardModel(0, CardType.Skil
                 break;
             case Element.Lightning:
                 var enemies = CombatState!.Enemies.Where(enemy => enemy.IsAlive).ToArray();
-                if (_x > 0) await DamageCmd.Attack(DynamicVars["LightningDamage"].BaseValue * _x).FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
+                if (_x > 0) await DamageCmd.Attack(DynamicVars["LightningDamage"].BaseValue).WithHitCount(_x)
+                    .FromCard(this).TargetingAllOpponents(CombatState!).Execute(context);
                 var vulnerable = _x + DynamicVars["ExtraX"].IntValue;
                 if (vulnerable > 0)
                     foreach (var enemy in enemies.Where(enemy => enemy.IsAlive))
