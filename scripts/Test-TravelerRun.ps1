@@ -64,7 +64,7 @@ if ($Acquisition) {
         $skip = '(?m)^STS2MOD_REWARD player=' + [regex]::Escape($finalKill.Groups[1].Value) + ' action=' + [regex]::Escape($finalKill.Groups[2].Value) + ' skipped=combat_ended_or_dead\r?$'
         if ($content -notmatch $skip) { throw 'The final killing action did not explicitly skip its combo reward.' }
     }
-    if ($content -notmatch 'STS2MOD_TEST_COMPLETE assertions=\d+ multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave=False') {
+    if ($content -notmatch 'STS2MOD_TEST_COMPLETE assertions=\d+ multiplayer=NOT_RUN ui=NOT_RUN shouldSave=False') {
         throw 'The rule test has not completed.'
     }
 }

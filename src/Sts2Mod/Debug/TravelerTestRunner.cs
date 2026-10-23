@@ -256,8 +256,7 @@ public partial class TravelerTestRunner : Node
         await TestContinuousCombos();
         await TestExpandedCards();
         await TestTravelerEvents();
-        await TravelerHandCommand.Prepare(_player, 1, false, full: true, paimon: true);
-        GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=READY_FOR_MANUAL_CHECK shouldSave={RunManager.Instance.ShouldSave}");
+        GD.Print($"STS2MOD_TEST_COMPLETE assertions={_assertions} multiplayer=NOT_RUN ui=NOT_RUN shouldSave={RunManager.Instance.ShouldSave}");
     }
 
     private async Task TestLightning()
