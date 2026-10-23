@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "friends_only",
-  "changeNote": "0.3.17 通关修复：补齐旅行者与建筑师的中英文结局对话，修复通关后无动画、无法进入胜利结算的问题；首胜和重复通关均可选择有效对话，恢复原生结局动画及结算流程。包含此前卡图取景与动态伤害预览修复。保持仅限好友。",
+  "changeNote": "0.3.17 验收更新：天地交征雷分支改为X次全体攻击，每段享受力量、易伤等修正；修复黏糊格挡预览和5张卡牌的元素文字颜色；派蒙的应援更名元素之心；更新4张事件图、8张遗物图和归途卡图。保持仅限好友。",
   "tags": [],
   "dependencies": [
     3737335127
