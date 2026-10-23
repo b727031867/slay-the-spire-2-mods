@@ -15,13 +15,14 @@ public sealed class JourneyPlans : CustomCardModel
 {
     public JourneyPlans() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     public override string CustomPortraitPath => "res://Sts2Mod/art/journey_plans.png";
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
     protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var selected = await CardSelectCmd.FromHand(context, Owner,
             new CardSelectorPrefs(SelectionScreenPrompt, CurrentUpgradeLevel > 0 ? 0 : 1, DynamicVars.Cards.IntValue),
-            card => card != this && !card.ShouldRetainThisTurn, this);
-        foreach (var card in selected) card.GiveSingleTurnRetain();
+            card => card != this && card.IsUpgradable, this);
+        foreach (var card in selected) CardCmd.Upgrade(card);
     }
 }

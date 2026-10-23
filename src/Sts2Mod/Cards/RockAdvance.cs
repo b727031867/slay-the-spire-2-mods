@@ -19,11 +19,11 @@ public sealed class RockAdvance : ElementCardModel
     public override string CustomPortraitPath => "res://Sts2Mod/art/rock_advance.png";
     public override bool GainsBlock => true;
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        [new DamageVar(5m, ValueProp.Move), new BlockVar(3m, ValueProp.Move)];
+        [new DamageVar(5m, ValueProp.Move), new BlockVar(5m, ValueProp.Move)];
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(2m);
-        DynamicVars.Block.UpgradeValueBy(2m);
+        DynamicVars.Damage.UpgradeValueBy(3m);
+        DynamicVars.Block.UpgradeValueBy(3m);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

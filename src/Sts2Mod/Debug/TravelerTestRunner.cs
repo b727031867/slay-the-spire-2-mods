@@ -158,7 +158,7 @@ public partial class TravelerTestRunner : Node
         if (CommandLineHelper.HasArg("sts2mod-cards"))
         {
             await TestExpandedCards();
-            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=27 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
+            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=28 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
             return;
         }
         if (CommandLineHelper.HasArg("sts2mod-character"))
@@ -354,28 +354,28 @@ public partial class TravelerTestRunner : Node
         await NextTurn();
         var hp = _target.CurrentHp;
         await Play<RockAdvance>();
-        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 3 && Power.State.Last == Element.Rock,
-            "TC13_rock_advance_damage5_then_block3");
+        Check(hp - _target.CurrentHp == 5 && _player.Creature.Block == 5 && Power.State.Last == Element.Rock,
+            "TC13_rock_advance_damage5_then_block5");
         await NextTurn(); hp = _target.CurrentHp;
         await Play<RockAdvance>(true);
-        Check(hp - _target.CurrentHp == 7 && _player.Creature.Block == 5, "TC13_rock_advance_upgrade_damage7_block5");
+        Check(hp - _target.CurrentHp == 8 && _player.Creature.Block == 8, "TC13_rock_advance_upgrade_damage8_block8");
 
         await NextTurn(); await SeedDraw();
         await Play<ThunderPrep>();
-        Check(_player.Creature.Block == 5 && PileType.Hand.GetPile(_player).Cards.Count == 1 && Power.State.Last == Element.Lightning,
-            "TC13_thunder_prep_block5_then_draw1");
+        Check(_player.Creature.Block == 7 && PileType.Hand.GetPile(_player).Cards.Count == 1 && Power.State.Last == Element.Lightning,
+            "TC13_thunder_prep_block7_then_draw1");
         await NextTurn(); await SeedDraw();
         await Play<ThunderPrep>(true);
-        Check(_player.Creature.Block == 8 && PileType.Hand.GetPile(_player).Cards.Count == 1,
-            "TC13_thunder_prep_upgrade_block8_draw1");
+        Check(_player.Creature.Block == 10 && PileType.Hand.GetPile(_player).Cards.Count == 1,
+            "TC13_thunder_prep_upgrade_block10_draw1");
 
         await NextTurn(); await SeedDraw(); hp = _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp);
         await Play<RockAdvance>(); await Play<ThunderPrep>();
-        Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == 9 && _player.Creature.Block == 8 && Power.State.Used == 1 && Power.State.Last == Element.Lightning,
+        Check(hp - _player.Creature.CombatState!.Enemies.Sum(e => e.CurrentHp) == 9 && _player.Creature.Block == 12 && Power.State.Used == 1 && Power.State.Last == Element.Lightning,
             "rock_to_defensive_thunder_attacks_random_enemy");
         await NextTurn(); await SeedDraw();
         await Play<ThunderPrep>(); await Play<TailwindPrep>();
-        Check(_player.Creature.Block == 5 && PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1,
+        Check(_player.Creature.Block == 7 && PileType.Hand.GetPile(_player).Cards.Count == 3 && Power.State.Used == 1,
             "new_cards_lightning_wind_draw_order");
 
         await NextTurn(); await SeedDraw(); hp = _target.CurrentHp;
@@ -384,7 +384,7 @@ public partial class TravelerTestRunner : Node
             "reverse_wind_lightning_draws_bonus");
         await NextTurn(); hp = _target.CurrentHp;
         await Play<LightningThrust>(); await Play<RockAdvance>();
-        Check(hp - _target.CurrentHp == 16 && _player.Creature.Block == 3 && Power.State.Used == 1,
+        Check(hp - _target.CurrentHp == 16 && _player.Creature.Block == 5 && Power.State.Used == 1,
             "reverse_lightning_rock_attacks_same_target");
 
         await RelicCmd.Obtain<PaimonCheer>(_player);

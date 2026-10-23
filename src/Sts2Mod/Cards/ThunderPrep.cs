@@ -19,7 +19,7 @@ public sealed class ThunderPrep : ElementCardModel
     public override string CustomPortraitPath => "res://Sts2Mod/art/thunder_prep.png";
     public override bool GainsBlock => true;
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        [new BlockVar(5m, ValueProp.Move), new CardsVar(1)];
+        [new BlockVar(7m, ValueProp.Move), new CardsVar(1)];
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
 
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

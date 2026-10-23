@@ -44,7 +44,7 @@ public static class ComboPresentation
         {
             ComboKind.WindRock => "block",
             ComboKind.LightningWind => "draw",
-            ComboKind.RockLightning when card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy || card is ThunderChain => "randomAttack",
+            ComboKind.RockLightning when card.Type == CardType.Skill && card.TargetType != TargetType.AnyEnemy => "randomAttack",
             _ => "attack"
         };
         return new(key, kind, element, power?.State.Remaining ?? ComboState.Limit,

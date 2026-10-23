@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+<title>雷蚀回响 占位草图</title>
+<rect width="512" height="384" fill="#eee7d8"/>
+<path d="M24 30L487 26M26 350L488 355M35 20L29 365M478 20L485 365" fill="none" stroke="#c8beae"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M207 80C80 15 55 195 154 238M305 80C432 15 457 195 358 238M156 122C86 111 108 223 174 207M356 122C426 111 404 223 338 207" stroke="#8a789d" stroke-width="5"/>
+<path d="M207 80C80 15 55 195 154 238M305 80C432 15 457 195 358 238" transform="translate(4 -3)" stroke="#a69b8c" opacity=".4" stroke-width="2"/>
+<path d="M274 50L213 162H259L229 252L308 137H262Z" stroke="#655478" stroke-width="6"/>
+<path d="M157 266C187 239 219 285 196 310C171 335 136 304 157 266ZM316 266C346 239 378 285 355 310C330 335 295 304 316 266Z" stroke="#608476" stroke-width="4"/>
+<path d="M203 286H299M213 300H289M118 272L99 286M394 272L413 286M244 322L256 338L268 322" stroke="#85796b" stroke-width="3"/>
+</g></svg>

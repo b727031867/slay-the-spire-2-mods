@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Powers.Mocks;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -56,7 +57,19 @@ public partial class TravelerTestRunner
         await TestComboHud();
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
+        await TestBalance0315();
         await TestPoolExpansion20261022();
+        var portraits = ModelDb.CardPool<TravelerCardPool>().AllCards.Cast<CustomCardModel>()
+            .Select(card => card.CustomPortraitPath)
+            .Concat(ModelDb.RelicPool<TravelerRelicPool>().AllRelics.Select(relic => relic.PackedIconPath)).ToArray();
+        Check(portraits.Length == 37 && portraits.All(path => !string.IsNullOrEmpty(path))
+            && portraits.Distinct().Count() == portraits.Length, "ART_card_relic_portraits_unique");
+        foreach (var path in portraits.OfType<string>().Where(path => path.Contains("/drafts/")))
+        {
+            var texture = ResourceLoader.Load<Texture2D>(path);
+            Check(texture is not null && texture.GetWidth() >= 128 && texture.GetHeight() >= 128,
+                "ART_draft_" + System.IO.Path.GetFileNameWithoutExtension(path));
+        }
         foreach (var asset in new[] { "wind_guidance", "rock_heart", "thunder_echo", "element_resonance", "gale_sweep",
             "shattering_rock", "thunder_mark", "triphase_finale", "wind_shelter", "patient_rampart", "charge_thunder",
             "journey_plans", "strike", "defend", "compass", "combo", "body", "icon", "select_background", "head_icon" })
@@ -77,11 +90,11 @@ public partial class TravelerTestRunner
         await TestDefensiveRandomCombos();
         await FreshExpansion();
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Where(c => c.Rarity != CardRarity.Basic).ToArray();
-        Check(pool.Length == 27 && pool.Count(c => c.Type == CardType.Attack) == 11
-            && pool.Count(c => c.Type == CardType.Skill) == 11 && pool.Count(c => c.Type == CardType.Power) == 5,
-            "EXP_pool_27_types_11_11_5");
-        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 10 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 12
-            && pool.Count(c => c.Rarity == CardRarity.Rare) == 5, "EXP_rarity_10_12_5");
+        Check(pool.Length == 28 && pool.Count(c => c.Type == CardType.Attack) == 11
+            && pool.Count(c => c.Type == CardType.Skill) == 12 && pool.Count(c => c.Type == CardType.Power) == 5,
+            "EXP_pool_28_types_11_12_5");
+        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 10 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 13
+            && pool.Count(c => c.Rarity == CardRarity.Rare) == 5, "EXP_rarity_10_13_5");
         Check(TravelerContent.RewardCardTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "EXP_all_ids_once");
         var boss = CardFactory.CreateForReward(_player, 3, CardCreationOptions.ForRoom(_player, RoomType.Boss)).ToArray();
         Check(boss.Length == 3 && boss.All(c => c.Card.Rarity == CardRarity.Rare), "EXP_boss_native_rare_rewards");
@@ -123,7 +136,7 @@ public partial class TravelerTestRunner
             await FreshExpansion();
             var before = _target.CurrentHp;
             await Play<ShatteringRock>(up);
-            Check(before - _target.CurrentHp == (up ? 17 : 13) && Power.State.Last == Element.Rock,
+            Check(before - _target.CurrentHp == (up ? 18 : 12) && Power.State.Last == Element.Rock,
                 "EXP_shattering_rock_" + up);
             await FreshExpansion();
             await Play<RockGuard>();
@@ -138,12 +151,16 @@ public partial class TravelerTestRunner
             await FreshExpansion();
             var wall = await Add<PatientRampart>(up);
             await Queue(new PlayCardAction(wall, null));
-            Check(_player.Creature.Block == (up ? 8 : 5) && wall.Keywords.Contains(CardKeyword.Retain),
+            Check(_player.Creature.Block == (up ? 9 : 6) && wall.Keywords.Contains(CardKeyword.Retain),
                 "EXP_patient_rampart_block_" + up);
             await FreshExpansion();
-            await Play<ChargeThunder>(up);
-            Check(_player.Creature.Block == (up ? 6 : 4) && _player.Creature.GetPower<EnergyNextTurnPower>()?.Amount == 1
-                && PileType.Exhaust.GetPile(_player).Cards.Any(c => c is ChargeThunder) == !up, "EXP_charge_thunder_base_" + up);
+            var charge = await Add<ChargeThunder>(up);
+            var chargeEnergy = _player.PlayerCombatState!.Energy;
+            await Queue(new PlayCardAction(charge, null));
+            Check(_player.Creature.Block == (up ? 9 : 6) && _player.Creature.GetPower<EnergyNextTurnPower>()?.Amount == 1
+                && _player.PlayerCombatState.Energy == chargeEnergy - 1
+                && !charge.Keywords.Contains(CardKeyword.Exhaust) && charge.Pile?.Type == PileType.Discard,
+                "EXP_charge_thunder_base_" + up);
             await SeedDraw();
             await ExpansionNativeTurn();
             Check(_player.PlayerCombatState!.Energy == _player.MaxEnergy + 1 && _player.Creature.GetPower<EnergyNextTurnPower>() is null,
@@ -158,7 +175,7 @@ public partial class TravelerTestRunner
             await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>(); await Play<RockGuard>();
             before = _target.CurrentHp;
             await Play<TriphaseFinale>(up);
-            Check(before - _target.CurrentHp == (up ? 24 : 22) && Power.State.Used == 3 && Power.State.Last == Element.Rock,
+            Check(before - _target.CurrentHp == (up ? 18 : 16) && Power.State.Used == 3 && Power.State.Last == Element.Rock,
                 "EXP_finale_three_combos_without_element_advance_" + up);
             var finale = await Add<TriphaseFinale>(up);
             await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), _player.Creature, 2m, _player.Creature, null);
@@ -166,7 +183,7 @@ public partial class TravelerTestRunner
             await PowerCmd.Apply<VulnerablePower>(new BlockingPlayerChoiceContext(), _target, 2m, _player.Creature, null);
             finale.DynamicVars.CalculatedDamage.UpdateCardPreview(finale, CardPreviewMode.Normal, _target, true);
             var displayedFinale = Math.Floor(finale.DynamicVars.CalculatedDamage.PreviewValue);
-            var expectedFinale = up ? 29 : 27;
+            var expectedFinale = up ? 22 : 20;
             before = _target.CurrentHp;
             await Queue(new PlayCardAction(finale, _target));
             Check(before - _target.CurrentHp == expectedFinale && displayedFinale == expectedFinale,
@@ -179,7 +196,7 @@ public partial class TravelerTestRunner
         await FreshExpansion();
         Check(Power.State.Last == Element.None && Power.State.Used == 0 && Power.State.RewardsThisTurn == 0
             && !_player.Creature.Powers.OfType<TravelerAbilityPower>().Any(), "EXP_new_combat_clears_ability_and_combo_state");
-        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=27 powers=5 multiplayer=NOT_RUN rendering=NOT_RUN");
+        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=28 powers=5 multiplayer=NOT_RUN rendering=NOT_RUN");
     }
 
     private async Task TestDefensiveRandomCombos()
@@ -245,29 +262,51 @@ public partial class TravelerTestRunner
         foreach (var up in new[] { false, true })
         {
             await FreshExpansion(); await SeedDraw();
+            var alreadyUpgraded = await Add<WindBlade>(true);
+            var status = await Add<Dazed>();
             var first = await Add<WindBlade>(); var second = await Add<LightningThrust>();
             var third = await Add<RockGuard>();
+            var deckLevels = _player.Deck.Cards.Select(c => c.CurrentUpgradeLevel).ToArray();
             await Play<JourneyPlans>(up);
-            Check(first.ShouldRetainThisTurn && second.ShouldRetainThisTurn == up && !third.ShouldRetainThisTurn
-                && Power.State.Last == Element.None && !PileType.Exhaust.GetPile(_player).Cards.Any(c => c is JourneyPlans),
+            Check(first.IsUpgraded && second.IsUpgraded == up && !third.IsUpgraded
+                && alreadyUpgraded.CurrentUpgradeLevel == 1 && !status.IsUpgraded
+                && !first.ShouldRetainThisTurn && !second.ShouldRetainThisTurn
+                && Power.State.Last == Element.None
+                && PileType.Exhaust.GetPile(_player).Cards.OfType<JourneyPlans>().Count() == 1
+                && _player.Deck.Cards.Select(c => c.CurrentUpgradeLevel).SequenceEqual(deckLevels),
                 "EXP_plans_native_selection_" + up);
             await ExpansionNativeTurn();
-            Check(first.Pile?.Type == PileType.Hand && (up ? second.Pile?.Type == PileType.Hand : second.Pile?.Type == PileType.Discard),
-                "EXP_plans_native_retention_" + up);
+            Check(first.IsUpgraded && second.IsUpgraded == up && !third.IsUpgraded
+                && first.Pile?.Type == PileType.Discard && second.Pile?.Type == PileType.Discard
+                && _player.Deck.Cards.Select(c => c.CurrentUpgradeLevel).SequenceEqual(deckLevels),
+                "EXP_plans_upgrade_persists_without_retention_" + up);
         }
         await FreshExpansion();
         await Play<JourneyPlans>();
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 0, "EXP_plans_empty_hand_returns_without_choice");
-        await Add<WindBlade>();
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 0
+            && PileType.Exhaust.GetPile(_player).Cards.OfType<JourneyPlans>().Count() == 1,
+            "EXP_plans_empty_hand_returns_without_choice");
+        var skipped = await Add<WindBlade>();
         using (CardSelectCmd.PushSelector(new ExpansionCardSelector(0))) await Play<JourneyPlans>(true);
-        Check(PileType.Hand.GetPile(_player).Cards.All(c => !c.ShouldRetainThisTurn), "EXP_plans_upgraded_can_skip");
+        Check(!skipped.IsUpgraded && !skipped.ShouldRetainThisTurn, "EXP_plans_upgraded_can_skip");
+        await FreshExpansion();
+        var only = await Add<WindBlade>();
+        only.GiveSingleTurnRetain();
+        await Play<JourneyPlans>(true);
+        Check(only.IsUpgraded && only.ShouldRetainThisTurn, "EXP_plans_single_eligible_retained_card_upgrades");
+        await FreshExpansion();
+        var maxed = await Add<WindBlade>(true);
+        await Add<Dazed>();
+        await Play<JourneyPlans>();
+        Check(maxed.CurrentUpgradeLevel == 1 && PileType.Hand.GetPile(_player).Cards.Count == 2,
+            "EXP_plans_no_upgradable_cards_returns_without_choice");
 
         foreach (var up in new[] { false, true })
         {
             await FreshExpansion(); await SeedDraw();
             await Play<RockHeart>(up);
+            Check(_player.Creature.Block == 0, "EXP_rock_heart_no_immediate_block_" + up);
             await CreatureCmd.GainBlock(_player.Creature, 50m, ValueProp.Unpowered, null);
-            // Zero enemy attacks for this native-boundary test; no block is added on the new turn.
             foreach (var enemy in _player.Creature.CombatState!.Enemies)
                 await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), enemy, -999m, enemy, null);
             var gains = 0;
@@ -275,22 +314,16 @@ public partial class TravelerTestRunner
             _player.Creature.BlockChanged += Observe;
             try { await ExpansionNativeTurn(); }
             finally { _player.Creature.BlockChanged -= Observe; }
-            Check(_player.Creature.Block == (up ? 6 : 4) && gains == 0, "EXP_rock_heart_retains_without_regaining_" + up);
+            Check(_player.Creature.Block == (up ? 6 : 4) && gains == 1, "EXP_rock_heart_turn_start_new_block_" + up);
+            await ExpansionNativeTurn();
+            Check(_player.Creature.Block == (up ? 6 : 4), "EXP_rock_heart_repeats_without_retention_" + up);
         }
         await FreshExpansion(); await SeedDraw();
         await Play<RockHeart>(); await Play<RockHeart>(true);
-        await CreatureCmd.GainBlock(_player.Creature, 30m, ValueProp.Unpowered, null);
         foreach (var enemy in _player.Creature.CombatState!.Enemies)
             await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), enemy, -999m, enemy, null);
         await ExpansionNativeTurn();
-        Check(_player.Creature.Block == 10, "EXP_rock_heart_stacks_caps_4_plus_6");
-        await FreshExpansion(); await SeedDraw();
-        await Play<RockHeart>();
-        await CreatureCmd.GainBlock(_player.Creature, 2m, ValueProp.Unpowered, null);
-        foreach (var enemy in _player.Creature.CombatState!.Enemies)
-            await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), enemy, -999m, enemy, null);
-        await ExpansionNativeTurn();
-        Check(_player.Creature.Block == 2, "EXP_rock_heart_does_not_create_missing_block");
+        Check(_player.Creature.Block == 10, "EXP_rock_heart_stacks_gain_4_plus_6");
         foreach (var blur in new[] { false, true })
         {
             await FreshExpansion(); await SeedDraw();
@@ -301,14 +334,14 @@ public partial class TravelerTestRunner
             foreach (var enemy in _player.Creature.CombatState!.Enemies)
                 await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), enemy, -999m, enemy, null);
             await ExpansionNativeTurn();
-            Check(_player.Creature.Block == 30, "EXP_rock_heart_native_retention_wins_" + blur);
+            Check(_player.Creature.Block == 34, "EXP_rock_heart_adds_to_native_retention_" + blur);
         }
         await FreshExpansion(); await SeedDraw();
         await Play<RockHeart>();
-        await CreatureCmd.GainBlock(_player.Creature, 2m, ValueProp.Unpowered, null);
         await ExpansionNativeTurn();
+        await CreatureCmd.LoseBlock(_player.Creature, _player.Creature.Block);
         await ExpansionNativeTurn();
-        Check(_player.Creature.Block == 0, "EXP_rock_heart_does_not_restore_enemy_consumed_block");
+        Check(_player.Creature.Block == 4, "EXP_rock_heart_regenerates_after_block_spent");
     }
 
     private async Task TestExpansionAbilities()
@@ -355,7 +388,7 @@ public partial class TravelerTestRunner
             && _player.Creature.GetPower<ThunderEchoPower>()?.Amount == 2, "EXP_echo_copies_add_base_reward");
         hp = _target.CurrentHp; otherHp = other.CurrentHp;
         await Play<ShatteringRock>();
-        Check(hp - _target.CurrentHp == 21 && otherHp == other.CurrentHp && Power.State.Used == 2,
+        Check(hp - _target.CurrentHp == 20 && otherHp == other.CurrentHp && Power.State.Used == 2,
             "EXP_echo_boosts_second_rock_lightning");
 
         await FreshExpansion();
@@ -396,8 +429,8 @@ public partial class TravelerTestRunner
         await Play<WindBlade>(); await Play<RockGuard>();
         var energy = _player.PlayerCombatState!.Energy;
         await Play<WindBlade>();
-        Check(_player.PlayerCombatState.Energy == energy && Power.State.RewardsThisTurn == 2 && Power.State.Used == 2,
-            "EXP_resonance_base_and_upgrade_use_separate_thresholds");
+        Check(_player.PlayerCombatState.Energy == energy + 1 && Power.State.RewardsThisTurn == 2 && Power.State.Used == 2,
+            "EXP_resonance_base_and_upgrade_share_ordered_slots");
         energy = _player.PlayerCombatState.Energy;
         await Play<RockGuard>();
         Check(_player.PlayerCombatState.Energy == energy - 1 && Power.State.RewardsThisTurn == 3,
@@ -412,9 +445,10 @@ public partial class TravelerTestRunner
         await Play<RockGuard>();
         energy = _player.PlayerCombatState.Energy;
         await Play<WindBlade>();
-        Check(_player.PlayerCombatState.Energy == energy, "EXP_resonance_can_trigger_on_extra_turn");
+        Check(_player.PlayerCombatState.Energy == energy + 1, "EXP_resonance_can_trigger_on_extra_turn");
 
         await FreshExpansion();
+        await Play<ElementResonance>();
         await Play<ElementResonance>();
         await Play<RockGuard>();
         // A deliberately blocked draw still consumes a combo but grants no actual reward.

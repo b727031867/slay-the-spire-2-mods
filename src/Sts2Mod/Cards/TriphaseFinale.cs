@@ -17,9 +17,9 @@ public sealed class TriphaseFinale : CustomCardModel
     public TriphaseFinale() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
     public override string CustomPortraitPath => "res://Sts2Mod/art/triphase_finale.png";
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        [new CalculationBaseVar(10m), new ExtraDamageVar(4m),
+        [new CalculationBaseVar(10m), new ExtraDamageVar(2m),
             new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (card, _) =>
-                Math.Clamp(card.Owner.Creature.GetPower<ComboPower>()?.State.Used ?? 0, 0, ComboState.Limit))];
+                card.Owner.Creature.GetPower<ComboPower>()?.State.CombosThisCombat ?? 0)];
     protected override void OnUpgrade()
     {
         DynamicVars.CalculationBase.UpgradeValueBy(2m);

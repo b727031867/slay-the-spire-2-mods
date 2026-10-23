@@ -82,6 +82,8 @@ public partial class TravelerTestRunner
             && _player.Relics.Count == beforeZero, "QUIET_zero_draw_no_bubble_or_relic_effect");
         await Play<ElementResonance>();
         await Play<ElementResonance>(true);
+        // Keep the legacy model's icon regression while new cards share one ordered power.
+        await PowerCmd.Apply<FirstElementResonancePower>(ExpansionContext(), _player.Creature, 1, _player.Creature, null);
         foreach (var power in new PowerModel[] { _player.Creature.GetPower<ElementResonancePower>()!,
             _player.Creature.GetPower<FirstElementResonancePower>()! })
         {

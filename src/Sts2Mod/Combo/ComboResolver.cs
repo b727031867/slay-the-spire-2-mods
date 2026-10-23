@@ -16,7 +16,6 @@ using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Relics;
 using Sts2Mod.Powers;
-using Sts2Mod.Cards;
 
 namespace Sts2Mod.Combo;
 
@@ -45,8 +44,12 @@ public static class ComboResolver
         power.RefreshLimit();
         var step = power.State.Reserve(identity, element);
         if (step.Triggered)
+        {
             foreach (var blessing in card.Owner.Relics.OfType<StatueBlessing>())
                 await blessing.OnComboTriggered(context);
+            foreach (var compass in card.Owner.Relics.OfType<UnboundJourneyCompass>())
+                await compass.OnComboTriggered(context);
+        }
         var paimonDoubles = step.Triggered
             && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false });
         var rewardAmount = ComboPresentation.Reward(step.Kind, paimonDoubles, ComboPresentation.EchoCopies(card.Owner));
@@ -81,7 +84,7 @@ public static class ComboResolver
             var target = play.Target;
             // Self/untargeted defensive skills use the native seeded combat-target RNG.
             // A targeted attack whose victim died still must not jump to another enemy.
-            var randomTarget = reservation.Effect || (card.Type != CardType.Attack && card.TargetType != TargetType.AnyEnemy) || card is ThunderChain;
+            var randomTarget = reservation.Effect || (card.Type != CardType.Attack && card.TargetType != TargetType.AnyEnemy);
             if (!randomTarget && (target is null || !target.IsAlive || target.Side == creature.Side
                 || !creature.CombatState!.Creatures.Contains(target)))
             {

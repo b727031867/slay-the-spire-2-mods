@@ -5,7 +5,7 @@ using Sts2Mod.Combo;
 
 namespace Sts2Mod.Powers;
 
-// Separate counters preserve the trigger timing when base and upgraded copies coexist.
+// Retain the legacy model ID; new cards use the ordered ElementResonancePower.
 [CustomID("TC_FIRST_ELEMENT_RESONANCE")]
 public sealed class FirstElementResonancePower : TravelerAbilityPower
 {

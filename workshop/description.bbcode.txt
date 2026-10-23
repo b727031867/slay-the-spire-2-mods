@@ -1,56 +1,42 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.14 · 支持单人和联机[/b]
-可选角色「旅行者」拥有27张专属奖励牌（11攻击/11技能/5能力）、10张起始牌，以及旅途罗盘、无界罗盘、派蒙的应援和4件新增遗物。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
+[b]0.3.15 · 支持单人和联机[/b]
+可选角色「旅行者」拥有28张专属奖励牌（11攻击/12技能/5能力）、10张起始牌及7种专属遗物模型。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
 
-[b]已获得用户双人联机实测反馈。[/b]联机时各方须使用相同游戏、Mod和BaseLib版本。选人页头像与名字重叠问题已修复；自动化检查与用户联机实测分别记录。
+[b]此前本地候选已获得用户双人联机实测反馈。[/b]联机各方须使用相同游戏、Mod和BaseLib版本；本次新增平衡的自动化验证为无GUI，不能替代新版本联机与真实UI验收。
 
-[h2]0.3.14 卡池扩展[/h2]
+[h2]0.3.15 更新[/h2]
 [list]
-[*]新增8张卡：风息涤尘、岩心澄明、逆风牵制、乘隙雷击、元素调律、三相灌注、雷霆迸发、天地交征。
-[*]新增4件遗物：旅人药匣、三色棱晶、远征战鼓、神像庇佑；原始起始牌组和旧牌数值保持。
-[*]元素调律从奖励池随机展示三元素各一张，选择一张免费打出并消耗，正常推进一次连携。
-[*]三相灌注即时及回合开始随机一次角色元素；同元素按能力份数获得临时敏捷，异元素尝试正常连携。人工制品可拦截回合末负敏捷，这是预期交互。
-[*]雷霆迸发按此前实际奖励追加段数，最多6段；天地交征为X费技能，按角色当前风/岩/雷执行抽牌回能、格挡或群体伤害，无元素时不可打出。
-[*]三色棱晶赋予首张牌本场战斗元素；药匣响应状态/诅咒消耗；战鼓强化下一张主动单体攻击首段；神像首次触发连携给予6覆甲。
-[*]新增内容复用现有插图，完整数值和升级效果见玩家指南。本轮自动验证为无GUI；新增内容的图形交互、联机、自然整局平衡未实测。
-[/list]
-[h2]此前更新[/h2]
-[list]
-[*]新增罕见攻击牌雷霆连锁：1费，随机攻击3次，每次3伤害；升级为4次，整张牌推进一次连携。
-[*]旅途罗盘移除抽牌，连携上限提高至4次；每回合第3次实际奖励后获得1点本场战斗力量，每回合一次。
-[*]欧洛巴斯之触可替换为无界罗盘：连携上限4次，每次实际奖励后额外抽1，无额外冷却；不继承原罗盘力量。
-[*]雷霆余响2费/升级1费：连携基础攻击、格挡各+2，抽牌+1；与派蒙逐项取较高奖励，不相乘或相加。
-[*]风的指引1费/升级0费：每回合首次风雷或风岩实际连携后再抽1，两类共享一次，可与派蒙共存。
-[*]元素共鸣2费：每回合第2次实际奖励后回1能量；升级1费，改为第1次。
-[*]顺风整备升级移除消耗，仍只抽1；蓄雷升级6格挡且不消耗；旅途筹谋不再消耗。
-[*]三相终击升级1费12基础伤害，保留每次连携+4（最多+12）；雷痕升级7伤害、2易伤。
-[*]风之庇护基础5格挡、单体虚弱1；升级7格挡、全体虚弱1。
-[*]遗物与元素共鸣改为原图标短闪；连携使用小型短线条，取消放大图片、重复气泡及大金环，连续触发合并显示。
-[*]保留同母稿七层网格、18关节角色动作、旅行者商店与篝火图；修复联机选人头像/名字布局。
+[*]修复元素调律选候选牌/目标时点击或快捷键选择手牌导致卡住的问题，结算结束或中断后恢复手牌输入。
+[*]三相终击2（1）费、10（12）基础伤害，本场战斗每成功占用一次连携额度增加2伤害，跨回合累计、无累计上限。
+[*]雷霆连锁1费，对所有敌人攻击2（3）次，每次5伤害。碎岩重击2费，12（18）伤害，主攻击获得三倍力量修正，连携追击仍正常结算力量。
+[*]磐岩之心1费，每回合开始获得4（6）格挡。元素共鸣2（1）费，每份按打出顺序占用连续实际奖励位置并回1（2）能量，每回合重置。
+[*]无界罗盘保留每次实际奖励额外抽1；每回合第3次触发连携获得1点本场战斗力量，按占用额度计数，每回合一次。
+[*]天地交征为X费消耗技能：风抽X（X+1）并回等量能量；岩3X（4X）覆甲；雷全体6X（8X）伤害后施加X（X+1）易伤。保留角色元素和原生X快照。
+[*]旅途筹谋0费消耗，选择1（至多2）张手牌本场战斗升级，不再给予保留。
+[*]雷鸣整备1费，7（10）格挡并抽1；蓄雷1费、不消耗，6（9）格挡、下回合额外1能量；藏锋岩壁1费，6（9）格挡并保留；磐岩进击1费，5（8）伤害及5（8）格挡。
+[*]新增雷蚀回响：雷元素罕见技能，1费虚无，翻倍一名敌人的全部可叠层负面效果；升级0费并移除虚无。包含负力量/负敏捷，开关型效果不变，沿用人工制品等原生拦截。
+[*]后续重复插图替换为14张独立占位草图，新牌另有独立草图。完整规则见玩家指南。
 [/list]
 
 [h2]连携规则[/h2]
 [list]
-[*]风↔岩：额外4格挡；岩↔雷：额外4基础攻击；雷↔风：额外抽1。
-[*]双向可触发，每人每回合默认合计3次，持有任一罗盘时4次；连携后保留最新元素，元素跨回合保留，战斗结束清空。
-[*]单体攻击追击原存活目标，目标死亡不转火；无敌方目标的防御技能随机追击，无目标群攻不自动选择目标；雷霆连锁可随机追击。
+[*]风+岩：4格挡；岩+雷：4追加攻击；雷+风：抽1。双向可触发。
+[*]每人每回合默认合计3次，持有任一罗盘时4次。连携后保留最新元素，跨回合保留，战斗结束清空。
+[*]单体追击原存活目标，目标死亡不转火；无敌方目标的防御技能随机追击，无目标群攻不自动选择目标。
 [*]派蒙只翻倍基础奖励，不翻倍能力/罗盘。能力默认无元素；灌注效果和棱晶赋予的元素可推进连携；普通未赋元素牌不打断记录。
-[*]普通自动打出和额外重复结算不推进序列，元素调律选中牌与灌注效果为例外；战斗结束跳过奖励，抽0、零伤害或无有效目标不计实际奖励次数。
+[*]普通自动打出和额外重复结算不推进序列，元素调律选中牌与灌注效果为例外。抽0、零伤害或无有效目标不计实际奖励；连携占用次数与实际奖励次数分别计数。
+[*]人工制品拦截灌注回合末负敏捷为预期交互。
 [/list]
 
 [h2]安装与验证[/h2]
-固定Windows x64、游戏v0.107.1/build23811903与BaseLib3.4.7。本Mod拒绝其他BaseLib版本；工坊依赖无法锁版本，更新后请核对。每个Mod只保留一份生效副本。
-此前用户已试玩轻量反馈候选；0.3.14新增内容本轮图形与联机未实测。最终包自动化验证范围单独记录，不将无GUI节点检查称为图形或联机验收。自然Boss系统性平衡与用户旧档迁移未作系统验收。条目在后续开发、上传更新和好友联机测试期间保持仅限好友；仅在用户明确另行要求时更改可见性。
-角色、卡牌及篝火插图使用生成式素材；雷霆连锁暂复用雷元素插图。封面及规则图为说明素材，不是游戏截图；部分通用演出复用原生资源。
+Windows x64、游戏v0.107.1/build23811903、BaseLib3.4.7。本Mod拒绝其他BaseLib版本；工坊依赖无法锁版本，更新后请核对。每个Mod只保留一份生效副本。条目沿用既有好友可见设置。
+自动化验证范围与发布证据见项目状态；新版本真实UI、联机/重连、自然Boss平衡及用户旧档迁移没有系统验收。角色与部分卡牌插图使用生成式素材，占位草图为独立几何矢量；封面及规则图为说明素材，不是游戏截图。
 
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/STATUS.md]当前状态与验证[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.14 has 27 reward cards (11 Attacks, 11 Skills, 5 Powers) and seven exclusive relic models. It retains Thunder Chain, revised combo balance, Unbound Compass and the co-op character-selection layout fix. Journey Compass raises the shared combo cap to four and grants 1 combat Strength after the third actual reward each turn, replacing its old draw effect. Unbound Compass instead draws one extra card per actual reward and keeps the four-use cap.
-Base rewards: Wind/Rock grants 4 Block, Rock/Lightning makes a 4-base-damage follow-up, Lightning/Wind draws 1. Both directions work. Elements persist across turns; ordinary cards do not interrupt them. Paimon doubles only base rewards. Thunder Echo adds 2 base attack/Block and 1 draw per copy; use the higher reward versus Paimon rather than stacking them. Wind Guidance can coexist with Paimon. Element Resonance grants energy after the second actual reward, or the first when upgraded.
-Relics and both Resonance variants now use brief flashes inside their existing icons. Combo effects are short, small line accents, without enlarged artwork or repeated text bubbles. Consecutive effects reuse a node without merging gameplay rewards. Original seven-layer, eighteen-joint character animation is retained.
-Supports singleplayer and co-op; all players need matching versions. Pinned baseline: Windows x64, v0.107.1/build23811903, BaseLib3.4.7. Automated headless checks and user playtesting are separate evidence, not systematic natural-run/Boss balance or old-save migration validation. AI-generated illustrations are used. Friends-only visibility is preserved throughout development, updates and testing, unless the user explicitly requests a change.
+Version 0.3.15 includes 28 reward cards, five Powers and seven exclusive relic models. It fixes hand input during Element Tuning selection, updates card balance, and adds Echoing Blight: a Lightning Uncommon Skill that doubles an enemy's stackable debuffs, including negative Strength and Dexterity, through native power hooks. It costs 1 and is Ethereal; upgrading reduces its cost to 0 and removes Ethereal. Unbound Compass now grants 1 combat Strength on the third combo trigger each turn while retaining its draw bonus. Heaven and Earth now Exhausts and grants draw/Energy, Plating, or AoE damage followed by Vulnerable. Journey Plans upgrades selected combat cards and Exhausts. Previous multiplayer feedback and new headless checks are separate evidence. Use matching game/mod/BaseLib versions on all clients.
 
-非官方同人项目，与游戏及主题作品权利方无隶属关系；不随包复制游戏程序集、原生美术、音频、字体或前置框架。
+条目在开发、更新和测试期间保持仅限好友，除非用户明确要求更改。Friends-only visibility is preserved unless explicitly changed by the user.
