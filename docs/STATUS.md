@@ -22,4 +22,3 @@
 发布准备入口只到PREPARED，不代表上传或上线。它校验并部署核心包，运行无GUI Full，复核核心字节，再冻结核心、文档、工坊配置与图片并生成仅限好友上传目录。操作见[开发说明](DEVELOPMENT.md)与[工坊说明](../workshop/README.md)。涉及磁盘行为时另跑SavePrepare/SaveResume；图形、联机、自然整局和旧档迁移结果单列。
 
 长期约束：自动游戏测试无GUI，使用隔离存档和无测试云后端，只清理本轮进程。工坊上传前核对实际目录为friends_only，上传后用WorkshopProbe确认FriendsOnly；历史private或visibility=null不作为后续配置。可见性来源见[设置验证](tests/WORKSHOP-FRIENDS-ONLY.md)与[AGENTS.md](../AGENTS.md)。
-

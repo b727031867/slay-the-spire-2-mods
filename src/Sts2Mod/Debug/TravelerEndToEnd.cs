@@ -261,7 +261,8 @@ public partial class TravelerTestRunner
                 var turnActions = 0;
                 while (CombatManager.Instance.IsInProgress && turnActions < 30)
                 {
-                    var card = PileType.Hand.GetPile(_player).Cards.Where(c => c.CanPlay())
+                    // This oracle models hand plays; Tuning/Infusion effect chains have dedicated pool tests.
+                    var card = PileType.Hand.GetPile(_player).Cards.Where(c => c.CanPlay() && c is not ElementTuning and not TriphaseInfusion)
                         .OrderByDescending(c => CardElement(c) != Element.None && CardElement(c) != oracle.Last && oracle.Last != Element.None)
                         .ThenByDescending(IsTheme).FirstOrDefault();
                     if (card is null) break;
