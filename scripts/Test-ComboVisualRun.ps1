@@ -2,6 +2,26 @@ param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$Cod
 $ErrorActionPreference='Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 $text=Get-Content -Raw -LiteralPath $LogFile
+foreach($id in 19..28) {
+ if(!$text.Contains("STS2MOD_TEST_PASS PORTRAIT_fills_native_frame_TC_C$id")){throw "Missing portrait framing check: $id"}
+}
+if(!$text.Contains('STS2MOD_PORTRAIT_COMPLETE cards=10 ratio=4:3 source=unchanged rendering=NOT_RUN')){
+ throw 'Portrait framing suite incomplete'
+}
+foreach($language in @('eng','zhs')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS PREVIEW_damage_format_$language")){throw "Missing damage format check: $language"}
+}
+foreach($id in @('TC_C01','TC_C03','TC_C05','TC_C12','TC_C13','TC_C14','TC_C22','TC_C23','TC_C26','TC_STRIKE')) {
+ foreach($upgraded in @('False','True')) {
+  foreach($step in @('target_damage','switch_back','clear_target')) {
+   if(!$text.Contains("STS2MOD_TEST_PASS PREVIEW_${step}_${id}_$upgraded")){throw "Missing damage target preview: $id/$upgraded/$step"}
+  }
+ }
+}
+if(!$text.Contains('STS2MOD_TEST_PASS PREVIEW_readonly_state_rng_energy_hp') -or
+ !$text.Contains('STS2MOD_DAMAGE_PREVIEW_COMPLETE formats=eng,zhs targeting=PASS readonly=PASS rendering=NOT_RUN')){
+ throw 'Damage preview suite incomplete'
+}
 foreach($case in @('pool_TravelerCardPool','pool_TravelerRelicPool','pool_TravelerPotionPool',
  'native_inline_glyph_bounded','acquired_native_relic_inline','unowned_native_relic_inline',
  'other_native_relic_inline','owned_potion_inline','card_inline','native_hover_icon_bounded','native_hover_layout_bounded')) {

@@ -36,6 +36,8 @@ public partial class TravelerTestRunner
     {
         var start = _assertions;
         await FreshExpansion();
+        await TestPortraitFraming();
+        await TestTargetDamagePreview();
         var choice = _player.Creature.CombatState!.CreateCard(MegaCrit.Sts2.Core.Models.ModelDb.Card<ShatteringRock>(), _player);
         var rulesTitle = new LocString("powers", "TC_RULES.title").GetFormattedText();
         var previewTitle = new LocString("powers", "TC_PREVIEW.title").GetFormattedText();

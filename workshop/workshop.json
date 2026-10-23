@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "friends_only",
-  "changeNote": "0.3.17 素材更新：替换TC_C19–TC_C28的10张卡牌封面，并为风的指引、磐岩之心、雷霆余响、元素共鸣、三相灌注接入5张独立透明Buff图标。用户已确认游戏内显示正常；本次未改玩法，按用户要求不跑回归测试。保持仅限好友。",
+  "changeNote": "0.3.17 显示修复：TC_C19–TC_C28的10张竖版卡图改为居中4:3卡面取景，修复左右留黑；原始图片完整保留。同步修复中英文伤害描述，切换怪物时显示原生计算的预计伤害。未改玩法数值，仅验证相关显示专项，不跑完整回归。保持仅限好友。",
   "tags": [],
   "dependencies": [
     3737335127

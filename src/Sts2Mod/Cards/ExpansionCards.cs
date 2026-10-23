@@ -18,7 +18,7 @@ public sealed class CleansingWind() : ElementCardModel(1, CardType.Skill, CardRa
 {
     public override bool GainsBlock => true;
     public override Element CardElement => Element.Wind;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C20.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C20.tres";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(5, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -42,7 +42,7 @@ public sealed class ClearRockMind() : ElementCardModel(1, CardType.Skill, CardRa
 {
     public override bool GainsBlock => true;
     public override Element CardElement => Element.Rock;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C21.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C21.tres";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(6, ValueProp.Move), new DynamicVar("Cleanse", 1)];
     protected override void OnUpgrade() { DynamicVars.Block.UpgradeValueBy(2); DynamicVars["Cleanse"].UpgradeValueBy(1); }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -59,7 +59,7 @@ public sealed class ClearRockMind() : ElementCardModel(1, CardType.Skill, CardRa
 public sealed class HeadwindRestraint() : ElementCardModel(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     public override Element CardElement => Element.Wind;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C22.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C22.tres";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move), new DynamicVar("Weak", 2)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -76,7 +76,7 @@ public sealed class HeadwindRestraint() : ElementCardModel(1, CardType.Attack, C
 public sealed class OpportunistLightning() : ElementCardModel(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C23.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C23.tres";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CalculationBaseVar(6), new ExtraDamageVar(2),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(static (_, target) =>
             Math.Max(0, target?.GetPower<WeakPower>()?.Amount ?? 0) + Math.Max(0, target?.GetPower<VulnerablePower>()?.Amount ?? 0))];
@@ -96,7 +96,7 @@ public sealed class ThunderBurst() : ElementCardModel(2, CardType.Attack, CardRa
 {
     private int _hits;
     public override Element CardElement => Element.Lightning;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C26.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C26.tres";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(4, ValueProp.Move)];
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1);
     protected override void AddExtraArgsToDescription(LocString description)
@@ -124,7 +124,7 @@ public sealed class HeavenEarthConvergence() : ElementCardModel(0, CardType.Skil
     public override Element CardElement => Element.None;
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override bool HasEnergyCostX => true;
-    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C27.png";
+    public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C27.tres";
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("RockPlating", 3), new DynamicVar("LightningDamage", 6), new DynamicVar("ExtraX", 0)];
     protected override void OnUpgrade() { DynamicVars["RockPlating"].UpgradeValueBy(1); DynamicVars["LightningDamage"].UpgradeValueBy(2); DynamicVars["ExtraX"].UpgradeValueBy(1); }
     protected override void AddExtraArgsToDescription(LocString description)
