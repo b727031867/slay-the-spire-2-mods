@@ -20,7 +20,7 @@ public abstract class TravelerEvent : CustomEventModel
 {
     protected abstract bool EarlyActs { get; }
     // Events are selected for the whole party. Do not expose Traveler-only content to other characters.
-    public override bool IsAllowed(IRunState run) => run.Players.All(p => p.Character is Traveler)
+    public override bool IsAllowed(IRunState run) => run.Players.Count > 0 && run.Players.All(p => p.Character is Traveler)
         && run.CurrentActIndex >= (EarlyActs ? 0 : 1) && run.CurrentActIndex <= (EarlyActs ? 1 : 2);
     public override string CustomInitialPortraitPath => $"res://Sts2Mod/art/events/{Id.Entry}.svg";
     protected EventOption Pick(string key, Func<Task>? chosen) => new(this, chosen, $"{Id.Entry}.pages.INITIAL.options.{key}");

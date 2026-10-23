@@ -18,6 +18,7 @@ internal static class UnclaimedMailRewards
 {
     private static readonly SpireField<CardReward, bool> Settled = new(() => false);
     private static readonly System.Reflection.PropertyInfo Options = AccessTools.Property(typeof(CardReward), "Options");
+    private static readonly System.Reflection.MethodInfo RelicObtained = AccessTools.Method(typeof(CardReward), "OnRelicObtained");
     internal static bool Applies(CardReward reward) => Options.GetValue(reward) is CardCreationOptions { Source: CardCreationSource.Encounter, RarityOdds: CardRarityOddsType.RegularEncounter }
         && reward.Player.Relics.Any(r => r is UnclaimedMail { IsMelted: false });
 
@@ -29,17 +30,30 @@ internal static class UnclaimedMailRewards
         var cards = player.Gold >= 15 ? reward.Cards.Select(c => new CardCreationResult(c)).ToList() : [];
         if (cards.Count == 0) return false;
         var chosen = (await CardSelectCmd.FromSimpleGridForRewards(new BlockingPlayerChoiceContext(), cards, player,
-            new CardSelectorPrefs(new LocString("events", "TC_MAIL.select"), 0, 1) { Cancelable = true })).FirstOrDefault();
-        if (chosen is null) { await Skip(reward); return true; }
+            new CardSelectorPrefs(new LocString("events", "TC_MAIL.select"), reward.CanSkip ? 0 : 1, 1) { Cancelable = reward.CanSkip })).FirstOrDefault();
+        if (chosen is null)
+        {
+            RecordChoices(reward, null);
+            await Skip(reward);
+            return true;
+        }
         if (player.Gold < 15) return false;
         var added = await CardPileCmd.Add(chosen, PileType.Deck);
         if (!added.success) return false;
         Settled.Set(reward, true);
         await PlayerCmd.LoseGold(15, player);
-        foreach (var offered in reward.Cards)
-            player.RunState.CurrentMapPointHistoryEntry?.GetEntry(player.NetId).CardChoices.Add(new CardChoiceHistoryEntry(offered, offered == chosen));
+        RecordChoices(reward, chosen);
         CardCmd.PreviewCardPileAdd(added);
         return true;
+    }
+
+    private static void RecordChoices(CardReward reward, CardModel? chosen)
+    {
+        // Match native completion cleanup; otherwise every finished reward keeps listening to future relic pickups.
+        reward.Player.RelicObtained -= RelicObtained.CreateDelegate<Action<RelicModel>>(reward);
+        foreach (var offered in reward.Cards)
+            reward.Player.RunState.CurrentMapPointHistoryEntry?.GetEntry(reward.Player.NetId).CardChoices
+                .Add(new CardChoiceHistoryEntry(offered, offered == chosen));
     }
 
     internal static async Task Skip(CardReward reward)

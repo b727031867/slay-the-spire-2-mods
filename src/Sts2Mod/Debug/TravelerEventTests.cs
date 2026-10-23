@@ -56,6 +56,14 @@ public partial class TravelerTestRunner
             }
         }
         finally { actField.SetValue(_player.RunState, oldAct); }
+        var characterField = AccessTools.Field(typeof(MegaCrit.Sts2.Core.Entities.Players.Player), "<Character>k__BackingField");
+        var originalCharacter = _player.Character;
+        try
+        {
+            characterField.SetValue(_player, ModelDb.Character<MegaCrit.Sts2.Core.Models.Characters.Ironclad>());
+            Check(ModelDb.AllEvents.OfType<TravelerEvent>().All(e => !e.IsAllowed(_player.RunState)), "EVENT_other_character_excluded");
+        }
+        finally { characterField.SetValue(_player, originalCharacter); }
         var curse = _player.RunState.CreateCard<Homeward>(_player);
         Check(curse.Type == CardType.Curse && curse.Keywords.SetEquals([CardKeyword.Unplayable]) && !MisalignedSurvey.Eligible(curse), "EVENT_curse_only_unplayable_excluded_from_survey");
         Check(!TravelerContent.RewardCardTypes.Contains(typeof(Homeward)), "EVENT_curse_not_normal_reward");
@@ -187,10 +195,19 @@ public partial class TravelerTestRunner
         Check(!await reward.SelectUnsynchronized() && _player.Deck.Cards.Count == count && _player.Gold == 14, "EVENT_mail_insufficient_gold_no_card");
         await PlayerCmd.SetGold(15, _player);
         Check(await reward.SelectUnsynchronized() && _player.Gold == 0 && _player.Deck.Cards.Count == count + 1, "EVENT_mail_pay15_take_one");
+        Check(((Delegate?)AccessTools.Field(typeof(MegaCrit.Sts2.Core.Entities.Players.Player), "RelicObtained").GetValue(_player))?
+            .GetInvocationList().All(d => d.Target != reward) != false, "EVENT_mail_claim_unsubscribes_relic_listener");
         reward.OnSkipped();
         Check(_player.Gold == 0, "EVENT_mail_no_skip_after_claim");
         await UnclaimedMailRewards.Skip(saved); await UnclaimedMailRewards.Skip(saved);
         Check(_player.Gold == 10, "EVENT_mail_skip10_once");
+        var skipReward = new CardReward(CardCreationOptions.ForRoom(_player, RoomType.Monster), 3, _player);
+        skipReward.Populate();
+        await PlayerCmd.SetGold(15, _player);
+        using (CardSelectCmd.PushSelector(new ExpansionCardSelector(0)))
+            Check(await skipReward.SelectUnsynchronized() && _player.Gold == 25, "EVENT_mail_grid_skip_grants10");
+        Check(((Delegate?)AccessTools.Field(typeof(MegaCrit.Sts2.Core.Entities.Players.Player), "RelicObtained").GetValue(_player))?
+            .GetInvocationList().All(d => d.Target != skipReward) != false, "EVENT_mail_grid_skip_unsubscribes_relic_listener");
         foreach (var relic in _player.Relics.OfType<TravelerEventRelic>().ToArray()) await RelicCmd.Remove(relic);
         await CreatureCmd.Kill(_player.Creature.CombatState!.Enemies.ToArray(), force: true);
         await MegaCrit.Sts2.Core.Combat.CombatManager.Instance.CheckWinCondition();
