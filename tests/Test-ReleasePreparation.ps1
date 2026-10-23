@@ -145,7 +145,7 @@ $stagesBefore=Get-Content -Raw (Join-Path $fixture 'stages.txt')
 $reused=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -TestResultFile $evidenceFile -Suite Cards,Events -OutputDirectory (Join-Path $fixture 'reuse')
 Check ($reused.ReusedTests -and $reused.Status -eq 'PREPARED' -and $reused.Tests.Count -eq 1) 'matching Full evidence reused for required focused coverage'
 Check ((Get-Content -Raw (Join-Path $fixture 'stages.txt')) -eq $stagesBefore) 'reuse neither deploys nor starts native tests'
-foreach($mode in @('legacy','core','metadata','environment','fail','gui','identity','coverage','loghash','missing-log','invalid-log')) {
+foreach($mode in @('legacy','core','metadata','environment','fail','gui','invalid-boolean','identity','coverage','loghash','missing-log','invalid-log')) {
     $evidence=$validEvidence | ConvertTo-Json -Depth 8 | ConvertFrom-Json
     switch($mode) {
         legacy {$evidence.SchemaVersion=1}
@@ -154,6 +154,7 @@ foreach($mode in @('legacy','core','metadata','environment','fail','gui','identi
         environment {$evidence.Environment.GameAssemblySha256='different'}
         fail {$evidence.Status='FAIL'}
         gui {$evidence.Headless=$false}
+        invalid-boolean {$evidence.Headless='true'}
         identity {$evidence.CodeCommit='b'*40}
         coverage {$evidence.Suite='Cards'}
         loghash {$evidence.LogSHA256='different'}
@@ -170,6 +171,7 @@ foreach($mode in @('legacy','core','metadata','environment','fail','gui','identi
     Set-Content $nativeLog 'PASS fixture'
 }
 Set-Content (Join-Path $fixture 'mode.txt') 'pass'
+Reject {& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -Suite @()} 'empty required suite list rejected'
 Set-Content (Join-Path $fixture 'docs/player/README.zh-CN.md') 'focused candidate documentation'
 $focused=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -Suite Cards,Events -OutputDirectory (Join-Path $fixture 'focused')
 Check (($focused.Tests.Suite -join ',') -eq 'Cards,Events' -and !$focused.Full) 'explicit focused suites do not silently run Full'

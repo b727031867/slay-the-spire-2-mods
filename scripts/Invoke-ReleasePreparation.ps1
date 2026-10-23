@@ -1,8 +1,8 @@
 param(
     [Parameter(Mandatory)][string]$PackageDirectory,
     [string]$OutputDirectory,
-    [ValidateSet('Load','Visuals','Cards','Character','Events','Full')][string[]]$Suite=@('Full'),
-    [string[]]$TestResultFile
+    [ValidateNotNullOrEmpty()][ValidateSet('Load','Visuals','Cards','Character','Events','Full')][string[]]$Suite=@('Full'),
+    [ValidateNotNullOrEmpty()][string[]]$TestResultFile
 )
 $ErrorActionPreference='Stop'
 $total=[Diagnostics.Stopwatch]::StartNew()
@@ -17,7 +17,7 @@ if ($TestResultFile) {
     $environment=& (Join-Path $PSScriptRoot 'Get-ModTestEnvironment.ps1')
     foreach ($file in $TestResultFile) {
         $test=Get-Content -Raw -LiteralPath $file | ConvertFrom-Json
-        if ($test.SchemaVersion -ne 2 -or $test.Status -ne 'PASS' -or $test.Headless -ne $true -or
+        if ($test.SchemaVersion -ne 2 -or $test.Status -ne 'PASS' -or $test.Headless -isnot [bool] -or $test.Headless -ne $true -or
             $test.CodeCommit -ne $package.Info.codeCommit) { throw "Reusable test identity missing or invalid: $file" }
         foreach ($name in $package.Hashes.Keys) {
             if ($test.CoreFiles.$name -ne $package.Hashes[$name]) { throw "Reusable test core mismatch: $name" }
@@ -40,7 +40,7 @@ if ($TestResultFile) {
     & (Join-Path $PSScriptRoot 'Deploy-Mod.ps1') -PackageDirectory $package.PackageDirectory | Out-Host
     foreach ($required in $Suite) {
         $test=& (Join-Path $PSScriptRoot 'Invoke-ModTests.ps1') -Suite $required -CodeCommit $package.Info.codeCommit -PackageDirectory $package.PackageDirectory
-        if ($test.Status -ne 'PASS' -or $test.Suite -ne $required -or $test.CodeCommit -ne $package.Info.codeCommit -or $test.Headless -ne $true) {
+        if ($test.Status -ne 'PASS' -or $test.Suite -ne $required -or $test.CodeCommit -ne $package.Info.codeCommit -or $test.Headless -isnot [bool] -or $test.Headless -ne $true) {
             throw "A passing headless result is required: $required"
         }
         $tests+=$test
