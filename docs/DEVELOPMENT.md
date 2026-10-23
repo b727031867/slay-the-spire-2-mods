@@ -1,6 +1,6 @@
 # 构建、部署与验证
 
-当前工程src/Sts2Mod，Mod ID为Sts2Mod，当前开发版本0.3.14，最近发布版本0.3.13。接续分支main，当前规则见[玩家指南](player/README.zh-CN.md)，包身份及验证范围见[发布报告](tests/RELEASE-0313.md)。下方操作示例中的历史测试范围不替代最新发布报告。
+工程为src/Sts2Mod，Mod ID为Sts2Mod。开发/发布版本、分支、包身份与验证范围统一见[STATUS](STATUS.md)；玩法规则见[玩家指南](player/README.zh-CN.md)。
 
 ## 统一测试入口
 
@@ -101,7 +101,7 @@ Sts2Mod/
 
 ### 原生获取和磁盘恢复
 
-使用main中的最新检查器；已发布包来源S及SHA256见[发布报告](tests/RELEASE-038.md)。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
+使用接续分支中的最新检查器；已发布包来源S及SHA256从[STATUS](STATUS.md)进入对应发布报告。自行重新构建时记录构建返回的新S和SHA256，不沿用旧包身份。
 
 ```powershell
 $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
@@ -134,23 +134,39 @@ $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
 
 移除后AI加载检查仍使用Start-ModGame.ps1 -Headless，并使用`Test-ModLoad.ps1 -LogFile '<日志>' -ExpectAbsent`检查本项目不再加载；BaseLib作为共享框架仍会加载。
 
-## 发布包装：复用已验收核心包
+## 发布准备：测试、冻结与工坊目录
 
-Build-Mod.ps1负责从源码构建四文件核心包。Build-ReleaseCandidate.ps1不再构建，也不读取当前HEAD替换核心源码身份：
+先提交源码，用Build-Mod从干净提交构建核心包。已验收核心可继续使用；新入口仍会对本轮部署运行Full，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。
 
 ```powershell
-.\scripts\Build-ReleaseCandidate.ps1 -PackageDirectory '<已校验核心目录>/Sts2Mod'
+.\scripts\Invoke-ReleasePreparation.ps1 -PackageDirectory '<干净核心目录>/Sts2Mod'
 ```
 
-入口通过Get-ModPackage校验四个非空普通文件、干净标记、源码提交、清单版本和三文件SHA256，再逐字节复制核心；附带当前玩家文档及release-info.txt，分别记录核心四文件哈希、文档提交/dirty与文档哈希。输出为新ZIP和SHA256，拒绝覆盖已有目录或归档。文档dirty标记不改变核心clean身份。
+入口依次校验核心、Deploy-Mod部署（已有BaseLib须匹配）、Invoke-ModTests运行无GUIFull、核对核心未变化、Build-ReleaseCandidate冻结快照、Prepare-Workshop准备上传目录。已有工坊重复副本须在部署前按原流程可恢复备份，避免双重加载。新入口的部署备份行为与Deploy-Mod相同，不自动恢复本地Mod；结束后本机保留候选供试玩。
 
-新二进制先从干净源码运行Build-Mod.ps1，再将返回的PackageDirectory交给包装入口。重新包装ZIP拥有新SHA256，不能沿用原ZIP身份；核心S和文件哈希保持。Prepare-Workshop也复用核心校验器，仅准备私有目录，不上传。
+输出PREPARED、核心身份/哈希、Full结果、快照/ZIP哈希与上传目录，保存为快照目录旁的.preparation.json。失败直接终止，保留日志及已生成产物便于排查；不会继续上传。磁盘专项、图形、联机和自然整局不由Full代替；需要时使用上文SavePrepare/SaveResume和单列的人工验证。
 
-脚本回归：
+如已完成对应验收，只需独立冻结和准备：
+
+```powershell
+$candidate = .\scripts\Build-ReleaseCandidate.ps1 -PackageDirectory '<已验收核心目录>/Sts2Mod'
+.\scripts\Prepare-Workshop.ps1 -SnapshotDirectory $candidate.CandidateDirectory
+```
+
+Build-ReleaseCandidate不构建。它保留四文件核心字节，附带三份玩家文档，以及已填充说明的workshop.json、mod_id.txt、封面和规则图。release-info.txt使用schemaVersion=2，分别记录核心、文档和工坊文件SHA256，并记录文档提交、文档dirty与工坊dirty。ZIP包含完整快照，重新包装有新的ZIP哈希。
+
+Get-ReleaseSnapshot校验快照身份、全部文件清单/哈希、固定工坊ID、friends_only、BaseLib依赖及图片大小。Prepare-Workshop只读取快照，逐字节生成上传内容并校验复制结果，不再从仓库读取文档、配置或图片。默认目录为.local/workshop/<S>-<快照哈希前12位>，已有目录拒绝覆盖；需要刷新内容就重新冻结，不手改旧上传目录。旧schemaVersion=1候选必须用原核心重新包装；Prepare-Workshop原PackageDirectory参数已改为SnapshotDirectory，防止静默回退到仓库内容。
+
+准备不证明验收通过，独立包装入口不会要求Full报告。正式发布需审阅对应结果，按[工坊说明](../workshop/README.md)上传、核对远端可见性、Steam实际下载和加载，再更新STATUS及发布报告。快照哈希用于发现意外改动，不是数字签名。
+
+脚本离线回归（合成包/日志，不启动游戏、不访问Steam）：
 
 ```powershell
 .\tests\Test-ReleasePackaging.ps1
+.\tests\Test-ReleasePreparation.ps1
 .\tests\Test-ModTestEntry.ps1
 ```
 
-包装测试使用合成四文件夹具验证流程与拒绝条件，不视为可加载游戏包；测试入口离线用例使用合成日志，真实游戏结果另记。
+## 工坊可见性与好友联机测试
+
+按2026-10-21用户要求，后续开发和测试与朋友一起进行，工坊条目3823282901始终保持“仅限好友”。上传配置使用 `friends_only`，准备入口拒绝其他值；上传前核对实际工作目录，上传后读取远端确认FriendsOnly。历史发布报告中的private是当时记录，不再作为后续上传策略。只有用户明确另行要求才更改可见性。多人兼容性与联机结果单独记录，不能用无GUI单人验收替代。
