@@ -5,7 +5,7 @@ $text=Get-Content -Raw -LiteralPath $LogFile
 foreach($id in 19..28) {
  if(!$text.Contains("STS2MOD_TEST_PASS PORTRAIT_fills_native_frame_TC_C$id")){throw "Missing portrait framing check: $id"}
 }
-if(!$text.Contains('STS2MOD_PORTRAIT_COMPLETE cards=10 ratio=4:3 source=unchanged rendering=NOT_RUN')){
+if(!$text.Contains('STS2MOD_PORTRAIT_COMPLETE cards=10 ratio=25:19 source=unchanged rendering=NOT_RUN')){
  throw 'Portrait framing suite incomplete'
 }
 foreach($language in @('eng','zhs')) {

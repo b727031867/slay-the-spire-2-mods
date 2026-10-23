@@ -14,7 +14,7 @@
 | character/merchant.tscn | 商店角色场景复用本项目已生成body.png，等比缩放并校准脚底基线；未新增图片或复制原生角色素材 |
 | ui/element_none、wind、rock、lightning.svg | 项目代码绘制的正式小尺寸状态图标，无外部图片输入 |
 | ui/reward_block、attack、draw.svg及旧插图SVG | 项目矢量源码，当前没有常驻面板使用奖励图标；运行时卡牌和角色插图使用PNG |
-| art/TC_C19–TC_C28.png/.tres、ui/powers/*.png | 用户2026-10-23生成、上传云盘并确认的10张卡牌封面和5张Buff图标；原始PNG字节保留，卡面由Godot AtlasTexture截取居中1024×768区域以匹配原生4:3卡框，Buff仍引用独立原图。来源与原始SHA256见[导入记录](art/CLOUD-ART-20261023.md)，卡框修复见[记录](tasks/PORTRAIT-FRAMING.md) |
+| art/TC_C19–TC_C28.png/.tres、ui/powers/*.png | 用户2026-10-23生成、上传云盘并确认的10张卡牌封面和5张Buff图标；原始PNG字节保留，卡面由Godot AtlasTexture截取居中1000×760区域以匹配原生25:19卡框，Buff仍引用独立原图。来源与原始SHA256见[导入记录](art/CLOUD-ART-20261023.md)，卡框修复见[记录](tasks/PORTRAIT-FRAMING.md) |
 | art/drafts/TC_C19–TC_C28.svg、TC_R03–TC_R07.svg | 本项目独立几何占位草图，中文标签转为矢量路径，不分发字体；卡牌SVG保留历史，运行时卡牌及三相灌注状态已改用上述PNG，遗物仍引用SVG |
 | 连携特效 | ElementComboVfx.cs使用Godot基本线条绘制，无外部纹理或音频 |
 | 普通攻防、受击及六套元素特效 | TravelerRig控制分层关节；CombatElementVfx以Godot曲线、多边形及折线绘制特效，无新增外部音频或纹理 |

@@ -22,12 +22,13 @@ public partial class TravelerTestRunner
             var texture = portrait.Texture as AtlasTexture;
             Check(((CustomCardModel)card).CustomPortraitPath == $"res://Sts2Mod/art/TC_C{number}.tres"
                 && texture is not null && texture.Atlas.ResourcePath == $"res://Sts2Mod/art/TC_C{number}.png"
-                && texture.Region == new Rect2(0, 384, 1024, 768)
-                && texture.GetSize() == new Vector2(1024, 768)
-                && Mathf.Abs(portrait.Size.X / portrait.Size.Y - 4f / 3f) < 0.01f,
+                && texture.Region == new Rect2(12, 388, 1000, 760)
+                && texture.GetSize() == new Vector2(1000, 760)
+                && portrait.StretchMode == TextureRect.StretchModeEnum.KeepAspectCentered
+                && texture.GetSize() == portrait.Size * 4,
                 "PORTRAIT_fills_native_frame_TC_C" + number);
             await CardPileCmd.RemoveFromCombat([card]);
         }
-        GD.Print("STS2MOD_PORTRAIT_COMPLETE cards=10 ratio=4:3 source=unchanged rendering=NOT_RUN");
+        GD.Print("STS2MOD_PORTRAIT_COMPLETE cards=10 ratio=25:19 source=unchanged rendering=NOT_RUN");
     }
 }
