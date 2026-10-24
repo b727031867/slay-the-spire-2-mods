@@ -71,4 +71,7 @@ $result=[pscustomobject]@{
     Rendering='NOT_RUN'; Multiplayer='NOT_RUN'; DiskResume='NOT_RUN'
 }
 $result | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath ($candidate.CandidateDirectory+'.preparation.json') -Encoding utf8
+$retention=& (Join-Path $PSScriptRoot 'Remove-OldDeliverables.ps1') -PreparationFile ($candidate.CandidateDirectory+'.preparation.json')
+$result | Add-Member -NotePropertyName Retention -NotePropertyValue $retention
+$result | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath ($candidate.CandidateDirectory+'.preparation.json') -Encoding utf8
 $result

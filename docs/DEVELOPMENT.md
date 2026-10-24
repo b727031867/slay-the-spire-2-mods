@@ -12,9 +12,10 @@
 
 - 后续每台PC只保留最近3份可交付制品，按冻结/交付时间排序，以实际包/快照哈希区分；相同Mod版本的不同发布包仍分别计数。
 - 一份制品包含同次交付的核心目录、完整快照、ZIP、SHA256、准备报告及工坊上传副本，相关副本合并计数。默认构建不生成中间ZIP，最终候选统一归档；不在其他目录长期堆放重复二进制。
-- 每次交付核验新包后，盘点artifacts、.local/workshop、临时测试包和构建工作树，删除三份之外的旧制品及不再使用的中间产物。先核对绝对路径、工作树改动与正在使用的包；保留清单中应覆盖待试玩包、当前发布包和必要回滚用途，避免删除唯一正在使用的副本。仍在使用的旧包须先完成替换，不能直接删除或静默突破三份上限。
+- 统一交付入口Invoke-ReleasePreparation完成测试校验、冻结、ZIP校验及上传目录准备，并写入PREPARED报告后，自动调用Remove-OldDeliverables保留本次及最近两份其他交付。相同快照的重复目录只占一份，相同核心的独立构建/ZIP按关联副本处理；当没有保留快照再使用该核心时一并删除。已有`*-release`完整快照和独立核心交接ZIP会纳入首次轮转。失败测试、冻结或上传目录准备不会触发清理。
 - 保留源码/原始素材、依赖和工具缓存、用户配置/存档、原始诊断日志、测试结果与有意保留的恢复备份；它们不计入可交付制品。旧二进制过期后，历史报告仍保留原来的包身份、哈希和PASS/FAIL，不把已删除包描述为本机仍可复用。不要把普通制品改名为备份来规避上限。
-- 当前脚本不自动轮转制品；交付收尾由执行者核对并清理，不假定Build-Mod或Build-ReleaseCandidate已代为执行。
+- 自动范围为本仓库artifacts下的已识别交付及其.local/workshop副本，包含过期快照、ZIP、校验文件、准备报告、阶段耗时和已核对的关联核心。先验证包、归档哈希、上传内容与所有删除路径，拒绝目录联接和未知上传文件；校验异常在删除前停止。清理结果返回并写入当前.preparation.json的Retention字段；清理异常会抛错并保留新候选和已有准备报告，排除原因后可用`Remove-OldDeliverables.ps1 -PreparationFile '<报告路径>'`重试，不重跑测试。
+- 使用默认输出或artifacts的直接子目录才能自动轮转；自定义输出到其他目录时返回Retention.Status=SKIPPED并警告，不删除任意外部目录。Build-Mod、Build-ReleaseCandidate和Prepare-Workshop单独运行不算完成交付，不触发删除；已有测试报告时应通过Invoke-ReleasePreparation的-TestResultFile复用证据完成交付。未完成任务的构建、未成功准备的候选、其他临时包和工作树仍由任务收尾核对清理，不由脚本猜测用途。
 
 首次过渡：2026-10-24按用户确认的清单删除12个本地/20个远端已完成分支、两个旧工作树和未跟踪平衡分析；用户执行BAT后核实剩余143项目标全部不存在，2532个保留文件大小/修改时间不变。累计清单约6.7 GiB。本轮此前明确保留的历史快照、回滚包和最新回归工作树不追加删除；下一次交付时将这些制品纳入统一盘点，收敛至三份。清单、恢复bundle和本机核验材料位于.local/backups/project-cleanup-20261024，不进入Git。
 
@@ -175,6 +176,8 @@ $test = .\scripts\Invoke-ModTests.ps1 -Suite Cards -CodeCommit '<包S>' -Package
 
 输出PREPARED、核心身份/哈希、所选范围、测试结果及是否复用、阶段耗时、快照/ZIP哈希与上传目录，保存为快照目录旁的.preparation.json。测试报告另含DurationSeconds。失败直接终止，保留诊断日志便于排查；失败中间包排查完成后清理，不作为可交付制品保留。磁盘专项按改动范围使用上文SavePrepare/SaveResume。用户试玩不阻塞提交、合并和打包，但工坊发布必须等待对应候选试玩成功；图形自动化、真实联机和自然整局系统性验证仍按用户明确要求执行并单列结果。
 
+准备成功后自动执行上文三份制品轮转，返回Retention.Status、Kept和Removed并回写报告。自动清理只处理托管目录；当前安装、用户存档、独立日志、备份和未完成任务保持不动。该步骤不表示用户试玩成功或已上传工坊。
+
 如已完成对应验收，只需独立冻结和准备：
 
 ```powershell
@@ -193,6 +196,7 @@ Get-ReleaseSnapshot校验快照身份、全部文件清单/哈希、固定工坊
 ```powershell
 .\tests\Test-ReleasePackaging.ps1
 .\tests\Test-ReleasePreparation.ps1
+.\tests\Test-DeliverableRetention.ps1
 .\tests\Test-ModTestEntry.ps1
 ```
 

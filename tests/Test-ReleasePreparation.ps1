@@ -4,7 +4,7 @@ $fixture=Join-Path $root ('.local/release-preparation-tests/'+[guid]::NewGuid().
 $scripts=Join-Path $fixture 'scripts'
 $core=Join-Path $fixture 'core'
 New-Item -ItemType Directory -Path $scripts,$core,(Join-Path $fixture 'docs/player') -Force | Out-Null
-foreach($name in @('Get-ModPackage','Get-ReleaseSnapshot','Build-ReleaseCandidate','Prepare-Workshop','Invoke-ReleasePreparation')) {
+foreach($name in @('Get-ModPackage','Get-ReleaseSnapshot','Build-ReleaseCandidate','Prepare-Workshop','Invoke-ReleasePreparation','Remove-OldDeliverables')) {
     Copy-Item -LiteralPath (Join-Path $root "scripts/$name.ps1") -Destination $scripts
 }
 Copy-Item -LiteralPath (Join-Path $root 'workshop') -Destination $fixture -Recurse

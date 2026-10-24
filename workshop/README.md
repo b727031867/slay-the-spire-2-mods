@@ -5,7 +5,7 @@
 开发版本、已发布版本、分支、包身份与验证范围统一见[当前状态](../docs/STATUS.md)。后续开发和上传更新统一显式使用friends_only；若用户要求好友联机测试，同样保持该可见性。历史发布报告中的visibility=null仅记录当时保留远端好友可见状态的做法，不再作为后续上传配置。
 
 1. 每个开发任务使用独立codex/分支，按影响范围检查通过后合入main。使用PowerShell 7，从干净提交运行Build-Mod.ps1一次，默认不生成中间ZIP。将核心目录交给 `scripts/Invoke-ReleasePreparation.ps1 -PackageDirectory '<核心目录>/Sts2Mod'`，默认部署并运行无GUIFull，再冻结快照和准备上传目录。已具备同包schemaVersion=2通过报告时加`-TestResultFile`复用，避免重新部署和测试；明确免完整回归的小修复按累计影响传`-Suite`。报告绑定方法、覆盖限制及阶段耗时见[开发说明](../docs/DEVELOPMENT.md)。入口不编译、不上传，PREPARED不代表发布完成。磁盘专项按改动范围执行。提供本地候选供用户试玩，必须记录用户明确确认该核心包试玩成功后才能上传；核心变化或重建后重新验证和确认，不能先上传工坊供试玩。联机仍为可选。
-2. 如已独立验收核心，可用Build-ReleaseCandidate.ps1 -PackageDirectory冻结，再运行 `scripts/Prepare-Workshop.ps1 -SnapshotDirectory <快照目录>`，生成 `.local/workshop/<完整源码提交>-<快照哈希前12位>/`。该入口只读快照中的核心、文档、配置和图片，不读取仓库补充内容；旧候选须重新冻结。仅生成的工作目录用于上传，保留快照ZIP、SHA256及准备报告。
+2. 统一入口成功后自动保留artifacts内最近3份交付，清理过期快照、ZIP、校验文件、准备报告及已核验的关联核心/上传副本；结果写入.preparation.json的Retention字段。旧包或上传副本校验异常时停止清理并报错，新候选保留。已有测试证据时使用-TestResultFile完成交付，不重复启动游戏。独立Build-ReleaseCandidate与Prepare-Workshop仍可用于冻结/准备，但不触发轮转；自定义输出到artifacts之外时轮转明确标记SKIPPED，范围详见[开发说明](../docs/DEVELOPMENT.md#制品保留与清理)。Prepare-Workshop只读取快照，生成 `.local/workshop/<完整源码提交>-<快照哈希前12位>/`；仅生成的工作目录用于上传，准备完成仍须等待用户试玩成功。
 3. 从官方发行页下载 Mega Crit ModUploader v0.2.0 Windows x64，保存其ZIP哈希。查看生成的workshop.json、image.png、previews/rules.png及content。
 4. Steam登录拥有本游戏的账号。使用官方 `ModUploader.exe upload -w <工作目录>` 进行仅限好友上传（visibility必须为friends_only）；此动作会向Steam提交内容。若平台要求同意法律条款，交由账号持有人完成。
 5. 成功后保存工作目录内mod_id.txt；跨PC继续更新时传递同一条目ID，不重复创建条目。不要把个人日志或凭据入库。后续更新使用同一ID和新候选内容。
