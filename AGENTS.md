@@ -21,7 +21,17 @@ The user requested on 2026-10-20 that game testing must not interfere with their
 - Daily development uses core checks plus affected suites, not Full by default. Retain all existing cases and strict validators; do not weaken assertions or unknown-error handling to shorten a run.
 - Reuse loading evidence included in focused suites. Full already covers focused gameplay suites; do not rerun them separately without a specific uncovered concern. Disk prepare/resume remains separate when persistence is affected.
 - Run Full for shared combat/lifecycle changes, broad or uncertain impact, and once per release candidate. Reuse evidence only when core hashes, relevant environment and coverage match; do not treat a new build with the same commit as the tested package.
-- Documentation-only changes need consistency/link review, not a game launch. Manual/graphical/multiplayer testing remains optional and requires the user's explicit request.
+- Documentation-only changes need consistency/link review, not a game launch. AI graphical tests and multiplayer tests require the user's explicit request; user playtest approval is required before Workshop publication as described below.
+
+## Task branches and deliverable retention
+
+User instruction dated 2026-10-24:
+
+- Start every development task, including fixes, tooling and rule/documentation changes, on its own `codex/` branch from the latest shared `main`. Do not develop directly on `main` or reuse a completed task branch.
+- Complete the impact-based checks in `docs/TESTING-SOP.md` before merging into `main`. Reassess conflicts or additional changes after integration; documentation-only tasks use consistency/link review. A successful merge does not establish user playtest approval or authorize Workshop publication.
+- After the merge is pushed and verified, remove the completed local and remote task branches when no unique work remains. Keep unfinished tasks on their own branches.
+- At each future delivery, retain only the latest **three deliverable sets per PC**, identified by frozen package/snapshot hashes and delivery time, not just the Mod version. A snapshot directory, its ZIP, checksum, preparation report and upload copy belong to one set. Remove older sets and obsolete intermediate builds, ZIPs, upload copies and temporary build worktrees after verifying the retained sets. Do not retain duplicate binaries elsewhere to evade the limit.
+- Preserve source/assets, dependency/tool caches, user saves/configuration, diagnostic logs/reports and deliberate recovery backups; these are not deliverable sets. Historical evidence must keep its original result even when an old binary is retired. Details and the initial cleanup transition are in `docs/DEVELOPMENT.md`.
 
 ## TASK-003 disk acceptance
 
@@ -30,11 +40,13 @@ The user requested on 2026-10-20 that game testing must not interfere with their
 - Test display/audio settings use explicit fixture defaults; run/progress/prefs data uses native disk persistence. This is not a test of user graphics settings persistence.
 - Continuous-battle acceptance uses a controlled deck, high player HP and a four-turn budget per combat. Record forced cleanup separately from natural victories; do not present it as a natural full-run or balance validation.
 
-## Workshop visibility and optional playtesting
+## Workshop visibility and user playtest approval
 
-User instruction dated 2026-10-21: when multiplayer playtests are requested, they use friends and the Friends Only Workshop item. User instruction dated 2026-10-23: manual playtesting and multiplayer verification are optional after development. They are not required to commit, merge, package or release, and must not be run unless the user explicitly requests them.
+User instruction dated 2026-10-21: when multiplayer playtests are requested, they use friends and the Friends Only Workshop item. The 2026-10-24 instruction supersedes the previous optional-playtesting release policy: develop on a task branch, pass the required checks, merge into `main`, deliver a local candidate for the user to play, then publish to Workshop only after the user explicitly confirms that candidate worked. Commits, merges and packaging do not require user playtesting. Multiplayer remains optional.
 
 - Keep the existing Workshop item `3823282901` set to **Friends Only** throughout development, uploads/updates and testing. The official uploader configuration value is `friends_only`.
 - Change visibility only if the user explicitly requests a different setting later. Do not restore the older private/hidden policy from historical acceptance reports or cached upload directories.
 - Before every upload, verify the actual upload workspace `workshop.json` uses `friends_only`; regenerate or deliberately refresh stale workspace metadata. After uploading, verify remote visibility with `WorkshopProbe inspect 3823282901` (expected `k_ERemoteStoragePublishedFileVisibilityFriendsOnly`).
-- If optional playtesting or multiplayer verification is performed, keep its results separate from headless logic and rendering checks. Planning friend sessions does not establish multiplayer compatibility.
+- Record the user's successful playtest against the actual candidate/core hashes before uploading; headless PASS, PREPARED, a merge or an older candidate's approval cannot substitute. Core byte changes or a rebuild require new tests and user confirmation for the new package. Documentation-only repackaging can reuse unchanged core approval, while separately checking the new snapshot/upload bytes.
+- Do not upload an unapproved candidate just to let the user test it through Workshop. Keep the existing published item unchanged until approval, then perform the authorized publication and existing download/visibility/hash checks.
+- Keep user playtest and optional multiplayer results separate from headless logic and rendering checks. Planning friend sessions does not establish multiplayer compatibility.
