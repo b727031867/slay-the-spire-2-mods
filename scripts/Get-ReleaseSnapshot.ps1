@@ -31,7 +31,8 @@ foreach ($group in $groups) {
 }
 if (@($items | Where-Object { !$_.PSIsContainer }).Count -ne $expected.Count) { throw 'Snapshot has unexpected files.' }
 $config = Get-Content -Raw -LiteralPath (Join-Path $path 'workshop/workshop.json') | ConvertFrom-Json
-if ($config.visibility -ne 'friends_only' -or [string]::IsNullOrWhiteSpace($config.description) -or
+# Preserve validation/retention of historical friends-only snapshots; Prepare-Workshop enforces public uploads.
+if ($config.visibility -notin @('public','friends_only') -or [string]::IsNullOrWhiteSpace($config.description) -or
     @($config.dependencies).Count -ne 1 -or $config.dependencies[0] -ne 3737335127 -or
     (Get-Content -Raw -LiteralPath (Join-Path $path 'workshop/mod_id.txt')).Trim() -ne '3823282901') { throw 'Invalid frozen Workshop policy or identity.' }
 foreach ($name in @('image.png','previews/rules.png')) {

@@ -30,7 +30,7 @@ $documentDirty = [bool](git -C $projectRoot status --porcelain -- $documents.Val
 $workshopSources = @('workshop/workshop.json','workshop/description.bbcode.txt','workshop/item-id.txt','workshop/assets/image.png','workshop/assets/rules.png')
 $workshopDirty = [bool](git -C $projectRoot status --porcelain -- $workshopSources)
 $config = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/workshop.json') | ConvertFrom-Json
-if ($config.visibility -ne 'friends_only') { throw 'Workshop visibility must be friends_only.' }
+if ($config.visibility -ne 'public') { throw 'Workshop visibility must be public.' }
 $config.description = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/description.bbcode.txt')
 $itemId = (Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'workshop/item-id.txt')).Trim()
 if ($itemId -ne '3823282901') { throw 'Release must update the existing Workshop item.' }

@@ -2,6 +2,8 @@ param([Parameter(Mandatory)][string]$SnapshotDirectory, [string]$OutputDirectory
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $snapshot = & (Join-Path $PSScriptRoot 'Get-ReleaseSnapshot.ps1') -SnapshotDirectory $SnapshotDirectory
+$config=Get-Content -Raw -LiteralPath (Join-Path $snapshot.SnapshotDirectory 'workshop/workshop.json') | ConvertFrom-Json
+if ($config.visibility -ne 'public') { throw 'Workshop upload requires a public snapshot; refreeze the existing core with current configuration.' }
 if (!$OutputDirectory) {
     $OutputDirectory = Join-Path $projectRoot ('.local/workshop/' + $snapshot.Info.codeCommit + '-' + $snapshot.SnapshotSHA256.Substring(0,12))
 }

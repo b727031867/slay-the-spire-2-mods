@@ -1,8 +1,8 @@
 {
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
-  "visibility": "friends_only",
-  "changeNote": "0.3.17 验收更新：天地交征雷分支改为X次全体攻击，每段享受力量、易伤等修正；修复黏糊格挡预览和5张卡牌的元素文字颜色；派蒙的应援更名元素之心；更新4张事件图、8张遗物图和归途卡图。保持仅限好友。",
+  "visibility": "public",
+  "changeNote": "0.3.17 验收更新：天地交征雷分支改为X次全体攻击，每段享受力量、易伤等修正；修复黏糊格挡预览和5张卡牌的元素文字颜色；派蒙的应援更名元素之心；更新4张事件图、8张遗物图和归途卡图。条目公开发布。",
   "tags": [],
   "dependencies": [
     3737335127

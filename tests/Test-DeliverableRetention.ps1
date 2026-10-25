@@ -48,6 +48,20 @@ foreach ($number in 1..3) {
 }
 $first=$deliveries[0].SnapshotDirectory
 $second=$deliveries[1].SnapshotDirectory
+# Previously published friends-only snapshots remain eligible for safe rotation after the public policy change.
+$friendsHistory=Join-Path $fixture 'artifacts/friends-history-release'
+Copy-Item -LiteralPath $first -Destination $friendsHistory -Recurse
+$friendsConfig=Join-Path $friendsHistory 'workshop/workshop.json'
+$friendsManifest=Join-Path $friendsHistory 'release-info.txt'
+$config=Get-Content -Raw $friendsConfig | ConvertFrom-Json
+$config.visibility='friends_only'
+$config | ConvertTo-Json -Depth 5 | Set-Content $friendsConfig
+$manifest=Get-Content -Raw $friendsManifest | ConvertFrom-Json
+$manifest.workshopFiles.'workshop.json'=(Get-FileHash $friendsConfig).Hash
+$manifest | ConvertTo-Json -Depth 5 | Set-Content $friendsManifest
+Compress-Archive -LiteralPath @(Get-ChildItem -LiteralPath $friendsHistory | ForEach-Object FullName) -DestinationPath "$friendsHistory.zip"
+"$((Get-FileHash "$friendsHistory.zip").Hash)  friends-history-release.zip" | Set-Content "$friendsHistory.zip.sha256"
+(Get-Item $friendsManifest).LastWriteTimeUtc=[datetime]'2000-01-01'
 # A core shared by retained snapshots survives expiration of an older snapshot.
 $oldCore=Join-Path $fixture 'artifacts/old-core'
 New-Item -ItemType Directory -Path $oldCore | Out-Null
@@ -74,6 +88,7 @@ Set-Content $unmanaged 'unrelated'
 $unfinished=& (Join-Path $scripts 'Build-ReleaseCandidate.ps1') -PackageDirectory $core -OutputDirectory (Join-Path $fixture 'artifacts/unfinished')
 $fourth=Deliver 'delivery 4'
 Check ($fourth.Retention.Status -eq 'COMPLETE' -and $fourth.Retention.Kept.Count -eq 3) 'successful delivery automatically retains three sets'
+Check (!(Test-Path $friendsHistory) -and !(Test-Path "$friendsHistory.zip")) 'historical friends-only delivery can expire under the public policy'
 foreach ($path in @($first,"$first.zip","$first.zip.sha256","$first.preparation.json",$deliveries[0].WorkshopDirectory)) {
     Check (!(Test-Path -LiteralPath $path)) "expired delivery component removed: $(Split-Path $path -Leaf)"
 }

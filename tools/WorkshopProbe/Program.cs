@@ -5,9 +5,10 @@ using Steamworks;
 // Steam client API only. Preview replacement is explicit; never uploads mod content or accepts agreements.
 var repair = args.Length == 4 && args[0] == "replace-preview";
 var friendsOnly = args.Length == 2 && args[0] == "friends-only";
-if ((!repair && (args.Length != 2 || args[0] is not ("inspect" or "subscribe" or "unsubscribe" or "friends-only")))
+var changeVisibility = friendsOnly || (args.Length == 2 && args[0] == "public");
+if ((!repair && (args.Length != 2 || args[0] is not ("inspect" or "subscribe" or "unsubscribe" or "friends-only" or "public")))
     || !ulong.TryParse(args[1], out var id))
-    throw new ArgumentException("Usage: WorkshopProbe inspect|subscribe|unsubscribe|friends-only <workshop-id> OR replace-preview <workshop-id> <index> <image-path>");
+    throw new ArgumentException("Usage: WorkshopProbe inspect|subscribe|unsubscribe|friends-only|public <workshop-id> OR replace-preview <workshop-id> <index> <image-path>");
 uint previewIndex = 0;
 string? previewPath = null;
 if (repair)
@@ -24,7 +25,7 @@ try
     var item = new PublishedFileId_t(id);
     var before = SteamUGC.GetItemState(item);
     Console.WriteLine(JsonSerializer.Serialize(new { item = id, stateBefore = before }));
-    if (args[0] == "inspect" || repair || friendsOnly)
+    if (args[0] == "inspect" || repair || changeVisibility)
     {
         var query = SteamUGC.CreateQueryUGCDetailsRequest([item], 1);
         try
@@ -44,19 +45,22 @@ try
             if (ok && SteamUGC.GetQueryUGCResult(query, 0, out var detail))
             {
                 Console.WriteLine(JsonSerializer.Serialize(new { item = id, visibility = detail.m_eVisibility.ToString(), result = detail.m_eResult.ToString(), consumerApp = detail.m_nConsumerAppID.m_AppId, title = detail.m_rgchTitle }));
-                if (friendsOnly)
+                if (changeVisibility)
                 {
                     if (detail.m_eResult != EResult.k_EResultOK || detail.m_nConsumerAppID.m_AppId != 2868840
                         || detail.m_ulSteamIDOwner != SteamUser.GetSteamID().m_SteamID)
                         throw new InvalidOperationException("Expected an owned Slay the Spire 2 Workshop item.");
-                    if (detail.m_eVisibility == ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityFriendsOnly)
+                    var visibility = friendsOnly
+                        ? ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityFriendsOnly
+                        : ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic;
+                    if (detail.m_eVisibility == visibility)
                     {
-                        Console.WriteLine("FRIENDS_ONLY already set; no update submitted.");
+                        Console.WriteLine($"{visibility} already set; no update submitted.");
                         return 0;
                     }
                     var update = SteamUGC.StartItemUpdate(detail.m_nConsumerAppID, item);
-                    if (!SteamUGC.SetItemVisibility(update, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityFriendsOnly))
-                        throw new InvalidOperationException("Steam rejected friends-only visibility.");
+                    if (!SteamUGC.SetItemVisibility(update, visibility))
+                        throw new InvalidOperationException("Steam rejected the visibility change.");
                     bool submitted = false;
                     EResult result = EResult.k_EResultNone;
                     bool agreementRequired = false;
@@ -69,7 +73,7 @@ try
                     submit.Set(SteamUGC.SubmitItemUpdate(update, ""));
                     timer.Restart();
                     while (!submitted && timer.Elapsed.TotalSeconds < 45) { SteamAPI.RunCallbacks(); Thread.Sleep(100); }
-                    Console.WriteLine(JsonSerializer.Serialize(new { operation = "friends-only", submitted, result = result.ToString(), agreementRequired }));
+                    Console.WriteLine(JsonSerializer.Serialize(new { operation = args[0], submitted, result = result.ToString(), agreementRequired }));
                     return submitted && result == EResult.k_EResultOK && !agreementRequired ? 0 : 6;
                 }
                 SteamUGC.GetQueryUGCPreviewURL(query, 0, out var coverUrl, 4096);

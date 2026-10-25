@@ -59,7 +59,7 @@ $prepared=& (Join-Path $scripts 'Prepare-Workshop.ps1') -SnapshotDirectory $expa
 foreach($name in @('README.zh-CN.md','CHANGELOG.md','ASSETS.md')) {
     Check ((Get-FileHash (Join-Path $prepared.WorkshopDirectory "content/$name")).Hash -eq $validated.Info.documents.$name) "frozen document reused: $name"
 }
-Check ((Get-Content -Raw (Join-Path $prepared.WorkshopDirectory 'workshop.json') | ConvertFrom-Json).visibility -eq 'friends_only') 'repository config changes cannot alter frozen visibility'
+Check ((Get-Content -Raw (Join-Path $prepared.WorkshopDirectory 'workshop.json') | ConvertFrom-Json).visibility -eq 'public') 'repository config changes cannot alter frozen public visibility'
 Check ((Get-Content -Raw (Join-Path $prepared.WorkshopDirectory 'mod_id.txt')).Trim() -eq '3823282901') 'frozen item identity retained'
 Check ((Get-FileHash (Join-Path $prepared.WorkshopDirectory 'image.png')).Hash -eq $validated.Info.workshopFiles.'image.png') 'repository art changes cannot alter frozen images'
 Check (@(Get-ChildItem (Join-Path $prepared.WorkshopDirectory 'content') -File).Count -eq 7) 'upload content remains exactly seven files'
@@ -105,6 +105,23 @@ foreach($policy in @('visibility','dependency','item','image-size')) {
         [IO.File]::WriteAllBytes($manifestPath,$original)
     }
 }
+$legacyConfig=Join-Path $expanded 'workshop/workshop.json'
+$legacyConfigBytes=[IO.File]::ReadAllBytes($legacyConfig)
+try {
+    $config=Get-Content -Raw $legacyConfig | ConvertFrom-Json
+    $config.visibility='friends_only'
+    $config | ConvertTo-Json -Depth 5 | Set-Content $legacyConfig
+    $manifest=Get-Content -Raw $manifestPath | ConvertFrom-Json
+    $manifest.workshopFiles.'workshop.json'=(Get-FileHash $legacyConfig).Hash
+    $manifest | ConvertTo-Json -Depth 5 | Set-Content $manifestPath
+    $legacy=& (Join-Path $scripts 'Get-ReleaseSnapshot.ps1') -SnapshotDirectory $expanded
+    Check ($legacy.Info.codeCommit -eq $commit) 'historical friends-only snapshot remains valid for inspection and retention'
+    Reject {& (Join-Path $scripts 'Prepare-Workshop.ps1') -SnapshotDirectory $expanded -OutputDirectory (Join-Path $fixture 'legacy-upload')} 'historical friends-only snapshot cannot prepare a new upload'
+    Check (!(Test-Path (Join-Path $fixture 'legacy-upload'))) 'legacy visibility rejected before copying upload files'
+} finally {
+    [IO.File]::WriteAllBytes($legacyConfig,$legacyConfigBytes)
+    [IO.File]::WriteAllBytes($manifestPath,$original)
+}
 Set-Content (Join-Path $expanded 'extra.txt') 'unexpected'
 Reject {& (Join-Path $scripts 'Get-ReleaseSnapshot.ps1') -SnapshotDirectory $expanded} 'unexpected snapshot files rejected'
 foreach($mode in @('deploy-fail','fail','throw','identity','gui','change-core')) {
@@ -118,6 +135,8 @@ foreach($mode in @('deploy-fail','fail','throw','identity','gui','change-core'))
     }
     $info | ConvertTo-Json -Depth 4 | Set-Content $buildInfo
 }
+Set-Content $configPath '{"visibility":"friends_only"}'
+Reject {& (Join-Path $scripts 'Build-ReleaseCandidate.ps1') -PackageDirectory $core -OutputDirectory (Join-Path $fixture 'friends-candidate')} 'new friends-only candidate rejected by public policy'
 Set-Content $configPath '{"visibility":"private"}'
 Reject {& (Join-Path $scripts 'Build-ReleaseCandidate.ps1') -PackageDirectory $core -OutputDirectory (Join-Path $fixture 'private-candidate')} 'invalid repository Workshop visibility rejected at freeze'
 Copy-Item -LiteralPath (Join-Path $root 'workshop/workshop.json') -Destination $configPath -Force

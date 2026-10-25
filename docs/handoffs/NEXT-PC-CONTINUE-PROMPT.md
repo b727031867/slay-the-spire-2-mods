@@ -10,4 +10,4 @@
 
 统一测试使用Invoke-ModTests，无GUI与本轮进程清理由入口保证。磁盘变更按范围另跑SavePrepare/SaveResume。合入main后交付本地候选，用户明确确认对应核心包试玩成功后才发布工坊；未确认时不上传。图形自动化和真实联机仍须用户明确要求，单独记录。游戏测试不复制用户存档、不手工写Steam缓存。
 
-后续上传保持原工坊ID3823282901及friends_only；上传前检查实际workshop.json，上传后用WorkshopProbe确认FriendsOnly。历史报告的private或visibility=null不作为当前操作。实际上传及Steam下载验收见[工坊说明](../../workshop/README.md)。
+2026-10-25起，后续上传保持原工坊ID3823282901及public；上传前检查实际workshop.json，上传后用WorkshopProbe确认Public。历史报告或缓存中的friends_only/private/visibility=null不作为当前操作；旧好友候选从原核心重新冻结，避免权限降回好友。实际上传及Steam下载验收见[工坊说明](../../workshop/README.md)。

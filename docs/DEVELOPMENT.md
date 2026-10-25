@@ -187,7 +187,7 @@ $candidate = .\scripts\Build-ReleaseCandidate.ps1 -PackageDirectory '<已验收�
 
 Build-ReleaseCandidate不构建。它保留四文件核心字节，附带三份玩家文档，以及已填充说明的workshop.json、mod_id.txt、封面和规则图。release-info.txt使用schemaVersion=2，分别记录核心、文档和工坊文件SHA256，并记录文档提交、文档dirty与工坊dirty。ZIP包含完整快照，重新包装有新的ZIP哈希。
 
-Get-ReleaseSnapshot校验快照身份、全部文件清单/哈希、固定工坊ID、friends_only、BaseLib依赖及图片大小。Prepare-Workshop只读取快照，逐字节生成上传内容并校验复制结果，不再从仓库读取文档、配置或图片。默认目录为.local/workshop/<S>-<快照哈希前12位>，已有目录拒绝覆盖；需要刷新内容就重新冻结，不手改旧上传目录。旧schemaVersion=1候选必须用原核心重新包装；Prepare-Workshop原PackageDirectory参数已改为SnapshotDirectory，防止静默回退到仓库内容。
+Get-ReleaseSnapshot校验快照身份、全部文件清单/哈希、固定工坊ID、BaseLib依赖及图片大小，兼容历史friends_only快照供审计和制品轮转。新Build-ReleaseCandidate和Prepare-Workshop只接受public；旧候选需要从原核心按当前公开配置重新冻结，不能直接上传旧好友目录。Prepare-Workshop只读取快照，逐字节生成上传内容并校验复制结果，不再从仓库读取文档、配置或图片。默认目录为.local/workshop/<S>-<快照哈希前12位>，已有目录拒绝覆盖；需要刷新内容就重新冻结，不手改旧上传目录。旧schemaVersion=1候选必须用原核心重新包装；Prepare-Workshop原PackageDirectory参数已改为SnapshotDirectory，防止静默回退到仓库内容。
 
 准备不证明验收通过，独立包装入口不会要求Full报告，也不自动检查用户反馈。正式发布前由执行者审阅测试结果并核对用户对该核心包的试玩成功确认，再按[工坊说明](../workshop/README.md)上传、核对远端可见性、Steam实际下载和加载，更新STATUS及发布报告，并执行三份制品保留规则。快照哈希用于发现意外改动，不是数字签名。
 
@@ -202,4 +202,4 @@ Get-ReleaseSnapshot校验快照身份、全部文件清单/哈希、固定工坊
 
 ## 工坊可见性与可选联机测试
 
-工坊条目3823282901始终保持“仅限好友”。上传配置使用 `friends_only`，准备入口拒绝其他值；上传前核对用户对候选的试玩成功确认及实际工作目录，上传后读取远端确认FriendsOnly。历史发布报告中的private是当时记录，不再作为后续上传策略。只有用户明确另行要求才更改可见性。用户试玩是工坊发布前置条件；联机仍为可选，用户明确要求时再与朋友执行，并将结果与无GUI单人验收分开记录。
+2026-10-25起工坊条目3823282901及后续更新均公开。上传配置使用 `public`，新候选及上传准备入口拒绝其他值；上传前核对用户对候选的试玩成功确认及实际工作目录，上传后读取远端确认Public。历史friends_only/private/visibility=null只记录当时事实，不作为后续上传策略。只有用户明确另行要求才更改可见性。用户试玩仍是新内容发布前置条件；仅修改已有条目权限时，可按用户明确授权运行WorkshopProbe public 3823282901，不上传新包，再inspect核对Public。联机仍为可选，用户明确要求时再与朋友执行，并将结果与无GUI单人验收分开记录。
