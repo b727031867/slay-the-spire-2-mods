@@ -1,7 +1,7 @@
 param(
     [Parameter(Mandatory)][string]$PackageDirectory,
     [string]$OutputDirectory,
-    [ValidateNotNullOrEmpty()][ValidateSet('Load','Visuals','Cards','Character','Events','Full')][string[]]$Suite=@('Full'),
+    [ValidateNotNullOrEmpty()][ValidateSet('Load','Visuals','Cards','Character','Events','Full')][string[]]$Suite=@('Load'),
     [ValidateNotNullOrEmpty()][string[]]$TestResultFile
 )
 $ErrorActionPreference='Stop'

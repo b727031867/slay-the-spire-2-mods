@@ -20,7 +20,7 @@ The user requested on 2026-10-20 that game testing must not interfere with their
 - Follow [docs/TESTING-SOP.md](docs/TESTING-SOP.md). Before editing, identify changed behavior, callers/shared state, affected resources/fixtures/validators, required tests and reasons for skipping others.
 - Daily development uses core checks plus affected suites, not Full by default. Retain all existing cases and strict validators; do not weaken assertions or unknown-error handling to shorten a run.
 - Reuse loading evidence included in focused suites. Full already covers focused gameplay suites; do not rerun them separately without a specific uncovered concern. Disk prepare/resume remains separate when persistence is affected.
-- Run Full for shared combat/lifecycle changes, broad or uncertain impact, and once per release candidate. Reuse evidence only when core hashes, relevant environment and coverage match; do not treat a new build with the same commit as the tested package.
+- User instruction dated 2026-10-26: run Full only when the user explicitly requests full regression. Shared changes, uncertain scope, packaging and publication do not authorize Full. Use targeted checks for the authorized scope; never launch Full implicitly. Reuse evidence only when core hashes, relevant environment and coverage match; do not treat a new build with the same commit as the tested package.
 - Documentation-only changes need consistency/link review, not a game launch. AI graphical tests and multiplayer tests require the user's explicit request; user playtest approval is required before Workshop publication as described below.
 
 ## Task branches and deliverable retention

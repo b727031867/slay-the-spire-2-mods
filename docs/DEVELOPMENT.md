@@ -21,7 +21,7 @@
 
 ## 统一测试入口
 
-先按[影响范围验证SOP](TESTING-SOP.md)评估本次改动，日常默认“核心检查＋受影响专项”，Full用于共享机制等高风险改动和发布候选。自动运行、等待完成、严格验收并清理自己的测试进程，例如局部卡牌改动：
+先按[影响范围验证SOP](TESTING-SOP.md)评估本次改动，日常默认“核心检查＋受影响专项”，Full仅在用户明确要求全量回归时运行；共享机制改动和发布不构成自动授权。自动运行、等待完成、严格验收并清理自己的测试进程，例如局部卡牌改动：
 
 ```powershell
 .\scripts\Invoke-ModTests.ps1 -Suite Cards -CodeCommit '<实际程序集身份S>'
@@ -155,7 +155,7 @@ $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
 
 ## 发布准备：测试、冻结与工坊目录
 
-先汇总本轮代码和资源改动，再提交、构建并测试同一包。以下入口默认对尚未完成候选验收的核心部署并运行Full，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。低风险修复按影响评估和用户授权显式使用`-Suite Cards,Events`等范围；入口不会自动猜测或缩减测试范围。
+先汇总本轮代码和资源改动，再提交、构建并测试同一包。以下入口默认对尚未完成候选验收的核心部署并运行Load，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。按影响评估和用户授权显式使用`-Suite Cards,Events`等范围；入口不会自动猜测或缩减测试范围。
 
 ```powershell
 .\scripts\Invoke-ReleasePreparation.ps1 -PackageDirectory '<干净核心目录>/Sts2Mod'
