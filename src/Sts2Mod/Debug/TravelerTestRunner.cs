@@ -132,6 +132,7 @@ public partial class TravelerTestRunner : Node
             await RunEndToEnd();
             return;
         }
+        if (CommandLineHelper.HasArg("sts2mod-sandworm")) { await TestSandworm(); return; }
         await TestTravelerSelection();
         GD.Print("STS2MOD_TEST_START fixture=singleplayer shouldSave=false seed=TC001A");
         var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Traveler>(), false,

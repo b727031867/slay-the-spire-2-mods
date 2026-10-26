@@ -41,11 +41,11 @@ function Reject([scriptblock]$action,$message){$failed=$false;try{& $action | Ou
 Set-Content (Join-Path $fixture 'mode.txt') 'pass'
 $result=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirectory $core -OutputDirectory (Join-Path $fixture 'candidate')
 Check ($result.Status -eq 'PREPARED' -and !$result.Uploaded) 'pipeline prepares without claiming upload'
-Check (((Get-Content (Join-Path $fixture 'stages.txt')) -join ',') -eq 'deploy,Full') 'deploy precedes headless Full'
+Check (((Get-Content (Join-Path $fixture 'stages.txt')) -join ',') -eq 'deploy,Load') 'default preparation only runs headless Load'
 Check (!$result.ReusedTests -and $result.Timings.TotalSeconds -ge 0 -and $result.Timings.FreezeSeconds -ge 0) 'stage timings and fresh testing recorded'
 Check ($result.Rendering -eq 'NOT_RUN' -and $result.Multiplayer -eq 'NOT_RUN' -and $result.DiskResume -eq 'NOT_RUN') 'unrun scopes remain explicit'
 $saved=Get-Content -Raw ($result.SnapshotDirectory+'.preparation.json') | ConvertFrom-Json
-Check ($saved.CoreFiles.'Sts2Mod.dll' -eq $hashes.'Sts2Mod.dll' -and $saved.Full.Status -eq 'PASS') 'summary binds Full result to core hashes'
+Check ($saved.CoreFiles.'Sts2Mod.dll' -eq $hashes.'Sts2Mod.dll' -and $saved.Tests[0].Status -eq 'PASS' -and !$saved.Full) 'summary binds default Load result to core hashes'
 $expanded=Join-Path $fixture 'expanded'
 Expand-Archive -LiteralPath $result.Candidate -DestinationPath $expanded
 $validated=& (Join-Path $scripts 'Get-ReleaseSnapshot.ps1') -SnapshotDirectory $expanded
