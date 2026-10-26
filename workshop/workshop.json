@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "public",
-  "changeNote": "0.3.17 验收更新：天地交征雷分支改为X次全体攻击，每段享受力量、易伤等修正；修复黏糊格挡预览和5张卡牌的元素文字颜色；派蒙的应援更名元素之心；更新4张事件图、8张遗物图和归途卡图。条目公开发布。",
+  "changeNote": "2026-10-26 遗物素材更新：无界罗盘、旅人药匣、三色棱晶、远征战鼓、神像庇佑替换为独立透明PNG图标。保留0.3.17版本号，玩法不变。",
   "tags": [],
   "dependencies": [
     3737335127
