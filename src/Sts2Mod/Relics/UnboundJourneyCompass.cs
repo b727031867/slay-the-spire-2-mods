@@ -20,7 +20,7 @@ public sealed class UnboundJourneyCompass : CustomRelicModel, IComboRewardRelic
     private bool _strengthGranted;
     public override RelicRarity Rarity => RelicRarity.Starter;
     public override bool IsStackable => false;
-    public override string PackedIconPath => "res://Sts2Mod/art/drafts/TC_R03.svg";
+    public override string PackedIconPath => "res://Sts2Mod/art/TC_R03.png";
     protected override string PackedIconOutlinePath => PackedIconPath;
     protected override string BigIconPath => PackedIconPath;
 

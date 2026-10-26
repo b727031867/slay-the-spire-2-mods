@@ -1,6 +1,6 @@
 # 素材来源与分发说明
 
-当前运行时卡牌、能力、遗物及角色插图使用项目生成式PNG；TC_C19–TC_C28已换为用户在云盘中确认的卡牌PNG，5种能力使用独立透明PNG状态图标，5件遗物仍用SVG占位草图，元素连携状态图标使用本项目SVG。docs/art中的来源和哈希保留，不作为玩法或发布状态说明。
+当前运行时卡牌、能力、遗物及角色插图使用项目生成式PNG；TC_C19–TC_C28已换为用户在云盘中确认的卡牌PNG，5种能力使用独立透明PNG状态图标，TC_R03–TC_R07五件遗物已换为用户云盘确认的透明PNG，元素连携状态图标使用本项目SVG。docs/art中的来源和哈希保留，不作为玩法或发布状态说明。
 
 0.3.9本地候选的战斗角色直接引用原有character/body.png，以相同UV制作七层网格和18关节；未生成或修改栅格图片。旧11部件atlas保留历史，当前开发控制器不再使用它。见[同母稿方案](design/TRAVELER-NATURAL-MOTION.md)。
 
@@ -15,7 +15,7 @@
 | ui/element_none、wind、rock、lightning.svg | 项目代码绘制的正式小尺寸状态图标，无外部图片输入 |
 | ui/reward_block、attack、draw.svg及旧插图SVG | 项目矢量源码，当前没有常驻面板使用奖励图标；运行时卡牌和角色插图使用PNG |
 | art/TC_C19–TC_C28.png/.tres、ui/powers/*.png | 用户2026-10-23生成、上传云盘并确认的10张卡牌封面和5张Buff图标；原始PNG字节保留，卡面由Godot AtlasTexture截取居中1000×760区域以匹配原生25:19卡框，Buff仍引用独立原图。来源与原始SHA256见[导入记录](art/CLOUD-ART-20261023.md)，卡框修复见[记录](tasks/PORTRAIT-FRAMING.md) |
-| art/drafts/TC_C19–TC_C28.svg、TC_R03–TC_R07.svg | 本项目独立几何占位草图，中文标签转为矢量路径，不分发字体；卡牌SVG保留历史，运行时卡牌及三相灌注状态已改用上述PNG，遗物仍引用SVG |
+| art/drafts/TC_C19–TC_C28.svg、TC_R03–TC_R07.svg | 本项目独立几何占位草图，中文标签转为矢量路径，不分发字体；卡牌SVG保留历史，运行时卡牌及三相灌注状态已改用上述PNG，遗物于2026-10-26改用用户提供PNG；SVG仅保留历史 |
 | 连携特效 | ElementComboVfx.cs使用Godot基本线条绘制，无外部纹理或音频 |
 | 普通攻防、受击及六套元素特效 | TravelerRig控制分层关节；CombatElementVfx以Godot曲线、多边形及折线绘制特效，无新增外部音频或纹理 |
 | 工坊image.png及rules.png | New-WorkshopArtwork.ps1以几何线条、色块、系统字体绘制的封面/规则图，非游戏截图、非生成式图片 |
@@ -32,3 +32,5 @@ BaseLib从原作者发行页独立获取，不打入Mod ZIP；游戏程序集、
 2026-10-24：以上事件美术现使用用户提供的13份PNG，包含TC_E01–TC_E04事件图、TC_R08–TC_R15遗物图和Homeward卡图；旧SVG保留为历史示意资源。游戏引用已切换到对应PNG，两种同伴契约分别使用TC_R14与TC_R15。来源为本轮用户素材更新，未新增外部字体或音频。
 
 0.3.15本地开发新增 `art/drafts/TC_C28.svg`：雷蚀回响独立几何占位草图，无外部图片或字体。资源导入/游戏加载待后续集中验证。
+
+2026-10-26：TC_R03–TC_R07遗物图标替换为用户Google Drive提供的5张1254×1254透明PNG，保留原始字节，小图/轮廓/大图共用对应PNG。旧草图保留历史。来源与SHA256见[导入记录](art/RELIC-ART-20261026.md)。
