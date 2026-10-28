@@ -82,6 +82,7 @@ public partial class TravelerTestRunner
             var rewards = CardFactory.CreateForReward(_player, 3, CardCreationOptions.ForRoom(_player, type)).ToArray();
             Check(rewards.Length == 3 && rewards.All(reward => IsTheme(reward.Card)), "CHAR_native_reward_pool_" + type);
         }
+        await TestLastingCandyRewards();
         for (var i = 0; i < 5; i++)
         {
             var shop = MerchantInventory.CreateForNormalMerchant(_player);

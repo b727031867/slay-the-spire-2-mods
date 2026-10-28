@@ -36,6 +36,16 @@ foreach($index in 0..7) {
 foreach($kind in @('Monster','Elite','Boss')) {
     if(!$text.Contains("STS2MOD_TEST_PASS CHAR_native_reward_pool_$kind")){throw "Missing native reward case: $kind"}
 }
+foreach($case in @('native_single_rarity_reproduces_bug','single_rarity_uses_uniform','mixed_rarity_preserves_odds','empty_pool_preserved','native_hook_single_rarity_candidates')) {
+    if(!$text.Contains("STS2MOD_TEST_PASS CHAR_candy_$case")){throw "Missing LastingCandy case: $case"}
+}
+foreach($kind in @('Monster','Elite','Boss')) {
+    foreach($combats in @(0,1,2,4)) {
+        foreach($prefix in @('reward','reward_roundtrip')) {
+            if(!$text.Contains("STS2MOD_TEST_PASS CHAR_candy_${prefix}_${kind}_$combats")){throw "Missing LastingCandy reward case: $prefix/$kind/$combats"}
+        }
+    }
+}
 foreach($index in 0..4) {
     if(!$text.Contains("STS2MOD_TEST_PASS CHAR_native_shop_five_slots_and_shared_potions_$index")){throw "Missing native shop case $index"}
 }
