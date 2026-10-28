@@ -31,3 +31,19 @@
 | Sts2Mod.dll | 3743057EDEFE393520D0D51E9322260F462BDF4E1F83A1604F54255538F74B4C |
 | Sts2Mod.pck | CD9FCEE5E8ED6FE05E69C99570607A16C93A2F4EB4FF630787A1A220046FC734 |
 | Sts2Mod.json | 0ED61F44AD1D737B4038FD876A513DDC850452F1CEB12ECFD41F1755A7D6F58A |
+
+## Steam登录后定向验证（2026-10-28）
+
+用户要求仅验证本次改动，最终只运行Visuals专项，复用其中的启动、选人资源及出牌表现证据；取消原计划的完整Character专项。未运行Cards、Events、存档恢复或Full。现有Visuals套件中的严格用例全部保留，无新增过滤入口或放宽未知错误处理。
+
+首次原生验证暴露测试夹具预期错误：原生EnergyIconsFormatter在colorless文案中回退当前角色前缀，因此未取得的共享遗物在旅行者对局里同样使用旅行者图标；修正这两条断言并新增显式ironclad前缀仍保留原生图标的断言。新增隔离断言初次遗漏Energy动态变量导致格式化失败，补齐时先遇到LocString.Add重载编译错误，改用原生Add(DynamicVar)后编译通过。随后计数器检查在原生CombatStateTracker下一帧延迟通知前断言，修正为最多5秒等待真实UI状态，仍严格断言归零变暗和回能恢复。均仅修改测试夹具与检查器，运行时素材及实现未变；早期失败日志和构建日志保留，不计PASS。
+
+- 最终干净核心：423c8008b644089042826aaa5d042f6b6070c560，PC-A；游戏v0.107.1/build23811903，BaseLib3.4.7。
+- 构建/导入/导出PASS；PCK哈希与首版一致，测试夹具变化使DLL哈希变化。
+- Visuals：PASS，236条断言，73.202秒，未知错误0。包含5个池的能量符号、24×24行内/74×74悬停图、原生显式前缀兼容、360×276悬停布局、自定义原生计数器场景、归零变暗/回能恢复/旋转中心，以及三元素音频映射、四段WAV加载、音量门控和headless静音。
+- 日志：.local/logs/game-20261028T0824232093759Z.log；schemaVersion=2报告位于同路径.result.json，绑定最终四文件核心、环境与日志哈希。
+- 日志SHA256：01B0941AD39AF0C68CEB4F6294E4BD90B182E85EE5C1394A63F1BFFCA0947726。
+- 最终DLL SHA256：FF33D62C29D83D72CCD4A8F8C713F356D307C0E1D28CC785EE7DB764791B4FF7；PCK SHA256：CD9FCEE5E8ED6FE05E69C99570607A16C93A2F4EB4FF630787A1A220046FC734。
+- 测试PID33152已结束；移除本轮临时四文件副本，原Workshop安装七文件逐项哈希恢复。未修改正常用户存档。
+- Test-ModTestEntry更新后12项PASS。图形观感、实际听感、真实联机NOT_RUN；无GUI静音检查不证明音效听感或最终混音。
+- 本次验证完成，保留任务分支与开发核心artifacts/Sts2Mod-0.3.17-v0.107.1-423c8008b644/Sts2Mod；未合入main、未推送、未冻结正式交付或发布Workshop。
