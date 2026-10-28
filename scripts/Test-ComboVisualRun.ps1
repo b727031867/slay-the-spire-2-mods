@@ -39,12 +39,25 @@ if(!$text.Contains('STS2MOD_TEST_PASS PREVIEW_readonly_state_rng_energy_hp') -or
  throw 'Damage preview suite incomplete'
 }
 foreach($case in @('pool_TravelerCardPool','pool_TravelerRelicPool','pool_TravelerPotionPool',
+ 'pool_TravelerEventCardPool','pool_TravelerEventRelicPool',
+ 'custom_counter_native_scene','counter_zero_darkens','counter_gain_restores','counter_rotates_about_center',
  'native_inline_glyph_bounded','acquired_native_relic_inline','unowned_native_relic_inline',
  'other_native_relic_inline','owned_potion_inline','card_inline','native_hover_icon_bounded','native_hover_layout_bounded')) {
  if(!$text.Contains("STS2MOD_TEST_PASS ENERGY_$case")){throw "Missing energy icon case: $case"}
 }
 if(!$text.Contains('STS2MOD_ENERGY_ICONS_COMPLETE pools=PASS inline=PASS native_hover=PASS rendering=NOT_RUN')){
  throw 'Energy icon suite incomplete'
+}
+foreach($element in @('Wind','Rock','Lightning')) {
+ foreach($case in @('mapping','resource')) {
+  if(!$text.Contains("STS2MOD_TEST_PASS AUDIO_${case}_$element")){throw "Missing element audio case: $case/$element"}
+ }
+}
+foreach($case in @('none_silent','resource_combo','volume_mute','headless_silent')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS AUDIO_$case")){throw "Missing audio case: $case"}
+}
+if(!$text.Contains('STS2MOD_ELEMENT_AUDIO_COMPLETE resources=PASS headless=SILENT listening=NOT_RUN')) {
+ throw 'Element audio suite incomplete'
 }
 if($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR'){throw 'Combo visual acceptance failed'}
 foreach($case in @('no_custom_panel_fresh_combat','no_custom_panel_after_plays','no_custom_panel_next_combat',

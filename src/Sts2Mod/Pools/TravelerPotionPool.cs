@@ -7,5 +7,6 @@ namespace Sts2Mod.Pools;
 [CustomID("TC_POTION_POOL")]
 public sealed class TravelerPotionPool : CustomPotionPoolModel
 {
-    public override string EnergyColorName => "ironclad";
+    public override string? BigEnergyIconPath => "res://Sts2Mod/ui/energy/hover.svg";
+    public override string? TextEnergyIconPath => "res://Sts2Mod/ui/energy/glyph.svg";
 }

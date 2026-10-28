@@ -78,6 +78,7 @@ public sealed class CombatPresentationLifecycle : SingletonModel
         if (CombatPresentation.Rig(cardPlay.Card.Owner.Creature) is { } rig)
         {
             rig.Style = CombatPresentation.Style(cardPlay.Card);
+            if (cardPlay.IsFirstInSeries) ElementAudio.Play(ElementAudio.ElementPath(rig.Style));
             rig.CardActive = true;
             rig.CardAttacked = false;
             if (cardPlay.Card.Type != CardType.Attack && !cardPlay.Card.GainsBlock) rig.PlayAction("Cast");

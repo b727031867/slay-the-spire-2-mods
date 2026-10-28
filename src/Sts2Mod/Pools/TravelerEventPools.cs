@@ -10,7 +10,8 @@ public sealed class TravelerEventRelicPool : CustomRelicPoolModel
 {
     public override bool IsShared => true;
     public override bool SeenByDefault => true;
-    public override string EnergyColorName => "ironclad";
+    public override string? BigEnergyIconPath => "res://Sts2Mod/ui/energy/hover.svg";
+    public override string? TextEnergyIconPath => "res://Sts2Mod/ui/energy/glyph.svg";
 }
 
 [CustomID("TC_EVENT_CARD_POOL")]
@@ -22,5 +23,6 @@ public sealed class TravelerEventCardPool : CustomCardPoolModel
     public override Color ShaderColor => new("79D9C8");
     public override bool IsColorless => false;
     public override bool SeenByDefault => true;
-    public override string EnergyColorName => "ironclad";
+    public override string? BigEnergyIconPath => "res://Sts2Mod/ui/energy/hover.svg";
+    public override string? TextEnergyIconPath => "res://Sts2Mod/ui/energy/glyph.svg";
 }

@@ -12,6 +12,6 @@ public sealed class TravelerCardPool : CustomCardPoolModel
     public override Color ShaderColor => new("79D9C8");
     public override bool IsColorless => false;
     public override bool SeenByDefault => true;
-    // Match the native energy counter. Full-resolution relic art is not an energy glyph.
-    public override string EnergyColorName => "ironclad";
+    public override string? BigEnergyIconPath => "res://Sts2Mod/ui/energy/hover.svg";
+    public override string? TextEnergyIconPath => "res://Sts2Mod/ui/energy/glyph.svg";
 }

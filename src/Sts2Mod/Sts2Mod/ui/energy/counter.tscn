@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://Sts2Mod/ui/energy/orb.svg" id="1"]
+[ext_resource type="Texture2D" path="res://Sts2Mod/ui/energy/ring.svg" id="2"]
+
+[node name="TravelerEnergyCounter" type="Control"]
+offset_right = 128.0
+offset_bottom = 128.0
+pivot_offset = Vector2(64, 64)
+
+[node name="Layers" type="Control" parent="."]
+unique_name_in_owner = true
+offset_right = 128.0
+offset_bottom = 128.0
+mouse_filter = 2
+
+[node name="Core" type="TextureRect" parent="Layers"]
+offset_right = 128.0
+offset_bottom = 128.0
+mouse_filter = 2
+texture = ExtResource("1")
+expand_mode = 1
+
+[node name="RotationLayers" type="Control" parent="Layers"]
+unique_name_in_owner = true
+offset_right = 128.0
+offset_bottom = 128.0
+mouse_filter = 2
+
+[node name="Orbit" type="TextureRect" parent="Layers/RotationLayers"]
+offset_right = 128.0
+offset_bottom = 128.0
+pivot_offset = Vector2(64, 64)
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1

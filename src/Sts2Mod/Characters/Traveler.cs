@@ -26,6 +26,7 @@ public sealed class Traveler : PlaceholderCharacterModel
         ModelDb.Card<WindBlade>(), ModelDb.Card<RockGuard>(), ModelDb.Card<LightningThrust>(), ModelDb.Card<TailwindPrep>()];
     public override IReadOnlyList<RelicModel> StartingRelics => [ModelDb.Relic<JourneyCompass>()];
     public override string CustomVisualPath => "res://Sts2Mod/character/traveler.tscn";
+    public override string CustomEnergyCounterPath => "res://Sts2Mod/ui/energy/counter.tscn";
     public override float DeathAnimTime => 0.6f;
     public override NCreatureVisuals CreateCustomVisuals()
     {
