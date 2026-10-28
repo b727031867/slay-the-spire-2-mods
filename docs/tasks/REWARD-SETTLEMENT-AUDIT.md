@@ -24,4 +24,12 @@
 
 ## 验证
 
-待记录原生回归结果。
+- Cards：中间核心6ba3489847748d8bfecb0eeb6e652edb71adedb1，754条断言PASS，868.830秒，未知错误0。日志.local/logs/game-20261028T1147111949965Z.log，同路径schemaVersion=2报告；日志SHA256为191F2FA71D416F35E60865282A6D4B8949D3C7183ED9DE3096C7FF03D8FB9E64。覆盖旅行者卡牌、5种能力、专属遗物、原生普通/Boss奖励、商店、目标死亡、末敌连携击杀及LastingCandy既有回归。
+- 最终核心0fc779d6e763432a265224436b86765ecaa87a6f，PC-B构建/无GUI导入/PCK导出PASS。6ba到最终核心未修改Cards、Powers、Relics、Combo任何实现；增量为SealedDeck局部兼容和测试/UID/文档。Cards旧报告仅证明其原包，未伪装成最终哈希报告；增量以最终包Events及加载覆盖，不重复无关卡牌场景。
+- Events：最终核心410条断言PASS（其中382条事件断言，另含28条选人夹具断言），134.616秒；包含20条新增回归。三种不足候选的原生失败已精确复现；常见/罕见/稀有三档药水真实事件房间、稳定牌型、三张不同升级奖励、药水消耗、事件结束及重复回调通过。SealedDeck原生30张取空失败复现、28张不同候选、选10张入牌组、PrismaticGem扩充后30张以及模拟铁甲保持30张均通过。SealedDeck测试执行原生选择回调，不声称验证了自定义模式自然整局。
+- 最终Events日志：.local/logs/game-20261028T1204482009826Z.log，同路径schemaVersion=2报告绑定最终核心与环境。日志SHA256：AFC9C170E0A443155BB615B0AE007E7AC683E60C34FA81FAC9640098A7FA225A。未知错误0，严格分类器识别6条已知Godot无GUI诊断，图形NOT_RUN。
+- 最终DLL SHA256：446FDBCC1888888A7F040B0164483A12B6A30077C7742C054406E268DD9444C5；PCK SHA256：14CB1E41C3414C4AB59A10F2BE2DB1C5C3F0274950C67B15E39F5EC5776712B1。
+- 首次SealedDeck编译发现本机Harmony没有AsyncStateMachineMoveNext辅助API，改用标准AsyncStateMachineAttribute定位原生MoveNext，最终构建通过；未增加依赖。历史沙虫夹具两条nullable警告保留。
+- 6ba的中间Events进程47984在完成前主动结束，由包含两项修复的最终包替代；原始报告保持提前退出FAIL，不记PASS，取消原因见.local/reward-audit-superseded-events.json。运行6ba时使用其匹配的严格检查器，最终检查器额外强制SealedDeck标记，未删减旧断言或放宽错误分类。
+- Cards进程48836、最终Events进程17052均已清理；两轮测试均将原Workshop安装按哈希恢复，没有改用户正常存档。Test-ModTestEntry12项PASS，git diff --check通过。
+- 未运行Full、真实联机、图形、旧故障磁盘档恢复或自然整局。接续发布复用最终Events报告并重新核对同核心、环境及日志，不重建最终核心。

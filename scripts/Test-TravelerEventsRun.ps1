@@ -59,5 +59,3 @@ foreach($case in @('native_thirty_reproduces_shortage','native_twenty_eight_uniq
     if(!$text.Contains("STS2MOD_TEST_PASS EVENT_sealed_$case")){throw "Missing Sealed Deck case: $case"}
 }
 Write-Output 'PASS: Traveler events, native rooms, permanent elements and contract rewards.'
-
-
