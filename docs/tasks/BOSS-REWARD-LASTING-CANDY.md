@@ -28,3 +28,13 @@ bugLog/godot.log:126900及godot2026-10-28T16.58.33.log:383186显示同一异常�
 - 原生测试PID23812已清理；原工坊两个模组目录逐项哈希恢复，测试存档位于唯一隔离命名空间，正常用户存档未修改。
 - Test-ModTestEntry：12项PASS；git diff --check通过。未改连携代码，不跑ComboRules；未运行Full、图形、真实联机、旧用户磁盘档恢复或自然整局。未上传工坊，尚无本候选用户试玩确认。
 - 后续仅提交生成的脚本UID及文档，复用同核心测试证据，不重建核心。
+
+## 本地交付
+
+- 运行时及验证记录已快进合入main并推送；核心仍为上述0f77584，无重建。
+- Invoke-ReleasePreparation使用Character同包报告复核核心、环境、日志及严格断言，PREPARED、ReusedTests=true、Uploaded=false。
+- 冻结目录：artifacts/Sts2Mod-0.3.17-v0.107.1-0f77584e44bc-candidate-20261028T1128511051197Z；同名.zip为试玩包，同名.preparation.json为交付及轮转报告。
+- ZIP SHA256：C20BB1B301E46405501A38C1DCBAC36B197B998BFC0C3809C4902F97CF31ABE4。
+- 快照SHA256：60C68362E499736C6654413454613D1C0E494A80D5510064269FF8B237F756BB。
+- Retention COMPLETE，当前PC保留最近3份交付，清理3项过期制品。临时tested-Sts2Mod及tested-BaseLib逐文件对照保留核心/恢复后的工坊安装核验哈希后删除；日志、测试证据及正常安装保留。游戏未保持运行。
+- 本机正常安装仍为原工坊版；本次修复通过本地ZIP交付。真实联机双方均需使用同一修复核心；旧故障存档能否恢复仍需在该核心上试玩确认，未更改用户存档。
