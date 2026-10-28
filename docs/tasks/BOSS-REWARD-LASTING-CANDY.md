@@ -44,3 +44,13 @@ bugLog/godot.log:126900及godot2026-10-28T16.58.33.log:383186显示同一异常�
 用户在本地修复包交付后明确要求“发布到工坊”，授权本次直接上传已验证0f77584核心，不等待额外试玩确认。此特定指令不记为用户试玩PASS，不修改后续一般发布门槛。
 
 本轮仅更新发布说明与文档：保留0.3.17、原条目3823282901及public；不重建核心，不改存档。以原schemaVersion=2 Character报告复核核心与环境，重新冻结文档及工坊配置；上传前核对实际上传目录public、全部文件哈希和条目ID，上传后独立检查Public、Steam原生下载七文件哈希及两张图片。下载后的Load只证明工坊包启动，不重复玩法回归；Full、图形、真实联机和旧故障存档恢复NOT_RUN。官方ModUploader v0.2.0来源ZIP SHA256为2B55C19CC5932235CA9DBD663CA07D04E5D5A0018402303199F9B4EC8CA06578。
+
+## 工坊发布完成
+
+- 原条目3823282901更新成功，独立WorkshopProbe查询为k_ERemoteStoragePublishedFileVisibilityPublic及k_EResultOK；依赖未变。
+- 新文档快照：artifacts/Sts2Mod-0.3.17-v0.107.1-0f77584e44bc-candidate-20261028T1136075855861Z。快照SHA256：62F8538E2685AB8F4814B746EC5AA702F20D01FCCFE6C37F83FB12C1A25B80D2；ZIP SHA256：40BD2D860B105F520B1CABD8D869993404CF6CA98182D8D4957656E9DF2704D4。自动轮转COMPLETE，保留3份交付。
+- Steam原生下载state=5、118450556字节、timestamp1793187396；七文件SHA256与实际上传快照逐项一致，未向Steam缓存复制候选文件冒充下载。
+- 初次CDN检查：封面200、旧规则图链接404。仅替换相册index0为冻结源规则图，Steam提交OK；新规则图链接与封面均200，PNG签名及SHA256与源文件一致。二进制内容及公开权限未变。
+- 实际下载工坊包Load PASS，未知错误0，日志.local/logs/game-20261028T1137505711580Z.log；测试PID50724已清理。本机保留唯一工坊安装，无本地覆盖副本。
+- 证据位于.local/boss-reward-release：candidate.json、upload.log、inspect-final.jsonl、download-after.jsonl、download-hashes.json、repair-preview.jsonl、cdn-hashes.json、workshop-load.json。未重建核心，原Character135项证据保持有效。
+- 用户授权直接发布不记为试玩通过；真实联机及旧故障存档恢复仍NOT_RUN。
