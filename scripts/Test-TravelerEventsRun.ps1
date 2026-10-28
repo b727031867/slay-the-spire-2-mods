@@ -47,4 +47,12 @@ foreach ($character in @('IRONCLAD','SILENT','REGENT','NECROBINDER','DEFECT')) {
         if (!$text.Contains("STS2MOD_TEST_PASS EVENT_guest_native_finish_${character}_$id")) { throw "Missing companion room completion: $character/$id" }
     }
 }
+foreach($case in @('Rare_Attack','Rare_Skill','Uncommon_Power')) {
+    if(!$text.Contains("STS2MOD_TEST_PASS EVENT_potion_trade_native_shortage_$case")){throw "Missing native potion shortage: $case"}
+}
+foreach($index in 0..2) {
+    foreach($case in @('inventory','valid_stable_types','native_rewards','finishes')) {
+        if(!$text.Contains("STS2MOD_TEST_PASS EVENT_potion_trade_${case}_$index")){throw "Missing potion trade case: $case/$index"}
+    }
+}
 Write-Output 'PASS: Traveler events, native rooms, permanent elements and contract rewards.'
