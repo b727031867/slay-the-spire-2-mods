@@ -38,8 +38,13 @@ public partial class TravelerTestRunner
         var relic = _player.Relics.OfType<Candelabra>().Single();
         Check(relic.HoverTip.Description.Contains(glyph) && !relic.HoverTip.Description.Contains("compass.png"),
             "ENERGY_acquired_native_relic_inline");
-        Check(ModelDb.Relic<Candelabra>().HoverTip.Description.Contains(nativeGlyph), "ENERGY_unowned_native_relic_inline");
-        Check(ModelDb.Relic<Lantern>().HoverTip.Description.Contains(nativeGlyph), "ENERGY_other_native_relic_inline");
+        // Native colorless descriptions fall back to the current run's character even without an owner.
+        Check(ModelDb.Relic<Candelabra>().HoverTip.Description.Contains(glyph), "ENERGY_unowned_native_relic_inline");
+        Check(ModelDb.Relic<Lantern>().HoverTip.Description.Contains(glyph), "ENERGY_other_native_relic_inline");
+        var nativeText = new MegaCrit.Sts2.Core.Localization.LocString("relics", ModelDb.Relic<Lantern>().Id.Entry + ".description");
+        nativeText.Add("energyPrefix", "ironclad");
+        Check(nativeText.GetFormattedText().Contains(nativeGlyph) && EnergyIconHelper.GetPath("ironclad") != expected,
+            "ENERGY_explicit_native_prefix_preserved");
         var potion = ModelDb.Potion<EnergyPotion>().ToMutable();
         potion.Owner = _player;
         Check(potion.HoverTip.Description.Contains(glyph), "ENERGY_owned_potion_inline");

@@ -41,7 +41,7 @@ if(!$text.Contains('STS2MOD_TEST_PASS PREVIEW_readonly_state_rng_energy_hp') -or
 foreach($case in @('pool_TravelerCardPool','pool_TravelerRelicPool','pool_TravelerPotionPool',
  'pool_TravelerEventCardPool','pool_TravelerEventRelicPool',
  'custom_counter_native_scene','counter_zero_darkens','counter_gain_restores','counter_rotates_about_center',
- 'native_inline_glyph_bounded','acquired_native_relic_inline','unowned_native_relic_inline',
+ 'native_inline_glyph_bounded','acquired_native_relic_inline','unowned_native_relic_inline','explicit_native_prefix_preserved',
  'other_native_relic_inline','owned_potion_inline','card_inline','native_hover_icon_bounded','native_hover_layout_bounded')) {
  if(!$text.Contains("STS2MOD_TEST_PASS ENERGY_$case")){throw "Missing energy icon case: $case"}
 }
