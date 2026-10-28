@@ -79,8 +79,11 @@ public partial class TravelerTestRunner
             "ENERGY_custom_counter_native_scene");
         var energyBefore = _player.PlayerCombatState!.Energy;
         await PlayerCmd.SetEnergy(0, _player);
+        // Native combat state notifications refresh the counter on the next process frame.
+        await Until(() => counter.GetNode<Control>("%Layers").Modulate == Colors.DarkGray, "zero energy counter refresh", 5);
         Check(counter.GetNode<Control>("%Layers").Modulate == Colors.DarkGray, "ENERGY_counter_zero_darkens");
         await PlayerCmd.SetEnergy(energyBefore, _player);
+        await Until(() => counter.GetNode<Control>("%Layers").Modulate == Colors.White, "restored energy counter refresh", 5);
         Check(counter.GetNode<Control>("%Layers").Modulate == Colors.White, "ENERGY_counter_gain_restores");
         var orbit = counter.GetNode<Control>("%RotationLayers/Orbit");
         var angle = orbit.Rotation;
