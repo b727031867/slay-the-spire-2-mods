@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "public",
-  "changeNote": "2026-10-28 Boss结算修复：修复LastingCandy追加能力牌候选只剩一种稀有度时，Boss奖励生成抛异常、无法结算及重进再次卡住的问题。保留0.3.17版本号和存档格式；Character无GUI专项135项通过，真实联机与旧故障存档恢复待验证。",
+  "changeNote": "2026-10-28 奖励结算兼容修复：保留LastingCandy的Boss结算修复；旅行者在药水的未来事件中只抽取可提供三张不同奖励的牌型，避免药水丢弃后结算失败；密封牌组按实际可用奖励牌数量提供候选，避免固定30张取空牌池。保留0.3.17版本号和存档格式，真实联机与旧故障存档恢复待验证。",
   "tags": [],
   "dependencies": [
     3737335127
