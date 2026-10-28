@@ -33,3 +33,13 @@
 - 6ba的中间Events进程47984在完成前主动结束，由包含两项修复的最终包替代；原始报告保持提前退出FAIL，不记PASS，取消原因见.local/reward-audit-superseded-events.json。运行6ba时使用其匹配的严格检查器，最终检查器额外强制SealedDeck标记，未删减旧断言或放宽错误分类。
 - Cards进程48836、最终Events进程17052均已清理；两轮测试均将原Workshop安装按哈希恢复，没有改用户正常存档。Test-ModTestEntry12项PASS，git diff --check通过。
 - 未运行Full、真实联机、图形、旧故障磁盘档恢复或自然整局。接续发布复用最终Events报告并重新核对同核心、环境及日志，不重建最终核心。
+
+## 合并及公开发布
+
+- 所有运行时修改与测试记录已合入并推送main；最终核心仍为0fc779d，无重建。Invoke-ReleasePreparation只复用最终核心的Events报告，未将6ba的Cards报告绑定到另一包。
+- 冻结目录：artifacts/Sts2Mod-0.3.17-v0.107.1-0fc779d6e763-candidate-20261028T1208060542418Z。快照SHA256：A933207E98EE52F00CA88457DD7AD3EE9423095069A8FDC3F55459F5738531ED；ZIP SHA256：1E2776C94345741CC4C05EC6417981E5953952F7503392241BDB7E0D8124868C。
+- 实际上传目录.local/workshop/0fc779d6e763432a265224436b86765ecaa87a6f-A933207E98EE内public、mod_id.txt=3823282901，核心/文档/配置及图片哈希与冻结快照一致。官方ModUploader v0.2.0显式-i 3823282901成功上传，依赖未变；来源ZIP SHA256为2B55C19CC5932235CA9DBD663CA07D04E5D5A0018402303199F9B4EC8CA06578。
+- 独立WorkshopProbe查询Public及k_EResultOK。Steam原生下载state=5、118465148字节、timestamp1793189337；七文件SHA256逐项与快照一致，未向Steam缓存复制候选文件冒充下载。封面及规则图均HTTP200，字节SHA256与源文件一致，本轮无需再次修图。
+- 下载后的唯一工坊安装Load PASS，未知错误0、已知无GUI错误0；日志.local/logs/game-20261028T1210439884429Z.log，PID29460已清理，无本地重复覆盖副本。此项仅证明下载包启动，不扩写为真实联机或画面通过。
+- 证据目录.local/reward-audit-release含candidate.json、upload.log、inspect-after.jsonl、download-after.jsonl、download-hashes.json、cdn-hashes.json、workshop-load.json及retired-intermediate-identities.json。制品轮转COMPLETE，保留3份交付、清理7项过期制品；额外核验并删除两轮临时测试副本及6ba/0d两份本轮过时中间核心，原日志、测试报告、身份哈希、源码和正常安装保留。
+- 最终公开版本仍为0.3.17，包含既有Boss结算修复及本次两项兼容修复。用户追加检查/修复指令不记为试玩PASS；Full、真实联机、旧故障存档恢复及自然整局仍未验证。
