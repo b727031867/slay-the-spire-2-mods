@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Potions;
 using MegaCrit.Sts2.Core.Models.Modifiers;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Nodes.Screens;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Rewards;
@@ -93,5 +95,33 @@ public partial class TravelerTestRunner
             "EVENT_sealed_native_twenty_eight_unique_candidates");
         Check(added.Length == 10 && added.All(IsTheme), "EVENT_sealed_native_ten_card_selection_completes");
         await CardPileCmd.RemoveFromDeck(added, showPreview: false);
+        var gem = await RelicCmd.Obtain<PrismaticGem>(_player);
+        try
+        {
+            using (CardSelectCmd.PushSelector(selector))
+                await (Task)AccessTools.Method(typeof(SealedDeck), "ChooseCards").Invoke(null, [_player])!;
+            Check(selector.Candidates.Length == 30 && selector.Candidates.Any(card => !IsTheme(card)),
+                "EVENT_sealed_native_pool_modifications_preserved");
+        }
+        finally
+        {
+            await CardPileCmd.RemoveFromDeck(_player.Deck.Cards.Except(before).ToArray(), showPreview: false);
+            await RelicCmd.Remove(gem);
+        }
+        var character = _player.Character;
+        var field = AccessTools.Field(typeof(MegaCrit.Sts2.Core.Entities.Players.Player), "<Character>k__BackingField");
+        try
+        {
+            field.SetValue(_player, ModelDb.Character<Ironclad>());
+            using (CardSelectCmd.PushSelector(selector))
+                await (Task)AccessTools.Method(typeof(SealedDeck), "ChooseCards").Invoke(null, [_player])!;
+            Check(selector.Candidates.Length == 30 && _player.Deck.Cards.Except(before).Count() == 10,
+                "EVENT_sealed_native_ironclad_thirty_unchanged");
+        }
+        finally
+        {
+            await CardPileCmd.RemoveFromDeck(_player.Deck.Cards.Except(before).ToArray(), showPreview: false);
+            field.SetValue(_player, character);
+        }
     }
 }
