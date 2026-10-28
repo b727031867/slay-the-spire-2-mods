@@ -17,4 +17,14 @@ bugLog/godot.log:126900及godot2026-10-28T16.58.33.log:383186显示同一异常�
 
 ## 验证
 
-待补本轮结果；首次编译发现新增测试误将CardReward.Cards当作CardCreationResult集合，已按原生CardModel枚举修正。历史沙虫夹具两条nullable警告保留。
+首次编译发现新增测试误将CardReward.Cards当作CardCreationResult集合，已按原生CardModel枚举修正。历史沙虫夹具两条nullable警告保留。
+
+- 干净核心源码：0f77584e44bce8875fdd4bc52c638888458c523b，PC-B / DESKTOP-BAGBD69；构建、Godot无GUI导入及PCK导出PASS。
+- Character：PASS，135条断言，含新增29条LastingCandy回归，81.334秒。原生能力候选被原奖励排除后仅剩Uncommon的精确场景通过；原生Boss三张基础奖励仍全为Rare；奖励序列化后重新生成及重复Populate通过；原生建筑师胜利结算界面通过。
+- 加载身份/资源PASS，未知错误0；严格分类器识别1条已知Godot dummy渲染诊断，不算图形验收。
+- 日志：.local/logs/game-20261028T1126286550437Z.log；同路径.result.json为schemaVersion=2，绑定核心、环境和日志哈希。日志SHA256：50374E4EDC97CE93A027BE6834A195CD811E4CA1FA2F1D5BFBD8E972272ACF7F。
+- DLL SHA256：00CF424B9D3635A12005FB29A705FD5DCE149245460609016268FFCAFBAAA125。
+- PCK SHA256：71E74F63D4E48D13FCD64AC0DC9924A7E6D2FC5C8EF37EA8CCC93308C022F2FD。
+- 原生测试PID23812已清理；原工坊两个模组目录逐项哈希恢复，测试存档位于唯一隔离命名空间，正常用户存档未修改。
+- Test-ModTestEntry：12项PASS；git diff --check通过。未改连携代码，不跑ComboRules；未运行Full、图形、真实联机、旧用户磁盘档恢复或自然整局。未上传工坊，尚无本候选用户试玩确认。
+- 后续仅提交生成的脚本UID及文档，复用同核心测试证据，不重建核心。
