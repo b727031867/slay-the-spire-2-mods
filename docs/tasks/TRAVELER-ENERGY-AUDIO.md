@@ -51,3 +51,16 @@
 ## 本次直接发布授权
 
 2026-10-28用户明确要求“发布到工坊，我朋友会进行验证”。此最新特定指令授权本次直接发布已通过Visuals的423c800核心，不等待额外试玩确认；不将该授权或朋友验证计划记作试玩、图形或联机PASS，也不修改后续发布的一般规则。保持0.3.17、原条目3823282901及public。复用同包236项Visuals证据，仅更新随包说明与工坊变更记录，不重建或扩大回归。
+
+## 工坊发布完成（2026-10-28）
+
+- 源码及发布说明8ac25be已快进合入并推送main，核心仍为已验证的423c800，无重建。最终四文件核心与Visuals报告哈希相同。
+- Invoke-ReleasePreparation以-Suite Visuals及同包schemaVersion=2报告复用通过证据；不重新部署或运行玩法测试。冻结目录：artifacts/Sts2Mod-0.3.17-v0.107.1-423c8008b644-candidate-20261028T0828184179156Z。
+- ZIP SHA256：26F8A833CE54D3966187BE1F265DD4733362DAAE96898F0EC9FBDE66E89ED8B5；快照SHA256：FB12318F720A5D4DDA01F0D38ED79696238212B9D3B327327D16C7ADDE92608A。
+- 自动轮转最初被旧dirty及旧格式归档阻止；只将30个被现行校验拒绝的历史ZIP/校验侧文件移至.local/energy-audio-release/unidentified-legacy-archives，逐项验证移动前后SHA256，不删除未知旧目录。恢复清单retention-rejected.json记录原路径和哈希。随后原轮转脚本COMPLETE，保留3份已识别交付并删除75项过期制品/侧文件/副本，源文件、存档、诊断日志与保护的历史归档保留；未降低身份校验或修改轮转脚本。
+- 官方ModUploader v0.2.0，来源ZIP SHA256 2B55C19CC5932235CA9DBD663CA07D04E5D5A0018402303199F9B4EC8CA06578。实际上传目录.local/workshop/423c8008b644089042826aaa5d042f6b6070c560-FB12318F720A中visibility=public、mod_id.txt=3823282901；七文件及工坊配置/图片哈希与快照相同。显式-i 3823282901上传成功，依赖未变。
+- 独立WorkshopProbe inspect确认k_ERemoteStoragePublishedFileVisibilityPublic及k_EResultOK；随后Steam原生下载state=5、118444530字节、timestamp1793176253。七文件SHA256与冻结上传快照逐项一致，未复制候选至Steam缓存冒充下载。
+- 封面及规则图均HTTP200，PNG字节SHA256与上传源文件一致。上传前相册URL曾为空，本次官方上传后已有正常可读取地址，无额外图片修复提交。
+- 本机保持唯一Workshop安装，本地mods下没有重复覆盖副本。实际Workshop副本无GUI主菜单Load PASS、未知错误0，日志.local/logs/game-20261028T0832080127717Z.log；PID2676已由统一入口清理。此项仅验证已下载包启动身份，不重跑玩法回归。
+- 全部本轮发布证据位于.local/energy-audio-release：upload.log、inspect-after.jsonl、download-after.jsonl、download-hashes.json、cdn-hashes.json、workshop-load.json、retention-rejected.json；完整准备/轮转报告在快照同名.preparation.json。
+- 已发布版本保持0.3.17。Full、图形观感、实际听感、真实联机及朋友试玩结果NOT_RUN，等待朋友验证反馈；直接发布授权不记作这些范围PASS。
