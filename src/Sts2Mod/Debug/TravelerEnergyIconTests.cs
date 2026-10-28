@@ -43,7 +43,7 @@ public partial class TravelerTestRunner
         Check(ModelDb.Relic<Lantern>().HoverTip.Description.Contains(glyph), "ENERGY_other_native_relic_inline");
         var nativeText = new MegaCrit.Sts2.Core.Localization.LocString("relics", ModelDb.Relic<Lantern>().Id.Entry + ".description");
         nativeText.Add("energyPrefix", "ironclad");
-        nativeText.Add("Energy", new MegaCrit.Sts2.Core.Localization.DynamicVars.EnergyVar(1) { ColorPrefix = "ironclad" });
+        nativeText.Add(new MegaCrit.Sts2.Core.Localization.DynamicVars.EnergyVar(1) { ColorPrefix = "ironclad" });
         Check(nativeText.GetFormattedText().Contains(nativeGlyph) && EnergyIconHelper.GetPath("ironclad") != expected,
             "ENERGY_explicit_native_prefix_preserved");
         var potion = ModelDb.Potion<EnergyPotion>().ToMutable();
