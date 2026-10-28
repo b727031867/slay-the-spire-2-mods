@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "public",
-  "changeNote": "2026-10-28 能量与音效更新：新增旅行者三元素旋转能量球、配套能量符号及风/岩/雷/连携短音效。保留0.3.17版本号，玩法和存档格式不变；已通过定向无GUI检查，画面、听感及朋友联机验收待进行。",
+  "changeNote": "2026-10-28 Boss结算修复：修复LastingCandy追加能力牌候选只剩一种稀有度时，Boss奖励生成抛异常、无法结算及重进再次卡住的问题。保留0.3.17版本号和存档格式；Character无GUI专项135项通过，真实联机与旧故障存档恢复待验证。",
   "tags": [],
   "dependencies": [
     3737335127
