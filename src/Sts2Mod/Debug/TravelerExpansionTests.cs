@@ -55,6 +55,7 @@ public partial class TravelerTestRunner
     private async Task TestExpandedCards()
     {
         await TestComboHud();
+        await TestUncommonExpansionCards();
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
         await TestEchoingBlight();
@@ -64,7 +65,7 @@ public partial class TravelerTestRunner
         var portraits = ModelDb.CardPool<TravelerCardPool>().AllCards.Cast<CustomCardModel>()
             .Select(card => card.CustomPortraitPath)
             .Concat(ModelDb.RelicPool<TravelerRelicPool>().AllRelics.Select(relic => relic.PackedIconPath)).ToArray();
-        Check(portraits.Length == 37 && portraits.All(path => !string.IsNullOrEmpty(path))
+        Check(portraits.Length == 47 && portraits.All(path => !string.IsNullOrEmpty(path))
             && portraits.Distinct().Count() == portraits.Length, "ART_card_relic_portraits_unique");
         foreach (var path in portraits.OfType<string>())
         {
@@ -92,11 +93,11 @@ public partial class TravelerTestRunner
         await TestDefensiveRandomCombos();
         await FreshExpansion();
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).Where(c => c.Rarity != CardRarity.Basic).ToArray();
-        Check(pool.Length == 28 && pool.Count(c => c.Type == CardType.Attack) == 11
-            && pool.Count(c => c.Type == CardType.Skill) == 12 && pool.Count(c => c.Type == CardType.Power) == 5,
-            "EXP_pool_28_types_11_12_5");
-        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 10 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 13
-            && pool.Count(c => c.Rarity == CardRarity.Rare) == 5, "EXP_rarity_10_13_5");
+        Check(pool.Length == 38 && pool.Count(c => c.Type == CardType.Attack) == 13
+            && pool.Count(c => c.Type == CardType.Skill) == 18 && pool.Count(c => c.Type == CardType.Power) == 7,
+            "EXP_pool_38_types_13_18_7");
+        Check(pool.Count(c => c.Rarity == CardRarity.Common) == 10 && pool.Count(c => c.Rarity == CardRarity.Uncommon) == 23
+            && pool.Count(c => c.Rarity == CardRarity.Rare) == 5, "EXP_rarity_10_23_5");
         Check(TravelerContent.RewardCardTypes.All(t => pool.Count(c => c.GetType() == t) == 1), "EXP_all_ids_once");
         var boss = CardFactory.CreateForReward(_player, 3, CardCreationOptions.ForRoom(_player, RoomType.Boss)).ToArray();
         Check(boss.Length == 3 && boss.All(c => c.Card.Rarity == CardRarity.Rare), "EXP_boss_native_rare_rewards");
@@ -197,7 +198,7 @@ public partial class TravelerTestRunner
         await FreshExpansion();
         Check(Power.State.Last == Element.None && Power.State.Used == 0 && Power.State.RewardsThisTurn == 0
             && !_player.Creature.Powers.OfType<TravelerAbilityPower>().Any(), "EXP_new_combat_clears_ability_and_combo_state");
-        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=28 powers=5 multiplayer=NOT_RUN rendering=NOT_RUN");
+        GD.Print($"STS2MOD_EXPANSION_COMPLETE assertions={_assertions - start} cards=38 powers=7 multiplayer=NOT_RUN rendering=NOT_RUN");
     }
 
     private async Task TestDefensiveRandomCombos()

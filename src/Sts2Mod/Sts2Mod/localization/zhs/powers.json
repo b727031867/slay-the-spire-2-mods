@@ -51,5 +51,9 @@
   "TC_FIRST_ELEMENT_RESONANCE.title": "元素共鸣+",
   "TC_FIRST_ELEMENT_RESONANCE.description": "每回合第1次实际获得连携奖励后，获得{Amount}点能量。与未升级共鸣分别计数。",
   "TC_TRIPHASE_INFUSION.title": "三相灌注",
-  "TC_TRIPHASE_INFUSION.description": "每回合开始随机赋予一种元素。异元素尝试一次正常连携；同元素获得{Amount}点本回合临时敏捷。多份合并随机。"
+  "TC_TRIPHASE_INFUSION.description": "每回合开始随机赋予一种元素。异元素尝试一次正常连携；同元素获得{Amount}点本回合临时敏捷。多份合并随机。",
+  "TC_LAYERED_ROCK_ECHO.title": "层岩回响",
+  "TC_LAYERED_ROCK_ECHO.description": "每回合首次实际获得风岩连携奖励后，获得{Amount}点本回合敏捷。多份相加；回合结束扣回实际获得的临时敏捷。",
+  "TC_TOXIC_SATCHEL.title": "毒雾行囊",
+  "TC_TOXIC_SATCHEL.description": "每回合首次实际获得雷风连携奖励后，对所有存活敌人施加{Amount}层中毒。多份相加，无实际抽牌奖励时不触发。"
 }

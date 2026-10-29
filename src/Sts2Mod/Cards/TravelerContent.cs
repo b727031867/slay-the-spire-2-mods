@@ -9,6 +9,9 @@ public static class TravelerContent
         typeof(GaleSweep), typeof(ShatteringRock), typeof(ThunderMark), typeof(TriphaseFinale),
         typeof(WindShelter), typeof(PatientRampart), typeof(ChargeThunder), typeof(JourneyPlans), typeof(ThunderChain),
         typeof(CleansingWind), typeof(ClearRockMind), typeof(HeadwindRestraint), typeof(OpportunistLightning),
-        typeof(ElementTuning), typeof(TriphaseInfusion), typeof(ThunderBurst), typeof(HeavenEarthConvergence), typeof(EchoingBlight)
+        typeof(ElementTuning), typeof(TriphaseInfusion), typeof(ThunderBurst), typeof(HeavenEarthConvergence), typeof(EchoingBlight),
+        typeof(WindPathfinding), typeof(WindShelteredPlans), typeof(StoneRidgeCounter), typeof(LayeredRockEcho),
+        typeof(StoneGathering), typeof(ThunderNavigation), typeof(VenomThunderNeedle), typeof(VenomCarryingWind),
+        typeof(ToxicSatchel), typeof(PoisonStoneBarrier)
     });
 }

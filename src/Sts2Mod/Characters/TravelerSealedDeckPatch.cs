@@ -41,7 +41,7 @@ internal static class TravelerSealedDeckPatch
             var available = options.GetPossibleCards(player)
                 .Where(card => card.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare)
                 .Select(card => card.Id).Distinct().Count();
-            // Traveler has fewer than the native thirty distinct reward cards.
+            // Smaller unlocked or modified pools must still satisfy native distinct-card generation.
             count = Math.Min(count, available);
         }
         return CardFactory.CreateForReward(player, count, options);

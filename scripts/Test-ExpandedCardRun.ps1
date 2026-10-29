@@ -65,7 +65,7 @@ if (!$text.Contains('STS2MOD_TEST_PASS ART_character_layered_battle_scale_312px'
     $text -notmatch '(?m)^STS2MOD_RANDOM_COMBO_COMPLETE cases=11 seeded_rng=native cap=3 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Final art/random-combo suite incomplete.'
 }
-foreach ($case in @('pool_28_types_11_12_5','rarity_10_13_5','all_ids_once','boss_native_rare_rewards',
+foreach ($case in @('pool_38_types_13_18_7','rarity_10_23_5','all_ids_once','boss_native_rare_rewards',
  'retain_keyword_survives_native_flush','plans_empty_hand_returns_without_choice','plans_upgraded_can_skip',
  'plans_single_eligible_retained_card_upgrades','plans_no_upgradable_cards_returns_without_choice',
  'rock_heart_stacks_gain_4_plus_6','rock_heart_regenerates_after_block_spent',
@@ -98,7 +98,7 @@ foreach ($up in @('False','True')) {
 foreach ($id in 7..19) {
     if (!$text.Contains('STS2MOD_TEST_PASS EXP_portrait_TC_C' + $id.ToString('00'))) { throw "Missing portrait $id" }
 }
-if ($text -notmatch '(?m)^STS2MOD_EXPANSION_COMPLETE assertions=\d+ cards=28 powers=5 multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
+if ($text -notmatch '(?m)^STS2MOD_EXPANSION_COMPLETE assertions=\d+ cards=38 powers=7 multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
     throw 'Expansion test has not completed.'
 }
 if ($text -notmatch '(?m)^STS2MOD_POOL22_COMPLETE assertions=\d+ cards=9 relics=4 rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
@@ -155,7 +155,7 @@ foreach ($up in @('False','True')) {
         if (!$text.Contains("STS2MOD_TEST_PASS POOL22_model_locale_roundtrip_TC_C${id}_$up")) { throw "Missing expansion model: $id/$up" }
     }
 }
-if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions=\d+ cards=28 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
+if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions=\d+ cards=38 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
     throw 'Focused completion marker missing.'
 }
 foreach ($case in @('chain_native_all_enemy_hits_False','chain_native_all_enemy_hits_True',
@@ -175,4 +175,4 @@ foreach ($up in @('False','True')) {
         if (!$text.Contains("STS2MOD_TEST_PASS BLIGHT_${case}_$up")) { throw "Missing blight case: $case/$up" }
     }
 }
-Write-Output 'EXPANDED_CARDS_PASS cards=28 powers=5 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'
+Write-Output 'EXPANDED_CARDS_PASS cards=38 powers=7 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'

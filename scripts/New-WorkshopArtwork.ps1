@@ -52,9 +52,9 @@ Canvas 1024 1024 (Join-Path $OutputDirectory 'image.png') {
     Label $g '风' 36 '#7DDBC8' 211 725 $true
     Label $g '岩' 36 '#EAC27C' 493 725 $true
     Label $g '雷' 36 '#BEA4EA' 775 725 $true
-    Label $g '28 张奖励牌  /  5 张能力  /  元素跨回合保留' 28 '#F3EBDD' 80 803
+    Label $g '38 张奖励牌  /  7 张能力  /  元素跨回合保留' 28 '#F3EBDD' 80 803
     Label $g '旅行者独立角色 · 支持单人和联机' 31 '#F3EBDD' 80 900 $true
-    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.3.17  /  非官方同人' 20 '#9AADB8' 80 960
+    Label $g 'SLAY THE SPIRE 2 MOD  /  v0.3.18  /  非官方同人' 20 '#9AADB8' 80 960
 }
 Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     param($g)
@@ -63,7 +63,7 @@ Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     $colors = @('#7DDBC8','#EAC27C','#BEA4EA')
     $titles = @('风 ↔ 岩','岩 ↔ 雷','雷 ↔ 风')
     $rewards = @('+4 格挡','+4 基础攻击','+1 抽牌')
-    $doubles = @('派蒙：8 格挡','派蒙：8 基础攻击','派蒙：2 抽牌')
+    $doubles = @('元素之心：8 格挡','元素之心：8 基础攻击','元素之心：2 抽牌')
     for($i=0;$i -lt 3;$i++) {
         $x=65+410*$i
         ElementIcon $g $i ($x+50) 225 45 $colors[$i]
@@ -73,6 +73,6 @@ Canvas 1280 720 (Join-Path $OutputDirectory 'rules.png') {
     }
     Label $g '默认每回合合计 3 次，持有罗盘 4 次 · 保留最新元素' 30 '#F3EBDD' 65 525 $true
     Label $g '岩雷：防御技能随机追击；单体攻击追击原目标，死亡不转火。' 24 '#9AADB8' 65 583
-    Label $g '罗盘每回合第3次加力量 · 共鸣按份数依次回1（2）能量· v0.3.17' 23 '#9AADB8' 65 645
+    Label $g '罗盘每回合第3次加力量 · 共鸣按份数依次回1（2）能量· v0.3.18' 23 '#9AADB8' 65 645
 }
 Get-ChildItem -LiteralPath $OutputDirectory -Filter '*.png' | Select-Object Name,Length

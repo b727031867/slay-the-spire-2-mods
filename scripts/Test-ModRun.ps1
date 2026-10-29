@@ -1,5 +1,5 @@
 param(
-    [Parameter(Mandatory)][ValidateSet('Load','Visuals','Cards','Character','Events','Full','SavePrepare','SaveResume')][string]$Suite,
+    [Parameter(Mandatory)][ValidateSet('Load','Visuals','Cards','NewCards','Character','Events','Full','SavePrepare','SaveResume')][string]$Suite,
     [Parameter(Mandatory)][string]$LogFile,
     [Parameter(Mandatory)][string]$CodeCommit,
     [string]$ResultFile,
@@ -15,6 +15,7 @@ try {
         Load { & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless }
         Visuals { & (Join-Path $PSScriptRoot 'Test-ComboVisualRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit }
         Cards { & (Join-Path $PSScriptRoot 'Test-ExpandedCardRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit }
+        NewCards { & (Join-Path $PSScriptRoot 'Test-NewCardRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit }
         Character { & (Join-Path $PSScriptRoot 'Test-TravelerCharacterRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Focused }
         Events { & (Join-Path $PSScriptRoot 'Test-TravelerEventsRun.ps1') -LogFile $LogFile -CodeCommit $CodeCommit }
         Full {

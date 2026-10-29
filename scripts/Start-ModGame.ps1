@@ -1,7 +1,8 @@
-param([switch]$TravelerSandworm, [switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance,
+param([switch]$TravelerNewCards, [switch]$TravelerSandworm, [switch]$Headless, [switch]$TravelerDebug, [switch]$TravelerTest, [switch]$TravelerRewards, [switch]$TravelerAcceptance,
     [switch]$TravelerCharacter, [switch]$TravelerCards, [switch]$TravelerVisuals, [switch]$TravelerEvents, [switch]$TravelerEndToEnd, [switch]$ResumeTask003, [string]$SandboxDirectory, [switch]$PassThru)
 $ErrorActionPreference = 'Stop'
 # Automated game tests must not open a window or steal focus from the user's work.
+if ($TravelerNewCards) { $TravelerTest = $true }
 if ($TravelerSandworm) { $TravelerTest = $true }
 if ($TravelerCharacter) { $TravelerTest = $true }
 if ($TravelerCards) { $TravelerTest = $true }
@@ -50,6 +51,7 @@ if ($TravelerCards) { $arguments += '--sts2mod-cards' }
 if ($TravelerVisuals) { $arguments += '--sts2mod-visuals' }
 if ($TravelerEvents) { $arguments += '--sts2mod-events' }
 if ($TravelerSandworm) { $arguments += '--sts2mod-sandworm' }
+if ($TravelerNewCards) { $arguments += '--sts2mod-newcards' }
 if ($TravelerEndToEnd) { $arguments += '--sts2mod-e2e' }
 if ($ResumeTask003) { $arguments += '--sts2mod-resume' }
 if ($Headless) { $arguments += '--headless' } else { $arguments += @('--windowed','--resolution','1280x720') }

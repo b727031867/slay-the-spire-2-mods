@@ -59,8 +59,8 @@ public partial class TravelerTestRunner
             "CHAR_exact_ten_card_starter");
         Check(_player.Relics.Count == 1 && _player.Relics.Single() is JourneyCompass, "CHAR_compass_only_starting_relic");
         var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, 0).ToArray();
-        Check(pool.Length == 30 && ThemeTypes.All(type => pool.Count(card => card.GetType() == type) == 1)
-            && pool.All(card => card.Pool is TravelerCardPool), "CHAR_thirty_models_twenty_eight_reward_cards_in_exclusive_pool");
+        Check(pool.Length == 40 && ThemeTypes.All(type => pool.Count(card => card.GetType() == type) == 1)
+            && pool.All(card => card.Pool is TravelerCardPool), "CHAR_forty_models_thirty_eight_reward_cards_in_exclusive_pool");
         Check(!ModelDb.CardPool<IroncladCardPool>().AllCards.Any(IsTheme)
             && !ModelDb.CardPool<SilentCardPool>().AllCards.Any(IsTheme)
             && !ModelDb.Character<Ironclad>().StartingDeck.Any(IsTheme), "CHAR_ironclad_and_silent_no_theme_cards");
@@ -98,6 +98,6 @@ public partial class TravelerTestRunner
         await NextTurn();
         await TestRestSiteArt();
         await TestMerchantArt();
-        GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=28 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
+        GD.Print($"STS2MOD_CHARACTER_CASES_COMPLETE assertions={_assertions - start} starter=10 exclusive_cards=38 starter_relic=1 rendering=NOT_RUN multiplayer=NOT_RUN");
     }
 }

@@ -133,7 +133,7 @@ public partial class TravelerTestRunner : Node
             return;
         }
         if (CommandLineHelper.HasArg("sts2mod-sandworm")) { await TestSandworm(); return; }
-        await TestTravelerSelection();
+        if (!CommandLineHelper.HasArg("sts2mod-newcards")) await TestTravelerSelection();
         GD.Print("STS2MOD_TEST_START fixture=singleplayer shouldSave=false seed=TC001A");
         var run = await NGame.Instance!.StartNewSingleplayerRun(ModelDb.Character<Traveler>(), false,
             [ModelDb.Act<Overgrowth>(), ModelDb.Act<Hive>(), ModelDb.Act<Glory>()], [], "TC001A", GameMode.Standard);
@@ -160,11 +160,17 @@ public partial class TravelerTestRunner : Node
             GD.Print($"STS2MOD_VISUAL_FOCUSED_COMPLETE assertions={_assertions} singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN shouldSave={RunManager.Instance.ShouldSave}");
             return;
         }
+        if (CommandLineHelper.HasArg("sts2mod-newcards"))
+        {
+            await TestUncommonExpansionCards();
+            GD.Print($"STS2MOD_NEWCARDS_COMPLETE assertions={_assertions} cards=10 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
+            return;
+        }
         await TestTravelerCharacter();
         if (CommandLineHelper.HasArg("sts2mod-cards"))
         {
             await TestExpandedCards();
-            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=28 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
+            GD.Print($"STS2MOD_EXPANSION_FOCUSED_COMPLETE assertions={_assertions} cards=38 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
             return;
         }
         if (CommandLineHelper.HasArg("sts2mod-character"))

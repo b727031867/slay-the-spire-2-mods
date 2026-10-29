@@ -51,5 +51,9 @@
   "TC_FIRST_ELEMENT_RESONANCE.title": "Element Resonance+",
   "TC_FIRST_ELEMENT_RESONANCE.description": "After your first actual combo reward each turn, gain {Amount} Energy. Triggers separately from unupgraded Resonance.",
   "TC_TRIPHASE_INFUSION.title": "Triphase Infusion",
-  "TC_TRIPHASE_INFUSION.description": "At turn start gain a random element. A different element attempts one normal combo; a matching element grants {Amount} temporary Dexterity this turn. Copies share one roll."
+  "TC_TRIPHASE_INFUSION.description": "At turn start gain a random element. A different element attempts one normal combo; a matching element grants {Amount} temporary Dexterity this turn. Copies share one roll.",
+  "TC_LAYERED_ROCK_ECHO.title": "Layered Rock Echo",
+  "TC_LAYERED_ROCK_ECHO.description": "After your first successful Wind-Rock combo reward each turn, gain {Amount} Dexterity this turn. Copies add together. Remove the temporary Dexterity at turn end.",
+  "TC_TOXIC_SATCHEL.title": "Toxic Satchel",
+  "TC_TOXIC_SATCHEL.description": "After your first successful Lightning-Wind combo reward each turn, apply {Amount} Poison to ALL living enemies. Copies add together; no trigger without a successful draw reward."
 }

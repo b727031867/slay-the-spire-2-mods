@@ -82,17 +82,17 @@ public partial class TravelerTestRunner
         var options = new CardCreationOptions([_player.Character.CardPool], CardCreationSource.Other, CardRarityOddsType.RegularEncounter)
             .WithFlags(CardCreationFlags.NoUpgradeRoll | CardCreationFlags.ForceRarityOddsChange | CardCreationFlags.IsCardReward);
         var rejected = false;
-        try { _ = CardFactory.CreateForReward(_player, 30, options).ToArray(); }
+        try { _ = CardFactory.CreateForReward(_player, ThemeTypes.Length + 1, options).ToArray(); }
         catch (InvalidOperationException ex) { rejected = ex.Message.Contains("couldn't generate a valid rarity"); }
-        Check(rejected, "EVENT_sealed_native_thirty_reproduces_shortage");
+        Check(rejected, "EVENT_sealed_native_overrequest_reproduces_shortage");
         var before = _player.Deck.Cards.ToArray();
         var selector = new EventCardSelector();
         using (CardSelectCmd.PushSelector(selector))
             await (Task)AccessTools.Method(typeof(SealedDeck), "ChooseCards").Invoke(null, [_player])!;
         var added = _player.Deck.Cards.Except(before).ToArray();
-        Check(selector.Candidates.Length == 28 && selector.Candidates.Select(card => card.Id).Distinct().Count() == 28
+        Check(selector.Candidates.Length == 30 && selector.Candidates.Select(card => card.Id).Distinct().Count() == 30
             && selector.Candidates.All(card => card.CurrentUpgradeLevel == 0 && IsTheme(card)),
-            "EVENT_sealed_native_twenty_eight_unique_candidates");
+            "EVENT_sealed_native_thirty_unique_candidates");
         Check(added.Length == 10 && added.All(IsTheme), "EVENT_sealed_native_ten_card_selection_completes");
         await CardPileCmd.RemoveFromDeck(added, showPreview: false);
         var gem = await RelicCmd.Obtain<PrismaticGem>(_player);

@@ -55,7 +55,7 @@ foreach($index in 0..2) {
         if(!$text.Contains("STS2MOD_TEST_PASS EVENT_potion_trade_${case}_$index")){throw "Missing potion trade case: $case/$index"}
     }
 }
-foreach($case in @('native_thirty_reproduces_shortage','native_twenty_eight_unique_candidates','native_ten_card_selection_completes','native_pool_modifications_preserved','native_ironclad_thirty_unchanged')) {
+foreach($case in @('native_overrequest_reproduces_shortage','native_thirty_unique_candidates','native_ten_card_selection_completes','native_pool_modifications_preserved','native_ironclad_thirty_unchanged')) {
     if(!$text.Contains("STS2MOD_TEST_PASS EVENT_sealed_$case")){throw "Missing Sealed Deck case: $case"}
 }
 Write-Output 'PASS: Traveler events, native rooms, permanent elements and contract rewards.'
