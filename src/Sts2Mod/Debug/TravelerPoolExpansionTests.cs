@@ -240,7 +240,6 @@ public partial class TravelerTestRunner
                 $"POOL22_x_lightning_native_multihit_{x}_{weak}_{up}");
         }
 
-        await TestEchoingBlight();
         await TestExpansion22Relics();
         await TestExpansion22Tuning();
         await TestExpansion22Infusion();

@@ -6,6 +6,7 @@
 
 [h2]2026-10-29 平衡调整[/h2]
 [list]
+[*]雷蚀回响：每种已有可叠层负面固定增加3（升级6）层或回合，负力量/负敏捷再降低相同点数；费用1（升级0）、虚无升级移除及不消耗不变。
 [*]远征战鼓：每回合第2次实际连携奖励后蓄势，本回合下一张主动单体攻击首段基础伤害翻倍。
 [*]三色棱晶：每回合首张牌（含自动出牌）若没有元素，随机赋予风、岩或雷并保留本场战斗；已有元素则跳过且不顺延。
 [*]雷霆余响：1（升级0）费，连携基础攻击、格挡各+2（升级+4），抽牌+1；不可叠加，重复取较高效果，与元素之心先相加再翻倍。
@@ -43,7 +44,7 @@
 [/list]
 
 [h2]此前卡牌与平衡更新[/h2]
-保留三相终击跨回合累计伤害、碎岩重击三倍力量、元素共鸣按出牌顺序回能、雷霆连锁多段群攻、天地交征X费分支、旅途筹谋临时升级及雷蚀回响负面效果翻倍等既有功能。完整卡牌数值、历史更新及规则见下方玩家指南。
+保留三相终击跨回合累计伤害、碎岩重击三倍力量、元素共鸣按出牌顺序回能、雷霆连锁多段群攻、天地交征X费分支及旅途筹谋临时升级等既有功能。雷蚀回响按上方最新规则固定增加负面层数。完整卡牌数值、历史更新及规则见下方玩家指南。
 
 [h2]连携规则[/h2]
 [list]
@@ -64,6 +65,6 @@ Windows x64、游戏v0.107.1/build23811903、BaseLib3.4.7。本Mod拒绝其他Ba
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.17 adds four themed events, persistent event rewards and mixed-character party support: a party needs at least one Traveler, while each player chooses independently and receives character-appropriate rewards. It includes the 0.3.15 balance update with 28 reward cards, five Powers and seven exclusive relic models. It fixes hand input during Element Tuning selection, updates card balance, and adds Echoing Blight: a Lightning Uncommon Skill that doubles an enemy's stackable debuffs, including negative Strength and Dexterity, through native power hooks. It costs 1 and is Ethereal; upgrading reduces its cost to 0 and removes Ethereal. Unbound Compass now grants 1 combat Strength on the third combo trigger each turn while retaining its draw bonus. Heaven and Earth now Exhausts and grants draw/Energy, Plating, or AoE damage followed by Vulnerable. Journey Plans upgrades selected combat cards and Exhausts. Previous multiplayer feedback and new headless checks are separate evidence. Use matching game/mod/BaseLib versions on all clients.
+Version 0.3.17 adds four themed events, persistent event rewards and mixed-character party support: a party needs at least one Traveler, while each player chooses independently and receives character-appropriate rewards. It includes the 0.3.15 balance update with 28 reward cards, five Powers and seven exclusive relic models. It fixes hand input during Element Tuning selection, updates card balance, and adds Echoing Blight: a Lightning Uncommon Skill that adds 3 stacks (6 upgraded) to each existing stackable debuff, further reducing negative Strength and Dexterity by the same amount, through native power hooks. It costs 1 and is Ethereal; upgrading reduces its cost to 0 and removes Ethereal. Unbound Compass now grants 1 combat Strength on the third combo trigger each turn while retaining its draw bonus. Heaven and Earth now Exhausts and grants draw/Energy, Plating, or AoE damage followed by Vulnerable. Journey Plans upgrades selected combat cards and Exhausts. Previous multiplayer feedback and new headless checks are separate evidence. Use matching game/mod/BaseLib versions on all clients.
 
 条目公开发布，后续更新继续保持公开。This Workshop item and future updates are public.

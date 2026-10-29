@@ -66,7 +66,7 @@
   "TC_PRISM.assignedElement": "Prism element: {Element} (lasts this combat).",
   "TC_DRUM.firstHit": "Drum ready: manually playing this card doubles only its first hit's base damage.",
   "TC_C28.title": "Echoing Blight",
-  "TC_C28.description": "Double all stackable debuff amounts or durations on an enemy, including negative Strength and Dexterity. Non-stacking effects are unchanged.\n[gold]Lightning element[/gold].{ComboPreview}",
+  "TC_C28.description": "Add [blue]{Stacks}[/blue] stacks or turns to each existing stackable debuff on an enemy. Lower negative Strength and Dexterity by another [blue]{Stacks}[/blue]. Non-stacking effects are unchanged.\n[gold]Lightning element[/gold].{ComboPreview}",
   "TC_SURVEY.permanentElement": "Survey element: {Element} (persists for this run).",
   "TC_CURSE_HOMEWARD.title": "Homeward",
   "TC_CURSE_HOMEWARD.description": "Unplayable.",

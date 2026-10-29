@@ -170,7 +170,8 @@ foreach ($case in @('chain_native_all_enemy_hits_False','chain_native_all_enemy_
 
 foreach ($up in @('False','True')) {
     foreach ($case in @('all_stackable_debuffs_only','empty_target_still_resolves_one_combo',
-      'native_artifact_blocks_each_increase','native_ethereal_upgrade_removal')) {
+      'native_artifact_blocks_each_increase','native_ethereal_upgrade_removal',
+      'repeated_use_adds_fixed_stacks','opportunist_repeated_fixed_scaling','large_stacks_fixed_positive_stats_unchanged')) {
         if (!$text.Contains("STS2MOD_TEST_PASS BLIGHT_${case}_$up")) { throw "Missing blight case: $case/$up" }
     }
 }

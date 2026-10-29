@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Sts2Mod.Combo;
 using Sts2Mod.Pools;
 
@@ -14,10 +15,12 @@ public sealed class EchoingBlight() : ElementCardModel(1, CardType.Skill, CardRa
 {
     public override Element CardElement => Element.Lightning;
     public override string CustomPortraitPath => "res://Sts2Mod/art/TC_C28.tres";
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Stacks", 3)];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];
     protected override void OnUpgrade()
     {
         EnergyCost.UpgradeBy(-1);
+        DynamicVars["Stacks"].UpgradeValueBy(3);
         RemoveKeyword(CardKeyword.Ethereal);
     }
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
@@ -31,7 +34,7 @@ public sealed class EchoingBlight() : ElementCardModel(1, CardType.Skill, CardRa
         {
             if (!play.Target.IsAlive) break;
             if (play.Target.Powers.Contains(power))
-                await PowerCmd.ModifyAmount(context, power, amount, Owner.Creature, this);
+                await PowerCmd.ModifyAmount(context, power, Math.Sign(amount) * DynamicVars["Stacks"].IntValue, Owner.Creature, this);
         }
         await ComboPower.Resolve(this, context, play, reservation);
     }

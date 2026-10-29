@@ -66,7 +66,7 @@
   "TC_PRISM.assignedElement": "棱晶赋予：{Element}（本场战斗保留）。",
   "TC_DRUM.firstHit": "战鼓蓄势：主动打出时，仅首段基础伤害翻倍。",
   "TC_C28.title": "雷蚀回响",
-  "TC_C28.description": "使一名敌人身上全部可叠层的负面效果数值或持续回合翻倍，包括负力量和负敏捷；无法叠层的效果不变。\n[gold]雷元素[/gold]。{ComboPreview}",
+  "TC_C28.description": "使一名敌人身上每种已有的可叠层负面效果增加[blue]{Stacks}[/blue]层或回合。负力量、负敏捷再降低[blue]{Stacks}[/blue]点；无法叠层的效果不变。\n[gold]雷元素[/gold]。{ComboPreview}",
   "TC_SURVEY.permanentElement": "测绘赋予：{Element}（本局游戏保留）。",
   "TC_CURSE_HOMEWARD.title": "归途",
   "TC_CURSE_HOMEWARD.description": "无法打出。",
