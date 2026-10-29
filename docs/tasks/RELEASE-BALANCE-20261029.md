@@ -8,4 +8,6 @@
 
 影响/核对：工坊description、changeNote、冻结元数据和上传目录；检查说明与实现一致、JSON/public/条目ID/依赖、快照与上传字节。上传后核对远端Public、Steam实际下载七文件哈希及图片可读取性。游戏加载、Full、图形、联机、自然整局、旧档迁移与本轮用户试玩均NOT_RUN。
 
-结果：准备中，待记录上传回执及独立远端核对。
+首轮上传：快照834D4191075786443C50CFD3A7E2196D3AB709AA01C04D2A9CB912E4B06CDFA7，官方上传器在提交阶段返回k_EResultInvalidParam；日志`.local/balance-20261029-release/upload.log`保留。独立inspect确认仍为原timestamp1793189337和118465148字节，未把失败记为发布成功。说明8688个UTF-8字节，超出Steamworks常量k_cchPublishedDocumentDescriptionMax=8000；压缩工坊内的旧版历史说明，完整历史仍保留仓库CHANGELOG。参考[官方接口](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemDescription)及[Steamworks.NET常量](https://github.com/rlabrecque/Steamworks.NET/blob/master/com.rlabrecque.steamworks.net/Runtime/autogen/SteamConstants.cs)。重新冻结元数据，核心不变。
+
+结果：待重试上传及独立远端核对。
