@@ -1,74 +1,47 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.18 · 支持单人和联机[/b]
-可选角色「旅行者」拥有38张专属奖励牌（13攻击/18技能/7能力）、10张起始牌及7种原有专属遗物模型，另有4个主题事件、6种旅行者事件遗物/契约、2种同伴契约和归途诅咒。支持简体中文/英文，通过风、岩、雷的出牌顺序组合防御、过牌和追击。
+[b]0.3.18 · 支持单人和联机 · 简体中文/英文[/b]
+可选角色「旅行者」拥有38张专属奖励牌（13攻击/18技能/7能力）、10张起始牌，以及专属遗物、四个主题事件和旅行者契约。通过风、岩、雷的出牌顺序组合防御、过牌和追击。
 
-[b]此前本地候选已获得用户双人联机实测反馈。[/b]联机各方须使用相同游戏、Mod和BaseLib版本；本次新增平衡的自动化验证为无GUI，不能替代新版本联机与真实UI验收。
-
-[h2]0.3.18 十张罕见牌扩展[/h2]
-新增循风寻径、借风藏势、岩脊反击、层岩回响、踏石蓄势、余雷引航、蚀雷针、携毒之风、毒雾行囊、沉毒岩障。支持元素检索、临时保留、敏捷防守、原生活力爆发和原生中毒。踏石蓄势的活力可跨回合，岩雷追击同样会消耗活力；余雷引航升级后不消耗。新增10张配套生成式卡图，两种新能力使用对应插图作为状态图标。仅对新增牌定向无GUI验证，实战平衡、画面与联机由发布后试玩验收。
-[h2]2026-10-29 平衡调整[/h2]
+[h2]0.3.18：十张罕见牌[/h2]
 [list]
-[*]雷蚀回响：每种已有可叠层负面固定增加3（升级6）层或回合，负力量/负敏捷再降低相同点数；费用1（升级0）、虚无升级移除及不消耗不变。
-[*]远征战鼓：每回合第2次实际连携奖励后蓄势，本回合下一张主动单体攻击首段基础伤害翻倍。
-[*]三色棱晶：每回合首张牌（含自动出牌）若没有元素，随机赋予风、岩或雷并保留本场战斗；已有元素则跳过且不顺延。
-[*]雷霆余响：1（升级0）费，连携基础攻击、格挡各+2（升级+4），抽牌+1；不可叠加，重复取较高效果，与元素之心先相加再翻倍。
-[*]塔外来信：旅行者集齐三种实际连携奖励后恢复5生命；非旅行者自己的第3回合结束恢复5生命。战斗开始失去2生命的代价不变。
+[*]循风寻径：从抽牌堆选择岩或雷元素牌入手；升级后不消耗。
+[*]借风藏势：抽2（3）张牌，再选择1张手牌本回合保留。
+[*]岩脊反击：7（10）伤害；已有格挡时再施加2虚弱。
+[*]层岩回响：每回合首次实际风岩奖励后，获得1（2）本回合敏捷。
+[*]踏石蓄势：8（11）格挡、7（10）原生活力。
+[*]余雷引航：7（9）格挡，下回合额外抽2；升级后不消耗。
+[*]蚀雷针：5（8）伤害、3（4）原生中毒。
+[*]携毒之风：全体3（4）原生中毒、抽1。
+[*]毒雾行囊：每回合首次实际雷风奖励后，全体2（3）原生中毒。
+[*]沉毒岩障：7（10）格挡；有存活中毒敌人时再获得3基础格挡。
 [/list]
-
-[h2]2026-10-28 事件兼容修复[/h2]
-旅行者在“药水的未来”事件中只抽取当前牌池能提供三张不同奖励的牌型，避免稀有攻击/技能或罕见能力候选不足时，丢弃药水后奖励生成失败。奖励仍为同稀有度升级牌三选一，其他角色沿用原生逻辑。
-旅行者使用“密封牌组”自定义规则时，提供至多30张候选（当前奖励池38张），仍选择10张组牌，避免固定生成30张导致取空牌池。
-
-[h2]2026-10-28 Boss结算修复[/h2]
-修复LastingCandy追加能力牌候选只剩一种稀有度时，Boss奖励生成抛异常、无法显示奖励及重进再次卡住的问题。普通三张Boss奖励规则及存档格式不变。Character无GUI专项135项通过，真实联机与旧故障存档恢复仍待验证；联机双方请更新到相同修复包。
-
-[h2]2026-10-28 能量与音效更新[/h2]
-新增旅行者三元素旋转能量球、配套卡牌/提示框能量符号，以及风、岩、雷和连携四种原创短音效；音效跟随游戏音量设置。玩法和存档格式不变。定向无GUI验证通过，本次画面、听感与朋友联机验收待进行。
-
-[h2]2026-10-26 遗物素材更新[/h2]
-无界罗盘、旅人药匣、三色棱晶、远征战鼓、神像庇佑使用独立透明PNG图标，替换旧占位草图；玩法不变。
-
-[h2]2026-10-24 验收更新[/h2]
-[list]
-[*]天地交征的雷分支对所有敌人攻击X次，每段享受力量、易伤等原生修正。
-[*]修复黏糊格挡预览与5张卡牌的元素文字颜色；遗物更名为元素之心，效果不变。
-[*]替换4张事件场景、8张事件遗物和归途卡图。本次为验收更新，通关结算仍需实机确认。
-[/list]
-[h2]0.3.17 更新[/h2]
-[list]
-[*]通关修复：补齐旅行者在建筑师事件中的可重复结局对话，修复无法播放结局动画、无法进入胜利结算的问题。
-[*]显示修复：10张新卡图按25:19居中取景，修复两侧留黑；伤害文案使用原生动态预览，切换怪物时随目标状态更新。
-[*]素材更新：TC_C19–TC_C28换用10张新卡牌封面，5种能力接入独立透明Buff图标；游戏内显示已由用户确认。
-[*]新增四个主题事件：岔路冒险、元素测绘、塔外来信与引路人，带来分层探索、永久元素改造、持续契约和免费遗物选择。
-[*]队伍中至少有一名旅行者即可遇到这些事件；各玩家独立选择并领取奖励。
-[*]其他角色获得本角色牌、战斗外升级、适用的原生普通遗物及通用契约，不引入旅行者元素机制。
-[*]包含0.3.15的全部卡牌平衡、雷蚀回响、元素调律输入修复和独立占位插图。
-[/list]
-
-[h2]此前卡牌与平衡更新[/h2]
-保留三相终击跨回合累计伤害、碎岩重击三倍力量、元素共鸣按出牌顺序回能、雷霆连锁多段群攻、天地交征X费分支及旅途筹谋临时升级等既有功能。雷蚀回响按上方最新规则固定增加负面层数。完整卡牌数值、历史更新及规则见下方玩家指南。
+全部1费罕见牌，起始卡组不变。补充元素调度、防守、活力爆发和原生中毒路线，附10张生成式插图。活力可跨回合，对下一次攻击的每段加伤；岩雷追击也会消耗活力。层岩回响和毒雾行囊多份相加。完整升级与规则见玩家指南。
 
 [h2]连携规则[/h2]
 [list]
-[*]风+岩：4格挡；岩+雷：4追加攻击；雷+风：抽1。双向可触发。
-[*]每人每回合默认合计3次，持有任一罗盘时4次。连携后保留最新元素，跨回合保留，战斗结束清空。
-[*]单体追击原存活目标，目标死亡不转火；无敌方目标的防御技能随机追击，无目标群攻不自动选择目标。
-[*]元素之心在雷霆余响加成后将连携奖励翻倍，不翻倍风的指引/罗盘的额外收益。能力默认无元素；灌注效果和棱晶赋予的元素可推进连携；普通未赋元素牌不打断记录。
-[*]普通自动打出和额外重复结算不推进序列，元素调律选中牌与灌注效果为例外。抽0、零伤害或无有效目标不计实际奖励；连携占用次数与实际奖励次数分别计数。
-[*]人工制品拦截灌注回合末负敏捷为预期交互。
+[*]风↔岩：4格挡；岩↔雷：4基础追加攻击；雷↔风：抽1张。双向可触发。
+[*]默认每人每回合合计3次，有任一罗盘时4次。连携后保留最新元素，跨回合保留，战斗结束清空；普通无元素牌不打断。
+[*]单体攻击追击原存活目标，死亡不转火；无敌方目标的技能随机追击；无目标群攻不自动选目标。
+[*]普通自动出牌和重复结算不推进；元素调律选中牌与三相灌注效果为明确例外。抽0、零伤害或无有效目标不计实际奖励。
+[*]元素之心在雷霆余响加成后翻倍基础连携奖励，不翻倍能力或罗盘额外收益。
 [/list]
 
-[h2]安装与验证[/h2]
-Windows x64、游戏v0.107.1/build23811903、BaseLib3.4.7。本Mod拒绝其他BaseLib版本；工坊依赖无法锁版本，更新后请核对。每个Mod只保留一份生效副本。条目公开发布。
-自动化验证范围与发布证据见项目状态；新版本真实UI、联机/重连、自然Boss平衡及用户旧档迁移没有系统验收。角色与部分卡牌插图使用生成式素材，占位草图为独立几何矢量；封面及规则图为说明素材，不是游戏截图。
+[h2]保留此前平衡及修复[/h2]
+雷蚀回响固定增加每种已有可叠层负面3（6）层或回合；负力量、负敏捷再降低相同点数，不翻倍。远征战鼓每回合第2次实际奖励后蓄势，下一张主动单体攻击首段基础伤害翻倍。雷霆余响1（0）费，攻击/格挡加2（4）、抽牌加1，不可叠加；棱晶只为每回合首张无元素牌随机赋予元素。塔外来信恢复5生命，开战失去2生命。
+保留Boss能力牌追加奖励、药水的未来事件、密封牌组候选和建筑师通关结算修复，以及旅行者能量球、计数器和元素音效。
 
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]玩家指南[/url]
-[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/STATUS.md]当前状态与验证[/url]
+[h2]四个主题事件[/h2]
+地图之外的岔路、失准的测绘台、寄自塔外的信、最后一位引路人。队伍至少一名旅行者即可遇到；各自选择并领取角色适用的奖励。包含永久元素改造、契约、同伴分支及归途诅咒。
+
+[h2]安装与验证[/h2]
+Windows x64，游戏v0.107.1/build23811903，BaseLib3.4.7。工坊依赖不能锁版本，本Mod拒绝其他BaseLib版本。每个Mod只保留一份生效副本；联机各方须使用相同游戏、Mod及BaseLib版本。
+本次新增牌106项定向无GUI检查通过，未知错误0；按用户要求发布后试玩，未运行Full。新版本图形、自然整局平衡、旧档及真实联机尚未验收；此前版本双人联机反馈不代替本版本验证。卡图含生成式素材，工坊封面和规则图为说明素材，不是游戏截图。
+
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]完整玩家指南与卡牌[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/CHANGELOG.md]历史更新[/url]
+[url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/STATUS.md]版本状态与验证[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Version 0.3.18 adds ten Uncommon cards for elemental tutoring, temporary Retain, Dexterity, native Vigor and native Poison. The reward pool now has 38 cards (13 Attacks, 18 Skills, 7 Powers). Only the new cards receive focused headless testing for this release; user playtesting follows publication.
-
-Version 0.3.17 adds four themed events, persistent event rewards and mixed-character party support: a party needs at least one Traveler, while each player chooses independently and receives character-appropriate rewards. It includes the 0.3.15 balance update with 28 reward cards, five Powers and seven exclusive relic models. It fixes hand input during Element Tuning selection, updates card balance, and adds Echoing Blight: a Lightning Uncommon Skill that adds 3 stacks (6 upgraded) to each existing stackable debuff, further reducing negative Strength and Dexterity by the same amount, through native power hooks. It costs 1 and is Ethereal; upgrading reduces its cost to 0 and removes Ethereal. Unbound Compass now grants 1 combat Strength on the third combo trigger each turn while retaining its draw bonus. Heaven and Earth now Exhausts and grants draw/Energy, Plating, or AoE damage followed by Vulnerable. Journey Plans upgrades selected combat cards and Exhausts. Previous multiplayer feedback and new headless checks are separate evidence. Use matching game/mod/BaseLib versions on all clients.
-
-条目公开发布，后续更新继续保持公开。This Workshop item and future updates are public.
+Traveler Elements 0.3.18 adds ten Uncommon cards for elemental tutoring, temporary Retain, Dexterity, native Vigor and Poison. The reward pool contains 38 cards: 13 Attacks, 18 Skills and 7 Powers. Starter deck unchanged. Vigor persists until the next eligible attack, boosts every hit, and can be consumed by a Rock-Lightning combo follow-up. Echoing Blight adds 3 (6 upgraded) stacks to existing stackable debuffs rather than doubling them. Four themed events support parties with at least one Traveler and give character-appropriate choices.
+Requires Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7. All multiplayer clients need matching versions. The 106 focused new-card headless checks passed; Full, graphical playtesting and real multiplayer were not run for this release. User playtesting follows publication. This item and future updates remain public. Unofficial fan mod, not affiliated with Mega Crit.
