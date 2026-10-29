@@ -1,6 +1,7 @@
 using BaseLib.Abstracts;
 using BaseLib.Utils;
 using BaseLib.Utils.Attributes;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -8,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
@@ -52,6 +54,7 @@ public sealed class TricolorPrism : CustomRelicModel
     {
         if (IsMelted || _spent || play.Card.Owner != Owner || !play.IsFirstInSeries) return Task.CompletedTask;
         _spent = true;
+        if (CombatCardElements.Get(play.Card) != Element.None) return Task.CompletedTask;
         CombatCardElements.Assigned.Set(play.Card, (int)Owner.RunState.Rng.CombatCardGeneration.NextItem(new[] { Element.Wind, Element.Rock, Element.Lightning }));
         Flash();
         return Task.CompletedTask;
@@ -77,7 +80,7 @@ public sealed class ExpeditionDrum : CustomRelicModel, IComboRewardRelic
     { if (participants.Contains(Owner.Creature)) Reset(); return Task.CompletedTask; }
     public Task OnComboReward(PlayerChoiceContext context)
     {
-        if (!IsMelted && Owner.Creature.GetPower<ComboPower>()?.State.RewardsThisTurn == 3)
+        if (!IsMelted && Owner.Creature.GetPower<ComboPower>()?.State.RewardsThisTurn == 2)
         { Ready = true; Flash(); InvokeDisplayAmountChanged(); }
         return Task.CompletedTask;
     }
@@ -88,13 +91,24 @@ public sealed class ExpeditionDrum : CustomRelicModel, IComboRewardRelic
         { Ready = false; _attack = play.Card; InvokeDisplayAmountChanged(); }
         return Task.CompletedTask;
     }
-    public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
-        => !IsMelted && props.HasFlag(ValueProp.Move) && cardSource is not null && cardSource.Owner == Owner
-            && cardSource == _attack ? 8 : 0;
+    internal bool DoublesFirstHit(CardModel card, CardPreviewMode previewMode)
+        => !IsMelted && (card == _attack || Ready && previewMode != CardPreviewMode.None);
     public override Task AfterDamageGiven(PlayerChoiceContext context, Creature? dealer, DamageResult result, ValueProp props, Creature target, CardModel? cardSource)
     { if (cardSource == _attack) _attack = null; return Task.CompletedTask; }
     public override Task AfterCardPlayed(PlayerChoiceContext context, CardPlay play)
     { if (play.Card == _attack) _attack = null; return Task.CompletedTask; }
+}
+
+[HarmonyPatch(typeof(Hook), nameof(Hook.ModifyDamage))]
+internal static class ExpeditionDrumBaseDamagePatch
+{
+    private static void Prefix(ref decimal damage, ValueProp props, CardModel? cardSource, CardPreviewMode previewMode)
+    {
+        if (!props.IsPoweredAttack() || cardSource is not { Type: CardType.Attack, TargetType: TargetType.AnyEnemy }) return;
+        // Change the original hit before Strength and other native damage modifiers run.
+        if (cardSource.Owner.Relics.OfType<ExpeditionDrum>().Any(drum => drum.DoublesFirstHit(cardSource, previewMode)))
+            damage *= 2;
+    }
 }
 
 [CustomID("TC_R07"), Pool(typeof(TravelerRelicPool))]

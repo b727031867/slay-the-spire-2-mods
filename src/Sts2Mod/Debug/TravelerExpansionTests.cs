@@ -385,7 +385,7 @@ public partial class TravelerTestRunner
         var hp = _target.CurrentHp; var otherHp = other.CurrentHp;
         await Play<RockGuard>(); await Play<LightningThrust>();
         Check(hp - _target.CurrentHp == 15 && otherHp == other.CurrentHp
-            && _player.Creature.GetPower<ThunderEchoPower>()?.Amount == 2, "EXP_echo_copies_add_base_reward");
+            && _player.Creature.GetPower<ThunderEchoPower>()?.Amount == 4, "EXP_echo_copies_keep_highest_bonus");
         hp = _target.CurrentHp; otherHp = other.CurrentHp;
         await Play<ShatteringRock>();
         Check(hp - _target.CurrentHp == 20 && otherHp == other.CurrentHp && Power.State.Used == 2,
@@ -398,8 +398,8 @@ public partial class TravelerTestRunner
         await PowerCmd.Apply<StrengthPower>(source.PlayerChoiceContext!, _player.Creature, 2m, _player.Creature, null);
         hp = _target.CurrentHp; other = _player.Creature.CombatState!.Enemies.First(e => e != _target); otherHp = other.CurrentHp;
         await Play<LightningThrust>();
-        Check(hp - _target.CurrentHp == 19 && otherHp == other.CurrentHp,
-            "EXP_echo_does_not_stack_with_paimon");
+        Check(hp - _target.CurrentHp == 23 && otherHp == other.CurrentHp,
+            "EXP_echo_adds_before_paimon_doubles");
 
         await FreshExpansion();
         await Play<ThunderEcho>(); await Play<ElementResonance>();

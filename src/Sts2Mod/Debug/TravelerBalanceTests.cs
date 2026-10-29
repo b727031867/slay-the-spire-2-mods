@@ -43,16 +43,43 @@ public partial class TravelerTestRunner
         Check(_player.Creature.Block == 13, "BAL_echo_wind_rock_six_block");
         await RelicCmd.Obtain<PaimonCheer>(_player);
         await Play<WindBlade>();
-        Check(_player.Creature.Block == 21, "BAL_echo_paimon_block_eight_no_stack");
+        Check(_player.Creature.Block == 25, "BAL_echo_paimon_block_twelve_add_then_double");
         await FreshExpansion(); await SeedDraw();
         await Play<ThunderEcho>(); await Play<WindBlade>(); await Play<LightningThrust>();
         Check(PileType.Hand.GetPile(_player).Cards.Count == 2, "BAL_echo_doubles_lightning_wind");
         await RelicCmd.Obtain<PaimonCheer>(_player);
         await Play<WindBlade>();
-        Check(PileType.Hand.GetPile(_player).Cards.Count == 4, "BAL_echo_paimon_draw_two_no_stack");
+        Check(PileType.Hand.GetPile(_player).Cards.Count == 6, "BAL_echo_paimon_draw_four_add_then_double");
         var card = await Add<LightningThrust>();
-        Check(ComboPresentation.VisualPreview((ElementCardModel)card).Bonus == 2,
+        Check(ComboPresentation.VisualPreview((ElementCardModel)card).Bonus == 4,
             "BAL_echo_preview_matches_draw");
+
+        foreach (var copies in new[] { new[] { false, false }, new[] { true, true }, new[] { false, true }, new[] { true, false } })
+        foreach (var doubled in new[] { false, true })
+        {
+            await FreshExpansion(); await SeedDraw();
+            if (doubled) await RelicCmd.Obtain<PaimonCheer>(_player);
+            foreach (var up in copies)
+            {
+                var echo = await Add<ThunderEcho>(up);
+                Check(echo.EnergyCost.Canonical == (up ? 0 : 1), "BAL_echo_cost_" + up);
+                await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(echo, null));
+            }
+            var bonus = copies.Any(up => up) ? 4 : 2;
+            var multiplier = doubled ? 2 : 1;
+            Check(_player.Creature.GetPower<ThunderEchoPower>()?.Amount == bonus,
+                "BAL_echo_no_stack_" + string.Join("", copies) + "_" + doubled);
+            await Play<WindBlade>(); await Play<RockGuard>();
+            Check(_player.Creature.Block == 7 + (4 + bonus) * multiplier,
+                "BAL_echo_block_add_then_double_" + string.Join("", copies) + "_" + doubled);
+            var hpBefore = _target.CurrentHp;
+            await Play<LightningThrust>();
+            Check(hpBefore - _target.CurrentHp == 7 + (4 + bonus) * multiplier,
+                "BAL_echo_attack_add_then_double_" + string.Join("", copies) + "_" + doubled);
+            await Play<WindBlade>();
+            Check(PileType.Hand.GetPile(_player).Cards.Count == 2 * multiplier,
+                "BAL_echo_draw_add_then_double_" + string.Join("", copies) + "_" + doubled);
+        }
 
         await FreshExpansion(); await SeedDraw();
         await Play<ElementResonance>(true);

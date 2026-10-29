@@ -52,7 +52,7 @@ public static class ComboResolver
         }
         var paimonDoubles = step.Triggered
             && card.Owner.Relics.Any(r => r is PaimonCheer { IsMelted: false });
-        var rewardAmount = ComboPresentation.Reward(step.Kind, paimonDoubles, ComboPresentation.EchoCopies(card.Owner));
+        var rewardAmount = ComboPresentation.Reward(step.Kind, paimonDoubles, ComboPresentation.EchoBonus(card.Owner));
         var reward = step.Kind switch
         {
             ComboKind.WindRock => $"block{rewardAmount}",
@@ -75,9 +75,9 @@ public static class ComboResolver
             GD.Print($"STS2MOD_REWARD player={card.Owner.NetId} action={reservation.ActionId} skipped=combat_ended_or_dead");
             return;
         }
-        var echoCopies = ComboPresentation.EchoCopies(card.Owner);
-        var bonus = ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles, echoCopies);
-        var draws = ComboPresentation.Reward(ComboKind.LightningWind, reservation.PaimonDoubles, echoCopies);
+        var echoAmount = ComboPresentation.EchoBonus(card.Owner);
+        var bonus = ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles, echoAmount);
+        var draws = ComboPresentation.Reward(ComboKind.LightningWind, reservation.PaimonDoubles, echoAmount);
         var awarded = false;
         if (reservation.Kind == ComboKind.RockLightning)
         {

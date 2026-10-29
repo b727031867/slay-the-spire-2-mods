@@ -72,8 +72,8 @@ foreach ($case in @('pool_28_types_11_12_5','rarity_10_13_5','all_ids_once','bos
  'power_cards_do_not_advance_and_copies_stack','guidance_two_copies_once_each','guidance_second_combo_no_second_draw',
  'guidance_resets_on_next_turn','guidance_new_copy_can_trigger_after_old_spent',
  'zero_draw_does_not_consume_actual_reward','guidance_after_blocked_draw_still_triggers',
- 'paimon_combo2_guidance1_compass0','echo_copies_add_base_reward','echo_boosts_second_rock_lightning',
- 'echo_does_not_stack_with_paimon','random_defensive_attack_triggers_echo_and_actual_reward','base_kill_does_not_trigger_echo',
+ 'paimon_combo2_guidance1_compass0','echo_copies_keep_highest_bonus','echo_boosts_second_rock_lightning',
+ 'echo_adds_before_paimon_doubles','random_defensive_attack_triggers_echo_and_actual_reward','base_kill_does_not_trigger_echo',
  'zero_attack_damage_does_not_trigger_echo',
  'resonance_base_and_upgrade_share_ordered_slots','resonance_third_reward_does_not_repeat','resonance_second_actual_after_skip_gains_energy','resonance_cap_does_not_repeat',
  'extra_turn_resets_actual_reward_counter','resonance_can_trigger_on_extra_turn',
@@ -108,16 +108,29 @@ foreach ($case in @('x_requires_element_no_payment','burst_replay_preserves_prep
  'x_replay_preserves_element_and_payment_snapshot','x_native_chemical_x_bonus',
  'x_native_free_autoplay_captures_without_payment','medicine_no_exhaust_no_proc','medicine_first_status_five_block',
  'medicine_once_per_turn','medicine_native_ethereal_next_turn','statue_initial_record_no_proc',
- 'statue_trigger_not_actual_reward','statue_once_per_combat','drum_third_actual_arms',
- 'drum_ignores_aoe_random_auto_and_x_skill','drum_only_first_hit_not_combo','drum_expires_at_turn_end',
+ 'statue_trigger_not_actual_reward','statue_once_per_combat','drum_first_reward_not_armed','drum_second_actual_arms',
+ 'drum_ignores_aoe_random_auto_and_x_skill','drum_only_first_hit_not_combo','drum_expires_at_turn_end','drum_calculated_base_preview',
  'prism_plain_skill_manual_combo_entry','prism_instance_survives_discard_redraw',
- 'prism_serialized_mark_copy_does_not_inherit','prism_next_turn_rerolls_same_instance',
+ 'prism_serialized_mark_copy_does_not_inherit','prism_next_turn_keeps_same_instance',
  'prism_auto_first_assigns_without_combo','prism_auto_consumes_first_card_slot',
  'tuning_interrupted_choice_restores_hand_input',
  'infusion_empty_records_only','infusion_two_copies_one_roll_two_dexterity',
  'infusion_accumulates_and_removes_only_own_dexterity','infusion_effect_combo_rewards_and_statue',
  'infusion_cap_updates_record_without_reward','infusion_turn_start_after_reset_single_roll')) {
     if (!$text.Contains("STS2MOD_TEST_PASS POOL22_$case")) { throw "Missing expansion boundary: $case" }
+}
+foreach ($strength in @(-2,0,3)) {
+    if (!$text.Contains("STS2MOD_TEST_PASS POOL22_drum_base_double_strength_once_$strength")) { throw "Missing drum strength case: $strength" }
+}
+foreach ($permanent in @('False','True')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS POOL22_prism_existing_element_skips_turn_$permanent")) { throw "Missing prism element case: $permanent" }
+}
+foreach ($order in @('FalseFalse','TrueTrue','FalseTrue','TrueFalse')) {
+    foreach ($doubled in @('False','True')) {
+        foreach ($case in @('no_stack','block_add_then_double','attack_add_then_double','draw_add_then_double')) {
+            if (!$text.Contains("STS2MOD_TEST_PASS BAL_echo_${case}_${order}_$doubled")) { throw "Missing echo case: $case/$order/$doubled" }
+        }
+    }
 }
 foreach ($up in @('False','True')) {
     foreach ($case in @('cleanse_exhaust_draw','cleanse_empty','cleanse_optional','rock_cleanse_before_block_reusable',
@@ -147,8 +160,8 @@ if (!$Full -and $text -notmatch '(?m)^STS2MOD_EXPANSION_FOCUSED_COMPLETE asserti
 }
 foreach ($case in @('chain_native_all_enemy_hits_False','chain_native_all_enemy_hits_True',
  'tailwind_one_draw_exhaust_boundary_False','tailwind_one_draw_exhaust_boundary_True',
- 'guidance_wind_rock_draws','guidance_pairs_share_once','echo_wind_rock_six_block','echo_paimon_block_eight_no_stack',
- 'echo_doubles_lightning_wind','echo_paimon_draw_two_no_stack',
+ 'guidance_wind_rock_draws','guidance_pairs_share_once','echo_wind_rock_six_block','echo_paimon_block_twelve_add_then_double',
+ 'echo_doubles_lightning_wind','echo_paimon_draw_four_add_then_double',
  'echo_preview_matches_draw','upgraded_resonance_first_refunds_energy','upgraded_resonance_once_per_turn',
  'compass_third_actual_reward_strength','compass_fourth_no_second_strength','compass_fifth_combo_blocked',
  'compass_strength_accumulates_next_turn','new_combat_strength_reset_without_compass')) {

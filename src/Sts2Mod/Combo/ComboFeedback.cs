@@ -40,7 +40,7 @@ public static class ComboFeedback
         if (actualDraw is <= 0) return;
         if (reservation.PaimonDoubles)
             creature.Player?.Relics.OfType<PaimonCheer>().FirstOrDefault(r => !r.IsMelted)?.Flash();
-        GD.Print($"STS2MOD_FEEDBACK kind={reservation.Kind} bonus={ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles, ComboPresentation.EchoCopies(creature.Player))} doubled={reservation.PaimonDoubles}");
+        GD.Print($"STS2MOD_FEEDBACK kind={reservation.Kind} bonus={ComboPresentation.Reward(reservation.Kind, reservation.PaimonDoubles, ComboPresentation.EchoBonus(creature.Player))} doubled={reservation.PaimonDoubles}");
         if (DisplayServer.GetName() == "headless") return;
         Presentation.ElementAudio.Play(Presentation.ElementAudio.ComboPath);
         // Attack/block fusion is already placed at the authoritative native result, once per target.

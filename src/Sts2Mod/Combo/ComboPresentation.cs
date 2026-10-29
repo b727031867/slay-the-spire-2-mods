@@ -18,11 +18,12 @@ public readonly record struct ComboVisualPreview(string Key, ComboKind Kind, Ele
 public static class ComboPresentation
 {
     public static bool HasPaimon(Player? player) => player?.Relics.Any(r => r is PaimonCheer { IsMelted: false }) == true;
-    public static int EchoCopies(Player? player) => player?.Creature.GetPower<ThunderEchoPower>()?.Amount ?? 0;
-    public static int Reward(ComboKind kind, bool doubled, int echoCopies = 0)
+    public static int EchoBonus(Player? player) => player?.Creature.GetPower<ThunderEchoPower>()?.Amount ?? 0;
+    public static int Reward(ComboKind kind, bool doubled, int echoAmount = 0)
     {
         var baseReward = kind == ComboKind.LightningWind ? 1 : 4;
-        return Math.Max(baseReward * (doubled ? 2 : 1), baseReward + echoCopies * (kind == ComboKind.LightningWind ? 1 : 2));
+        var echoBonus = echoAmount > 0 ? (kind == ComboKind.LightningWind ? 1 : Math.Min(echoAmount, 4)) : 0;
+        return (baseReward + echoBonus) * (doubled ? 2 : 1);
     }
 
     public static bool InHand(ElementCardModel card) => card.IsMutable && card.Pile?.Type == PileType.Hand
@@ -48,7 +49,7 @@ public static class ComboPresentation
             _ => "attack"
         };
         return new(key, kind, element, power?.State.Remaining ?? ComboState.Limit,
-            Reward(kind, card.IsMutable && HasPaimon(card.Owner), card.IsMutable ? EchoCopies(card.Owner) : 0));
+            Reward(kind, card.IsMutable && HasPaimon(card.Owner), card.IsMutable ? EchoBonus(card.Owner) : 0));
     }
 
     public static LocString Preview(ElementCardModel card)
@@ -62,10 +63,10 @@ public static class ComboPresentation
         return text;
     }
 
-    public static LocString Trigger(ComboKind kind, bool doubled, int? actualDraw = null, int echoCopies = 0)
+    public static LocString Trigger(ComboKind kind, bool doubled, int? actualDraw = null, int echoAmount = 0)
     {
         var key = kind switch { ComboKind.WindRock => "trigger", ComboKind.RockLightning => "rockLightningTrigger", _ => "lightningWindTrigger" };
-        var reward = Reward(kind, doubled, echoCopies);
+        var reward = Reward(kind, doubled, echoAmount);
         if (kind == ComboKind.LightningWind && actualDraw is { } actual && actual < reward) key = "limitedDrawTrigger";
         var text = new LocString("powers", "TC_COMBO." + key);
         text.Add("Bonus", reward);

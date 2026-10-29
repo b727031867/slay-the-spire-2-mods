@@ -40,10 +40,10 @@ public sealed class ComboPower : CustomPowerModel
         loc.Add("Remaining", DisplayAmount);
         loc.Add("Limit", IsMutable ? State.TurnLimit : ComboState.Limit);
         var doubled = IsMutable && ComboPresentation.HasPaimon(Owner?.Player);
-        var echoCopies = IsMutable ? ComboPresentation.EchoCopies(Owner?.Player) : 0;
-        loc.Add("BlockBonus", ComboPresentation.Reward(ComboKind.WindRock, doubled, echoCopies));
-        loc.Add("AttackBonus", ComboPresentation.Reward(ComboKind.RockLightning, doubled, echoCopies));
-        loc.Add("DrawBonus", ComboPresentation.Reward(ComboKind.LightningWind, doubled, echoCopies));
+        var echoAmount = IsMutable ? ComboPresentation.EchoBonus(Owner?.Player) : 0;
+        loc.Add("BlockBonus", ComboPresentation.Reward(ComboKind.WindRock, doubled, echoAmount));
+        loc.Add("AttackBonus", ComboPresentation.Reward(ComboKind.RockLightning, doubled, echoAmount));
+        loc.Add("DrawBonus", ComboPresentation.Reward(ComboKind.LightningWind, doubled, echoAmount));
         return loc;
     }
     public override LocString Title => WithState(DisplayAmount == 0 ? "exhaustedTitle" : "title");

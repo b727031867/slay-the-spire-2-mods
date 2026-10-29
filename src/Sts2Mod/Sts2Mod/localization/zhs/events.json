@@ -40,7 +40,7 @@
   "TC_E03.title": "寄自塔外的信",
   "TC_E03.pages.INITIAL.description": "邮差坐在封死的门前，耐心核对你的姓名。信里写着你刚经历的事，水印是一道门，门外又有高塔。\n“寄信人是我？”\n“是的，签名在这里。”\n“可我今天才到。”\n他郑重地划掉日期：“那么是我们提前了。给您添麻烦了。”",
   "TC_E03.pages.INITIAL.options.SIGN.title": "签收：塔外来信",
-  "TC_E03.pages.INITIAL.options.SIGN.description": "本局每场战斗开始失去2生命；每场首次实际获得风岩、岩雷、雷风三种奖励后恢复3生命。不要求同回合。",
+  "TC_E03.pages.INITIAL.options.SIGN.description": "本局每场战斗开始失去2生命；每场首次实际获得风岩、岩雷、雷风三种奖励后恢复5生命。不要求同回合。",
   "TC_E03.pages.INITIAL.options.VERIFY.title": "核验：地址更正",
   "TC_E03.pages.INITIAL.options.VERIFY.description": "本局每场战斗开始，随机获得1张自带元素的未升级旅行者奖励牌到手牌，附加虚无，本回合免费。代价：首回合少抽1张。",
   "TC_E03.pages.INITIAL.options.BUY.title": "交易：无人认领",
@@ -77,7 +77,7 @@
   "TC_E02.pages.CALIBRATED_GUEST.description": "器械仔细修整了你的技艺，牌面留下熟悉而清晰的纹路。纸带上写着：首次服务完成。第二次服务收费60金币。",
   "TC_E03.pages.INITIAL_GUEST.description": "邮差给旅行者递过一封信，又从袋中取出写着你姓名的信封。里面记载了只有你知道的经历。他把三份适用于你的投递契约摊在桌上：“每位收件人的邮资，分别结算。”",
   "TC_E03.pages.INITIAL.options.SIGN_GUEST.title": "签收：塔外来信",
-  "TC_E03.pages.INITIAL.options.SIGN_GUEST.description": "本局每场战斗开始失去2生命；自己的第3回合结束时恢复3生命，每场一次。提前结束战斗不会治疗。",
+  "TC_E03.pages.INITIAL.options.SIGN_GUEST.description": "本局每场战斗开始失去2生命；自己的第3回合结束时恢复5生命，每场一次。提前结束战斗不会治疗。",
   "TC_E03.pages.INITIAL.options.VERIFY_GUEST.title": "核验：地址更正",
   "TC_E03.pages.INITIAL.options.VERIFY_GUEST.description": "本局每场战斗首回合少抽1张牌，生成1张本角色非稀有未升级奖励牌到手牌，附加虚无，本回合免费。不进入永久牌组；排除X费与不可打出牌。",
   "TC_E04.pages.INITIAL_GUEST.description": "老测绘师认出了旅行者的罗盘。他也向同行的你打开另一格工具匣：“那些是他的旧物。这些才适合你。免费带走一件，工具会记住各自的主人。”"

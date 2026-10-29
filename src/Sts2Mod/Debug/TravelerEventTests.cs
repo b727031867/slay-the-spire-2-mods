@@ -173,9 +173,9 @@ public partial class TravelerTestRunner
         await outside.OnReward(context, ComboKind.RockLightning);
         Check(_player.Creature.CurrentHp == before, "EVENT_letter_requires_three_distinct");
         await outside.OnReward(context, ComboKind.LightningWind);
-        Check(_player.Creature.CurrentHp == before + 3, "EVENT_letter_heal3");
+        Check(_player.Creature.CurrentHp == before + 5, "EVENT_letter_heal5");
         await outside.OnReward(context, ComboKind.LightningWind);
-        Check(_player.Creature.CurrentHp == before + 3, "EVENT_letter_once_per_combat");
+        Check(_player.Creature.CurrentHp == before + 5, "EVENT_letter_once_per_combat");
         var spool = _player.Relics.OfType<EchoSpool>().Single();
         var weakBefore = _player.Creature.CombatState!.Enemies.Sum(e => e.GetPowerAmount<WeakPower>());
         await spool.OnReward(context, ComboKind.WindRock);

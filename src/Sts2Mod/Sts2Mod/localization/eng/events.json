@@ -40,7 +40,7 @@
   "TC_E03.title": "A Letter from Outside",
   "TC_E03.pages.INITIAL.description": "A courteous postman checks your name beside a sealed door. The letter describes what just happened to you. Its watermark is a door with another Spire beyond.\n“Did I send it?”\n“Your signature is here.”\n“I only arrived today.”\nHe carefully crosses out the date. “Then we were early. Sorry for the inconvenience.”",
   "TC_E03.pages.INITIAL.options.SIGN.title": "Sign: Outside Letter",
-  "TC_E03.pages.INITIAL.options.SIGN.description": "For this run, lose 2 HP at each combat start. Heal 3 HP after first receiving all three different combo rewards in that combat; turns may differ.",
+  "TC_E03.pages.INITIAL.options.SIGN.description": "For this run, lose 2 HP at each combat start. Heal 5 HP after first receiving all three different combo rewards in that combat; turns may differ.",
   "TC_E03.pages.INITIAL.options.VERIFY.title": "Verify: Address Correction",
   "TC_E03.pages.INITIAL.options.VERIFY.description": "Each combat, add a random unupgraded elemental Traveler reward card to hand with Ethereal and free cost this turn. Draw 1 fewer card on the first turn.",
   "TC_E03.pages.INITIAL.options.BUY.title": "Trade: Unclaimed Mail",
@@ -77,7 +77,7 @@
   "TC_E02.pages.CALIBRATED_GUEST.description": "The machine refines your technique into a familiar, sharper pattern. The receipt reads: first service complete. A second service costs 60 Gold.",
   "TC_E03.pages.INITIAL_GUEST.description": "After handing the Traveler a letter, the courier produces an envelope with your name. It recounts things only you could know. He lays out three contracts suited to you. Each recipient pays their own postage.",
   "TC_E03.pages.INITIAL.options.SIGN_GUEST.title": "Sign: Letter from Outside",
-  "TC_E03.pages.INITIAL.options.SIGN_GUEST.description": "For this run, lose 2 HP at the start of each combat. Heal 3 HP at the end of your third turn, once per combat. No healing if combat ends earlier.",
+  "TC_E03.pages.INITIAL.options.SIGN_GUEST.description": "For this run, lose 2 HP at the start of each combat. Heal 5 HP at the end of your third turn, once per combat. No healing if combat ends earlier.",
   "TC_E03.pages.INITIAL.options.VERIFY_GUEST.title": "Verify: Address Correction",
   "TC_E03.pages.INITIAL.options.VERIFY_GUEST.description": "Draw 1 fewer card on the first turn of each combat. Add a random unupgraded non-Rare reward card for your character to your hand, Ethereal and free this turn. It is not added to your deck. Excludes X-cost and Unplayable cards.",
   "TC_E04.pages.INITIAL_GUEST.description": "The surveyor recognizes the compass, then opens another compartment for you. Those old tools belong to the Traveler. These will suit you. Take one, free of charge. Every tool remembers its own keeper."

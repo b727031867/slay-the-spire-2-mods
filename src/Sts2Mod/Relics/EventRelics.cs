@@ -86,7 +86,7 @@ public sealed class OutsideLetter : TravelerEventRelic, IEventComboRelic
     {
         if (IsMelted || _kinds == 7 || kind == ComboKind.None) return;
         _kinds |= 1 << ((int)kind - 1);
-        if (_kinds == 7) { Flash(); await CreatureCmd.Heal(Owner.Creature, 3); }
+        if (_kinds == 7) { Flash(); await CreatureCmd.Heal(Owner.Creature, 5); }
     }
 }
 
@@ -132,7 +132,7 @@ public sealed class CompanionLetter : TravelerEventRelic
             || !Owner.Creature.IsAlive || Owner.PlayerCombatState!.TurnNumber != 3) return;
         _healed = true;
         Flash();
-        await CreatureCmd.Heal(Owner.Creature, 3);
+        await CreatureCmd.Heal(Owner.Creature, 5);
     }
 }
 

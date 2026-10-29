@@ -177,7 +177,7 @@ public partial class TravelerTestRunner
                 Check(_player.Creature.CurrentHp == hpBefore, "EVENT_guest_letter_no_other_participant_" + tag + "_" + turn);
                 await Queue(new EndPlayerTurnAction(_player, number));
                 await Until(() => _player.PlayerCombatState!.TurnNumber > number && ReadyToPlay, "companion next turn");
-                Check(_player.Creature.CurrentHp == hpBefore + (turn == 3 ? 3 : 0), "EVENT_guest_letter_native_turn_" + tag + "_" + turn);
+                Check(_player.Creature.CurrentHp == hpBefore + (turn == 3 ? 5 : 0), "EVENT_guest_letter_native_turn_" + tag + "_" + turn);
                 if (turn == 1) Check(!PileType.Hand.GetPile(_player).Cards.Contains(mailed)
                     && mailed.EnergyCost.GetWithModifiers(CostModifiers.All) == mailed.EnergyCost.Canonical
                     && mailed.CurrentStarCost == mailed.CanonicalStarCost

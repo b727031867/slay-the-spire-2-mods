@@ -275,8 +275,10 @@ public partial class TravelerTestRunner
 
         await FreshExpansion();
         await RelicCmd.Obtain<ExpeditionDrum>(_player);
-        await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>(); await Play<RockGuard>();
-        Check(_player.GetRelic<ExpeditionDrum>()!.Ready, "POOL22_drum_third_actual_arms");
+        await Play<WindBlade>(); await Play<RockGuard>();
+        Check(!_player.GetRelic<ExpeditionDrum>()!.Ready, "POOL22_drum_first_reward_not_armed");
+        await Play<WindBlade>();
+        Check(_player.GetRelic<ExpeditionDrum>()!.Ready, "POOL22_drum_second_actual_arms");
         var source = await Play<GaleSweep>();
         var automatic = await Add<LightningThrust>();
         await CardCmd.AutoPlay(source.PlayerChoiceContext!, automatic, _target);
@@ -287,14 +289,41 @@ public partial class TravelerTestRunner
         await PowerCmd.Remove<VulnerablePower>(_target);
         await PlayerCmd.SetEnergy(10, _player);
         var hp = _target.CurrentHp;
-        // Resetting the input state also resets the burst's count; two hits should gain +8 only once.
+        // Resetting the input state also resets the burst's count; double only the first of two hits.
         await Play<ThunderBurst>();
-        Check(hp - _target.CurrentHp == 16 && !_player.GetRelic<ExpeditionDrum>()!.Ready,
+        Check(hp - _target.CurrentHp == 12 && !_player.GetRelic<ExpeditionDrum>()!.Ready,
             "POOL22_drum_only_first_hit_not_combo");
         SetExpansionElement(Element.Wind);
         await Play<RockGuard>(); await Play<WindBlade>(); await Play<RockGuard>();
         await ExpansionNativeTurn();
         Check(!_player.GetRelic<ExpeditionDrum>()!.Ready, "POOL22_drum_expires_at_turn_end");
+
+        foreach (var strength in new[] { -2, 0, 3 })
+        {
+            await FreshExpansion();
+            await RelicCmd.Obtain<ExpeditionDrum>(_player);
+            await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>();
+            SetExpansionElement(Element.None);
+            if (strength != 0) await PowerCmd.Apply<StrengthPower>(ExpansionContext(), _player.Creature, strength, _player.Creature, null);
+            var attack = await Add<ThunderBurst>();
+            attack.DynamicVars.Damage.UpdateCardPreview(attack, CardPreviewMode.Normal, _target, true);
+            hp = _target.CurrentHp;
+            var preview = attack.DynamicVars.Damage.PreviewValue;
+            await Queue(new PlayCardAction(attack, _target));
+            Check(preview == 8 + strength && hp - _target.CurrentHp == 12 + strength * 2,
+                "POOL22_drum_base_double_strength_once_" + strength);
+        }
+
+        await FreshExpansion();
+        await RelicCmd.Obtain<ExpeditionDrum>(_player);
+        await Play<WindBlade>(); await Play<RockGuard>(); await Play<WindBlade>();
+        await PowerCmd.Apply<StrengthPower>(ExpansionContext(), _player.Creature, 3, _player.Creature, null);
+        var finale = await Add<TriphaseFinale>();
+        finale.DynamicVars.CalculatedDamage.UpdateCardPreview(finale, CardPreviewMode.Normal, _target, true);
+        hp = _target.CurrentHp;
+        var finalePreview = finale.DynamicVars.CalculatedDamage.PreviewValue;
+        await Queue(new PlayCardAction(finale, _target));
+        Check(finalePreview == 31 && hp - _target.CurrentHp == 31, "POOL22_drum_calculated_base_preview");
 
         await FreshExpansion();
         await RelicCmd.Obtain<TricolorPrism>(_player);
@@ -314,13 +343,14 @@ public partial class TravelerTestRunner
         Check(CombatCardElements.Get(restored) == expected && CombatCardElements.Assigned.Get(clone) == 0,
             "POOL22_prism_serialized_mark_copy_does_not_inherit");
         await ExpansionNativeTurn();
-        expected = NextExpansionElement();
+        var counterBefore = _player.RunState.Rng.CombatCardGeneration.Counter;
         await CardPileCmd.Add(card, PileType.Hand);
         await Queue(new PlayCardAction(card, null));
-        Check(CombatCardElements.Get(card) == expected, "POOL22_prism_next_turn_rerolls_same_instance");
+        Check(CombatCardElements.Get(card) == expected && _player.RunState.Rng.CombatCardGeneration.Counter == counterBefore,
+            "POOL22_prism_next_turn_keeps_same_instance");
         await FreshExpansion();
         await RelicCmd.Obtain<TricolorPrism>(_player);
-        var automaticFirst = await Add<WindBlade>();
+        var automaticFirst = await Add<TravelerStrike>();
         expected = NextExpansionElement();
         await CardCmd.AutoPlay(ExpansionContext(), automaticFirst, _target);
         Check(CombatCardElements.Get(automaticFirst) == expected && Power.State.Last == Element.None,
@@ -329,6 +359,21 @@ public partial class TravelerTestRunner
         await Queue(new PlayCardAction(unmarked, null));
         Check(CombatCardElements.Assigned.Get(unmarked) == 0 && Power.State.Last == Element.None,
             "POOL22_prism_auto_consumes_first_card_slot");
+        foreach (var permanent in new[] { false, true })
+        {
+            await FreshExpansion();
+            await RelicCmd.Obtain<TricolorPrism>(_player);
+            var elementalFirst = permanent ? await Add<TravelerStrike>() : await Add<WindBlade>();
+            if (permanent) CombatCardElements.Permanent.Set(elementalFirst, (int)Element.Wind);
+            counterBefore = _player.RunState.Rng.CombatCardGeneration.Counter;
+            await Queue(new PlayCardAction(elementalFirst, _target));
+            var plainSecond = await Add<TravelerDefend>();
+            await Queue(new PlayCardAction(plainSecond, null));
+            Check(CombatCardElements.Get(elementalFirst) == Element.Wind
+                && CombatCardElements.Assigned.Get(elementalFirst) == 0 && CombatCardElements.Assigned.Get(plainSecond) == 0
+                && _player.RunState.Rng.CombatCardGeneration.Counter == counterBefore,
+                "POOL22_prism_existing_element_skips_turn_" + permanent);
+        }
         await FreshExpansion(); await SeedDraw();
         await RelicCmd.Obtain<TricolorPrism>(_player);
         var rng = _player.RunState.Rng.CombatCardGeneration;
