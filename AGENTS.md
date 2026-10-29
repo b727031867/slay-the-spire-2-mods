@@ -43,6 +43,8 @@ User instruction dated 2026-10-24:
 
 ## Workshop visibility and user playtest approval
 
+User instruction dated 2026-10-30: before freezing a candidate and again before uploading, count the actual Workshop description's UTF-8 bytes, not its character count. Reject descriptions at or above 8000 bytes; the 8448-byte description in the first 0.3.18 upload caused an InvalidParam submission failure. Follow [the description-length SOP](workshop/README.md#工坊说明长度检查). Shorten the source description and refreeze unchanged core files; never edit a frozen snapshot or blindly retry an invalid submission.
+
 User instruction dated 2026-10-25 supersedes the earlier Friends Only policy: the existing item and all future Workshop releases are **public**. The 2026-10-24 playtest policy remains: develop on a task branch, pass the required checks, merge into `main`, deliver a local candidate for the user to play, then publish new content only after the user explicitly confirms that candidate worked. Commits, merges and packaging do not require user playtesting. Multiplayer remains optional; friend playtests do not change public visibility.
 
 - Keep the existing Workshop item `3823282901` **public**, using uploader configuration `visibility=public`. Change this only if the user explicitly requests a different setting later; do not restore historical friends_only/private/hidden settings from reports or cached directories.

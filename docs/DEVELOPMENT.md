@@ -155,6 +155,8 @@ $prepare = .\scripts\Invoke-ModTests.ps1 -Suite SavePrepare -CodeCommit '<包S>'
 
 ## 发布准备：测试、冻结与工坊目录
 
+2026-10-30起，冻结前检查`workshop/description.bbcode.txt`、上传前再次检查实际工作目录`workshop.json`的`description`，均按UTF-8字节计数，达到8000即停止。不能用字符数代替字节数；本次8448字节曾导致Steam返回`k_EResultInvalidParam`。超限先精简源说明并重新冻结，核心不变时复用同包测试，不手改旧快照，也不盲目重试。可直接执行的两阶段检查及来源见[工坊说明长度SOP](../workshop/README.md#工坊说明长度检查)。
+
 先汇总本轮代码和资源改动，再提交、构建并测试同一包。以下入口默认对尚未完成候选验收的核心部署并运行Load，不隐式编译、不提交Git、不上传Steam，也不改STATUS中的发布结论。按影响评估和用户授权显式使用`-Suite Cards,Events`等范围；入口不会自动猜测或缩减测试范围。
 
 ```powershell

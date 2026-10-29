@@ -15,4 +15,29 @@
 
 所有图片小于1MB。配置按[官方v0.2.0模板](https://github.com/megacrit/sts2-mod-uploader/blob/v0.2.0/template/README.md)准备，dependencies为BaseLib的工坊ID3737335127；该字段无法固定依赖版本。tags暂留空，不擅用Tools & APIs标签。分支支持字段按官方提示在网页核查，不虚构版本兼容范围。
 
+## 工坊说明长度检查
+
+2026-10-30用户要求纳入发布SOP：Steam说明长度常量为8000；项目统一要求提交的`description`小于8000个UTF-8字节，给字符串终止符留余量。中文字符通常占多个字节，PowerShell的`.Length`不是上传字节数。首次0.3.18说明仅4396字符，却达到8448字节，提交返回`k_EResultInvalidParam`；精简为5019字节（含末尾换行）的同一核心包随后上传成功。
+
+依据：[Steamworks SetItemDescription说明](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemDescription)与[Steamworks.NET的8000长度常量](https://github.com/rlabrecque/Steamworks.NET/blob/master/com.rlabrecque.steamworks.net/Runtime/autogen/SteamConstants.cs)。8448是本次超限值，不是允许上限。
+
+在运行`Invoke-ReleasePreparation`或`Build-ReleaseCandidate`前执行：
+
+```powershell
+$description = Get-Content -Raw -LiteralPath ./workshop/description.bbcode.txt
+$descriptionBytes = [Text.Encoding]::UTF8.GetByteCount($description)
+if ($descriptionBytes -ge 8000) { throw "Workshop description too long: $descriptionBytes UTF-8 bytes; must be below 8000." }
+```
+
+上传前，对准备报告返回的实际`WorkshopDirectory`再次执行；将占位路径替换为本次上传目录，不能只检查仓库源文件：
+
+```powershell
+$uploadDirectory = '<本次准备报告的WorkshopDirectory>'
+$uploadConfig = Get-Content -Raw -LiteralPath (Join-Path $uploadDirectory 'workshop.json') | ConvertFrom-Json
+$descriptionBytes = [Text.Encoding]::UTF8.GetByteCount([string]$uploadConfig.description)
+if ($descriptionBytes -ge 8000) { throw "Upload description too long: $descriptionBytes UTF-8 bytes; refreeze before upload." }
+```
+
+将实际字节数记入发布记录。超限时优先将累积历史更新改为仓库更新日志链接，保留当前版本内容、安装要求和验证范围；修改源说明后重新冻结并生成新上传目录，不直接截断JSON或修改冻结快照。只改工坊说明、核心四文件哈希不变时复用既有同包测试，不重建、不重复运行玩法测试。若提交仍返回InvalidParam，保存失败日志并独立inspect远端状态，检查字段后再重试；失败回调不得记录成发布成功。
+
 后续开发和上传更新保持公开（public），复用条目3823282901。只有用户明确另行要求时才能更改可见性。上传前核对用户试玩成功确认及实际工作目录内workshop.json，旧候选的friends_only/private配置不得直接复用；上传后用WorkshopProbe inspect 3823282901确认远端为Public。只修改已发布条目的权限时，可按用户明确授权运行WorkshopProbe public 3823282901并再次inspect，不上传新内容。联机仍为可选，计划本身不代表多人兼容性已验收。发布前须解决实际依赖兼容问题并审阅报告。每次交付按[制品保留规则](../docs/DEVELOPMENT.md#制品保留与清理)仅保留最近3份可交付制品，清理更旧快照/ZIP、上传副本及中间包，保留必要证据。

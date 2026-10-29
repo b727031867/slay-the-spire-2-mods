@@ -48,3 +48,15 @@
 ### 首次上传与说明修订
 
 首次官方上传器提交返回k_EResultInvalidParam；原生日志与独立inspect已保留，远端仍为旧版安装。发现工坊说明增长到8448 UTF-8字节，超过Steam SDK的8000上限；精简为当前玩法、安装要求及历史更新链接。仅修改工坊说明，不重建核心；重新冻结并复用相同106项证据。旧失败快照和日志保留其原始状态。另有本轮临时测试副本清理被自动审批拒绝（仅返回blocked by policy），未重试绕过，三个临时目录保留；正式制品轮转已COMPLETE。
+
+### 公开发布完成与SOP补充
+
+- 官方ModUploader v0.2.0第二次提交成功更新原条目3823282901，独立WorkshopProbe inspect确认Public/k_EResultOK；未创建新条目、未改变依赖。
+- 最终快照：artifacts/Sts2Mod-0.3.18-v0.107.1-1e9d6ff8ce7c-candidate-20261029T1820478035013Z；SHA256为746D9CC0240B3BDA3DAB5ED43F94302D2268BE18D2C7A73647D8F9E05682B068。
+- ZIP SHA256：A6B6750A7F38CFD666F9CAC06F6516C0A0FF1AF53C8B39B7E91F31B84C9E9E86。实际上传工作目录.local/workshop/1e9d6ff8ce7c3ed96aa5322f685c5d7c80bd1f16-746D9CC0240B，description为5019 UTF-8字节。
+- Steam原生订阅下载完成：state=5，144093157字节，timestamp1793298092；下载的七文件SHA256全部与冻结快照一致，没有复制候选冒充Steam下载。
+- 封面与规则图CDN均HTTP200，两个PNG字节SHA256与上传源图相同。工坊当前加载副本为0.3.18；按用户只测新增牌的要求，发布后不另启动Load或其他游戏测试。
+- 准备入口复用最终NewCards106项schemaVersion=2证据；核心四文件不变，未重建。正式制品轮转COMPLETE，保留3份。临时测试副本的清理被自动审批拒绝，仍保留在三个本轮newcards-test目录；未绕过重试，正常存档与游戏安装未删除。
+- 发布证据位于.local/newcards-release：upload-first-failed.log、inspect-after-failed-upload.jsonl、upload.log、inspect-after.jsonl、download-after.jsonl、download-hashes.json、cdn-hashes.json、published.json与准备报告。
+- 用户随后要求将说明长度问题写入发布SOP。已在AGENTS.md、docs/DEVELOPMENT.md及workshop/README.md加入冻结前/上传前两次UTF-8字节检查、8000阈值、超限重新冻结及失败后inspect规则；明确8448是事故超限值。实际源说明/上传说明均5019字节，7999/8000/8448阈值及中文UTF-8自检通过。此后仅更新内部SOP和发布回执，不更改已发布核心、玩家文档或工坊内容。
+- 用户试玩、图形观感、自然整局平衡、旧档和真实联机仍NOT_RUN，等待用户发布后验收。
