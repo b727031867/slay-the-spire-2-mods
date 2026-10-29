@@ -106,7 +106,7 @@ public partial class TravelerTestRunner
                 && cards.Count(c => c.Type == CardType.Attack) == 2, "EXP_shop_native_type_slots_" + i);
         }
 
-        var upgradedCosts = new[] { 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1 };
+        var upgradedCosts = new[] { 0, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1 };
         for (var i = 0; i < 13; i++)
         {
             var canonical = pool.Single(c => c.Id.Entry == "TC_C" + (i + 7).ToString("00"));
