@@ -27,6 +27,7 @@ internal sealed class TuningCardSelector(Element element) : ExpansionCardSelecto
     public bool HandInputBlocked { get; private set; }
     public override async Task<IEnumerable<CardModel>> GetSelectedCards(IEnumerable<CardModel> options, int minSelect, int maxSelect)
     {
+        if (Selected is not null) return await base.GetSelectedCards(options, minSelect, maxSelect);
         var hand = NPlayerHand.Instance!;
         await hand.ToSignal(hand.GetTree(), SceneTree.SignalName.ProcessFrame);
         var holder = hand.ActiveHolders.First();

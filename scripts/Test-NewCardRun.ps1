@@ -13,4 +13,7 @@ foreach ($id in 29..38) {
 foreach ($case in @('pool','search','retain','counter','dexterity','vigor','navigation','needle','poison_wind','satchel','barrier','boundaries')) {
     if ($text -notmatch "(?m)^STS2MOD_TEST_PASS NEW_${case}_complete\r?$") { throw "Missing new card behavior: $case" }
 }
+foreach ($case in @('boundary_tuning_search_fixture_seed','boundary_tuning_search_nested_choice')) {
+    if ($text -notmatch "(?m)^STS2MOD_TEST_PASS NEW_${case}\r?$") { throw "Missing new-card interaction: $case" }
+}
 'NEW_CARDS_PASS cards=10 singleplayer=PASS rendering=NOT_RUN multiplayer=NOT_RUN'

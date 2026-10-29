@@ -3,6 +3,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
+using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -182,6 +183,27 @@ public partial class TravelerTestRunner
         Check(PileType.Hand.GetPile(_player).Cards.Count == 0, "NEW_boundary_empty_retain_returns");
         Check(ResourceLoader.Load<Texture2D>("res://Sts2Mod/art/TC_C32.png") is not null
             && ResourceLoader.Load<Texture2D>("res://Sts2Mod/art/TC_C37.png") is not null, "NEW_boundary_power_icons");
+        await FreshNewCards();
+        var windCandidates = ModelDb.AllCards.OfType<ElementCardModel>()
+            .Where(c => TravelerContent.RewardCardTypes.Contains(c.GetType()) && c.CardElement == Element.Wind).ToArray();
+        var rng = _player.RunState.Rng.CombatCardGeneration;
+        var found = false;
+        for (var attempt = 0; attempt < 128; attempt++)
+        {
+            if (new Rng(rng.Seed, rng.Counter).NextItem(windCandidates) is WindPathfinding) { found = true; break; }
+            rng.NextItem(windCandidates);
+        }
+        Check(found, "NEW_boundary_tuning_search_fixture_seed");
+        var rock = await Add<RockGuard>(); await CardPileCmd.Add(rock, PileType.Draw);
+        var lightning = await Add<LightningThrust>(); await CardPileCmd.Add(lightning, PileType.Draw);
+        await Add<WindBlade>();
+        SetExpansionElement(Element.Rock);
+        var tuning = new TuningCardSelector(Element.Wind);
+        using (CardSelectCmd.PushSelector(tuning)) await Play<ElementTuning>();
+        Check(tuning.Selected is WindPathfinding && tuning.Selected.Pile?.Type == PileType.Exhaust
+            && tuning.Candidates.Length == 3 && new[] { rock, lightning }.Count(c => c.Pile?.Type == PileType.Hand) == 1
+            && Power.State.Last == Element.Wind && Power.State.Used == 1,
+            "NEW_boundary_tuning_search_nested_choice");
         foreach (var name in new[] { "search", "retain", "counter", "dexterity", "vigor", "navigation", "needle", "poison_wind", "satchel", "barrier", "boundaries" })
             Check(true, "NEW_" + name + "_complete");
     }
