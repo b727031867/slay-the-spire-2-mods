@@ -62,7 +62,7 @@ public partial class TravelerTestRunner
             foreach (var up in copies)
             {
                 var echo = await Add<ThunderEcho>(up);
-                Check(echo.EnergyCost.Canonical == (up ? 0 : 1), "BAL_echo_cost_" + up);
+                Check(echo.EnergyCost.GetWithModifiers(CostModifiers.Local) == (up ? 0 : 1), "BAL_echo_cost_" + up);
                 await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(echo, null));
             }
             var bonus = copies.Any(up => up) ? 4 : 2;

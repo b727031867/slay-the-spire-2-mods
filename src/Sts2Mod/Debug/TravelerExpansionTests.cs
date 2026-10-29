@@ -57,6 +57,7 @@ public partial class TravelerTestRunner
         await TestComboHud();
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
+        await TestBalanceChanges();
         await TestBalance0315();
         await TestPoolExpansion20261022();
         var portraits = ModelDb.CardPool<TravelerCardPool>().AllCards.Cast<CustomCardModel>()
@@ -192,7 +193,6 @@ public partial class TravelerTestRunner
 
         await TestExpansionRetain();
         await TestExpansionAbilities();
-        await TestBalanceChanges();
         await FreshExpansion();
         Check(Power.State.Last == Element.None && Power.State.Used == 0 && Power.State.RewardsThisTurn == 0
             && !_player.Creature.Powers.OfType<TravelerAbilityPower>().Any(), "EXP_new_combat_clears_ability_and_combo_state");
