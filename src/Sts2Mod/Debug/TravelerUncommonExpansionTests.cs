@@ -39,7 +39,7 @@ public partial class TravelerTestRunner
                 var restored = CardModel.FromSerializable(card.ToSerializable());
                 Check(card.Rarity == CardRarity.Uncommon && card.EnergyCost.Canonical == 1
                     && restored.GetType() == type && restored.CurrentUpgradeLevel == (up ? 1 : 0)
-                    && !card.Description.GetFormattedText().Contains("{"), $"NEW_metadata_{card.Id.Entry}_{up}");
+                    && !card.GetDescriptionForPile(PileType.None).Contains("{"), $"NEW_metadata_{card.Id.Entry}_{up}");
             }
             var art = ResourceLoader.Load<Texture2D>(((CustomCardModel)canonical).CustomPortraitPath);
             Check(art is not null && art.GetWidth() >= 250 && art.GetHeight() >= 190,
