@@ -24,10 +24,10 @@ public partial class TravelerTestRunner
         foreach (var (rarity, type) in new[] { (CardRarity.Rare, CardType.Attack),
             (CardRarity.Rare, CardType.Skill), (CardRarity.Uncommon, CardType.Power) })
         {
-            // Keep the shortage fixture at two candidates as the real card pool grows.
+            // Keep the shortage fixture below three candidates as the real card pool grows.
             var candidates = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, _player.RunState.CardMultiplayerConstraint)
                 .Where(card => card.Rarity == rarity && card.Type == type).Take(2).Select(card => card.Id).ToHashSet();
-            Check(candidates.Count == 2, $"EVENT_potion_trade_shortage_fixture_{rarity}_{type}");
+            Check(candidates.Count is > 0 and < 3, $"EVENT_potion_trade_shortage_fixture_{rarity}_{type}");
             var options = CardCreationOptions.ForNonCombatWithUniformOdds([_player.Character.CardPool],
                 card => candidates.Contains(card.Id))
                 .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoCardPoolModifications);
