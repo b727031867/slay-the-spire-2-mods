@@ -24,14 +24,23 @@ public partial class TravelerTestRunner
         foreach (var (rarity, type) in new[] { (CardRarity.Rare, CardType.Attack),
             (CardRarity.Rare, CardType.Skill), (CardRarity.Uncommon, CardType.Power) })
         {
+            // Keep the shortage fixture at two candidates as the real card pool grows.
+            var candidates = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, _player.RunState.CardMultiplayerConstraint)
+                .Where(card => card.Rarity == rarity && card.Type == type).Take(2).Select(card => card.Id).ToHashSet();
+            Check(candidates.Count == 2, $"EVENT_potion_trade_shortage_fixture_{rarity}_{type}");
             var options = CardCreationOptions.ForNonCombatWithUniformOdds([_player.Character.CardPool],
-                card => card.Rarity == rarity && card.Type == type)
+                card => candidates.Contains(card.Id))
                 .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoCardPoolModifications);
             var rejected = false;
             try { _ = CardFactory.CreateForReward(_player, 3, options).ToArray(); }
             catch (InvalidOperationException ex) { rejected = ex.Message.Contains("couldn't generate a valid card"); }
             Check(rejected, $"EVENT_potion_trade_native_shortage_{rarity}_{type}");
         }
+        var expandedOptions = CardCreationOptions.ForNonCombatWithUniformOdds([_player.Character.CardPool],
+            card => card.Rarity == CardRarity.Uncommon && card.Type == CardType.Power)
+            .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoCardPoolModifications);
+        Check(CardFactory.CreateForReward(_player, 3, expandedOptions).Select(card => card.Id).Distinct().Count() == 3,
+            "EVENT_potion_trade_expanded_uncommon_power_pool");
         if (CombatManager.Instance.IsInProgress)
         {
             await CreatureCmd.Kill(_player.Creature.CombatState!.Enemies.ToArray(), force: true);
@@ -48,9 +57,10 @@ public partial class TravelerTestRunner
             var model = (TheFutureOfPotions)((EventRoom)_player.RunState.CurrentRoom!).LocalMutableEvent;
             var property = AccessTools.Property(typeof(TheFutureOfPotions), "PotionToCardType");
             var types = (Dictionary<PotionModel, CardType>)property.GetValue(model)!;
+            var pool = _player.Character.CardPool.GetUnlockedCards(_player.UnlockState, _player.RunState.CardMultiplayerConstraint).ToArray();
             Check(ReferenceEquals(types, property.GetValue(model)) && types.Count == 3
-                && types.Where(pair => pair.Key is FruitJuice).All(pair => pair.Value == CardType.Power)
-                && types.Where(pair => pair.Key is Ashwater).All(pair => pair.Value != CardType.Power),
+                && types.All(pair => pool.Count(card => card.Type == pair.Value && card.Rarity ==
+                    (pair.Key is FirePotion ? CardRarity.Common : pair.Key is Ashwater ? CardRarity.Uncommon : CardRarity.Rare)) >= 3),
                 $"EVENT_potion_trade_valid_stable_types_{index}");
             var traded = _player.Potions.ElementAt(index);
             var rarity = index switch { 0 => CardRarity.Common, 1 => CardRarity.Uncommon, _ => CardRarity.Rare };

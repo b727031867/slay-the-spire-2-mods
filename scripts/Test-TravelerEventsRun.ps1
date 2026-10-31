@@ -56,7 +56,9 @@ foreach ($character in @('IRONCLAD','SILENT','REGENT','NECROBINDER','DEFECT')) {
 }
 foreach($case in @('Rare_Attack','Rare_Skill','Uncommon_Power')) {
     if(!$text.Contains("STS2MOD_TEST_PASS EVENT_potion_trade_native_shortage_$case")){throw "Missing native potion shortage: $case"}
+    if(!$text.Contains("STS2MOD_TEST_PASS EVENT_potion_trade_shortage_fixture_$case")){throw "Missing controlled shortage fixture: $case"}
 }
+if(!$text.Contains('STS2MOD_TEST_PASS EVENT_potion_trade_expanded_uncommon_power_pool')){throw 'Missing expanded Uncommon Power pool evidence'}
 foreach($index in 0..2) {
     foreach($case in @('inventory','valid_stable_types','native_rewards','finishes')) {
         if(!$text.Contains("STS2MOD_TEST_PASS EVENT_potion_trade_${case}_$index")){throw "Missing potion trade case: $case/$index"}
