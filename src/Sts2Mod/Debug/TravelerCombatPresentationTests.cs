@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Sts2Mod.Cards;
 using Sts2Mod.Combo;
@@ -159,8 +160,47 @@ public partial class TravelerTestRunner
         Check(rig.LastReaction == "LifeLoss", "ANIM_non_attack_hp_loss_has_no_weapon_contact");
         rig.Advance(1);
         Check(rig.ActionName == "Idle" && rig.Position == Vector2.Zero, "ANIM_repeated_hits_restore_pose");
+        await TestSurroundedFacing();
         GD.Print($"STS2MOD_COMBAT_PRESENTATION_COMPLETE assertions={_assertions - start} native_events=PASS cleanup=PASS rendering=NOT_RUN multiplayer=NOT_RUN");
         await NextTurn();
+    }
+
+    private async Task TestSurroundedFacing()
+    {
+        var creature = _player.Creature;
+        var rig = CombatPresentation.Rig(creature)!;
+        var other = creature.CombatState!.Enemies.First(enemy => enemy != _target && enemy.IsAlive);
+        var context = new BlockingPlayerChoiceContext();
+        await PowerCmd.Apply<BackAttackLeftPower>(context, _target, 1, _target, null);
+        await PowerCmd.Apply<BackAttackRightPower>(context, other, 1, other, null);
+        var surrounded = await PowerCmd.Apply<SurroundedPower>(context, creature, 1, _target, null);
+        try
+        {
+            Check(creature.GetCreatureNode()!.Body == rig, "ANIM_surrounded_native_body_is_rig");
+            foreach (var target in new[] { _target, other, _target, other })
+            {
+                var left = target == _target;
+                var card = await Add<TravelerStrike>();
+                await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(card, target));
+                Check(surrounded!.Facing == (left ? SurroundedPower.Direction.Left : SurroundedPower.Direction.Right),
+                    "ANIM_surrounded_native_facing_" + (left ? "left" : "right"));
+                foreach (var action in new[] { "Attack", "Defend", "Hit", "Dead", "Revive" })
+                {
+                    rig.PlayAction(action);
+                    for (var i = 0; i < 80; i++) rig.Advance(.01 / CombatPresentation.Speed);
+                    Check(rig.Scale == new Vector2(left ? -TravelerRig.RigScale : TravelerRig.RigScale, TravelerRig.RigScale)
+                        && (rig.ToGlobal(Vector2.Right).X < rig.GlobalPosition.X) == left,
+                        "ANIM_surrounded_facing_survives_" + action + (left ? "_left" : "_right"));
+                }
+            }
+        }
+        finally
+        {
+            await PowerCmd.Remove(surrounded);
+            await PowerCmd.Remove<BackAttackLeftPower>(_target);
+            await PowerCmd.Remove<BackAttackRightPower>(other);
+            rig.ResetForPreview();
+        }
     }
 
     // The review player uses these actual native mesh frames, not a second JS animation implementation.

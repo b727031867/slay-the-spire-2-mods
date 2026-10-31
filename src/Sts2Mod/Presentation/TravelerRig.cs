@@ -129,7 +129,8 @@ public partial class TravelerRig : Node2D
         _coat=Mathf.Lerp(_coat,-_pose.Torso*.18f,1-(float)Math.Exp(-delta*14));
         bones["Cape"].Rotation=_cape+(float)Math.Sin(_clock*2.4-.7)*.004f; bones["Coat"].Rotation=_coat;
         _skin.PlantLeg("Left"); _skin.PlantLeg("Right");
-        Position=Vector2.Zero; Rotation=_pose.Root; Scale=Vector2.One*RigScale;
+        // Surrounded flips the native body; pose updates must retain that facing.
+        Position=Vector2.Zero; Rotation=_pose.Root; Scale=new Vector2(Mathf.Sign(Scale.X)*RigScale,RigScale);
         Modulate=ActionName is "Hit" or "PartialHit" or "LifeLoss"?new Color(1,1-.12f*pulse,1-.14f*pulse):Colors.White;
         _skin.Update();
     }
