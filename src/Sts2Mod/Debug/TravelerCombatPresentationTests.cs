@@ -1,5 +1,9 @@
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Models.Encounters;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -167,13 +171,22 @@ public partial class TravelerTestRunner
 
     private async Task TestSurroundedFacing()
     {
+        await CreatureCmd.Kill(_player.Creature.CombatState!.Enemies.ToArray(), force: true);
+        await CombatManager.Instance.CheckWinCondition();
+        await Until(() => !CombatManager.Instance.IsInProgress, "combat end before surrounded fixture");
+        await RunManager.Instance.EnterAct(1, doTransition: false);
+        var encounter = ModelDb.Encounter<KaiserCrabBoss>().ToMutable();
+        encounter.DebugRandomizeRng();
+        await RunManager.Instance.EnterRoomDebug(RoomType.Boss, model: encounter);
+        await Until(() => CombatManager.Instance.IsInProgress && ReadyToPlay
+            && _player.Creature.HasPower<SurroundedPower>(), "native crab surrounded fixture");
         var creature = _player.Creature;
         var rig = CombatPresentation.Rig(creature)!;
-        var other = creature.CombatState!.Enemies.First(enemy => enemy != _target && enemy.IsAlive);
-        var context = new BlockingPlayerChoiceContext();
-        await PowerCmd.Apply<BackAttackLeftPower>(context, _target, 1, _target, null);
-        await PowerCmd.Apply<BackAttackRightPower>(context, other, 1, other, null);
-        var surrounded = await PowerCmd.Apply<SurroundedPower>(context, creature, 1, _target, null);
+        _target = creature.CombatState!.Enemies.Single(enemy => enemy.HasPower<BackAttackLeftPower>());
+        var other = creature.CombatState.Enemies.Single(enemy => enemy.HasPower<BackAttackRightPower>());
+        foreach (var enemy in creature.CombatState.Enemies) { enemy.SetMaxHpInternal(3000m); enemy.SetCurrentHpInternal(3000m); }
+        await PlayerCmd.SetEnergy(30m, _player);
+        var surrounded = creature.GetPower<SurroundedPower>()!;
         try
         {
             Check(creature.GetCreatureNode()!.Body == rig, "ANIM_surrounded_native_body_is_rig");
@@ -196,10 +209,7 @@ public partial class TravelerTestRunner
         }
         finally
         {
-            await PowerCmd.Remove(surrounded);
-            await PowerCmd.Remove<BackAttackLeftPower>(_target);
-            await PowerCmd.Remove<BackAttackRightPower>(other);
-            rig.ResetForPreview();
+            await StartFreshCombat();
         }
     }
 

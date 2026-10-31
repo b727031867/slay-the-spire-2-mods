@@ -14,3 +14,4 @@
 包：artifacts/Sts2Mod-0.3.18-v0.107.1-bf8b85b16bac/Sts2Mod（build-info.txt 记录完整哈希）。DLL SHA256 A89061A5DA932DF45F13C91D1EEBA96ACA1DACA09B6C6D682BC41EE8547033FB；PCK SHA256 2AF7E200016635CC50A854F36FD514355D7E2F632466B9AE29CE8098F8A1A813。
 Visuals：BLOCKED，用户游戏 PID 24488 仍在运行；未部署、未启动测试进程、未合入main、未上传工坊。新增回归已编译，但尚未执行。
 后续：用户退出游戏后，部署上述同包 → Invoke-ModTests -Suite Visuals 并绑定 PackageDirectory → 成功后合并/推送main → 复用报告执行 Invoke-ReleasePreparation（含保留清理）→ 本地用户试玩。
+首轮 Visuals FAIL：左右动作断言通过，但 Cultists 夹具缺少 kaiser_crab_direction 音乐参数，严格检查拒绝。保留日志 game-20261031T1358240391528Z.log；改为第二幕原生 KaiserCrabBoss 夹具，使用真实左右敌人/夹击状态与音乐，并补严格日志用例校验。
