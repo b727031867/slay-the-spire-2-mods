@@ -39,7 +39,7 @@ public partial class TravelerTestRunner
         var expandedOptions = CardCreationOptions.ForNonCombatWithUniformOdds([_player.Character.CardPool],
             card => card.Rarity == CardRarity.Uncommon && card.Type == CardType.Power)
             .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoCardPoolModifications);
-        Check(CardFactory.CreateForReward(_player, 3, expandedOptions).Select(card => card.Id).Distinct().Count() == 3,
+        Check(CardFactory.CreateForReward(_player, 3, expandedOptions).Select(result => result.Card.Id).Distinct().Count() == 3,
             "EVENT_potion_trade_expanded_uncommon_power_pool");
         if (CombatManager.Instance.IsInProgress)
         {
