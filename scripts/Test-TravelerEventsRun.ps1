@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 $text = Get-Content -Raw -LiteralPath $LogFile
 foreach ($language in @('zhs','eng')) {
-    foreach ($case in @('event_relic_consistent','watch_concise')) {
+    foreach ($case in @('event_relic_consistent','watch_concise','curse_reward_preview')) {
         if (!$text.Contains("STS2MOD_TEST_PASS EVENT_copy_${case}_$language")) { throw "Missing event copy evidence: $case/$language" }
     }
     if (!$text.Contains("STS2MOD_TEST_PASS EVENT_option_font_uniform_$language") -or

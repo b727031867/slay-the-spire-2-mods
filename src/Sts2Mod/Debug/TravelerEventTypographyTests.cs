@@ -25,6 +25,11 @@ public partial class TravelerTestRunner
             Check(relics.RootElement.GetProperty("TC_R10.description").GetString() == (language == "zhs"
                 ? "持有任意罗盘时，每回合连携可用次数变为5次。" : "With either compass, you can use up to 5 combos per turn."),
                 "EVENT_copy_watch_concise_" + language);
+            Check(new[] { "CURSE", "CURSE_GUEST" }.All(option =>
+            {
+                var text = events.RootElement.GetProperty($"TC_E01.pages.INITIAL.options.{option}.description").GetString()!;
+                return text.Contains("60") && text.Contains("12") && text.Contains(language == "zhs" ? "归途" : "Homeward");
+            }), "EVENT_copy_curse_reward_preview_" + language);
             var options = events.RootElement.EnumerateObject().Where(p => p.Name.Contains(".options.") && p.Name.EndsWith(".title")).ToArray();
             foreach (var group in options.Chunk(3))
             {
