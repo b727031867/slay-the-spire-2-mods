@@ -2,6 +2,13 @@ param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$Cod
 $ErrorActionPreference = 'Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 $text = Get-Content -Raw -LiteralPath $LogFile
+foreach ($language in @('zhs','eng')) {
+    foreach ($case in @('event_relic_consistent','watch_concise')) {
+        if (!$text.Contains("STS2MOD_TEST_PASS EVENT_copy_${case}_$language")) { throw "Missing event copy evidence: $case/$language" }
+    }
+    if (!$text.Contains("STS2MOD_TEST_PASS EVENT_option_font_uniform_$language") -or
+        !$text.Contains("STS2MOD_TEST_PASS EVENT_option_text_fits_$language")) { throw "Missing event typography: $language" }
+}
 if ($text -match 'STS2MOD_TEST_FAIL|SCRIPT ERROR') { throw 'Traveler event tests failed.' }
 if ($text -notmatch '(?m)^STS2MOD_EVENTS_COMPLETE assertions=(\d+) logic=PASS rendering=NOT_RUN multiplayer=NOT_RUN' -or [int]$Matches[1] -lt 90) {
     throw 'Event completion evidence missing or incomplete.'

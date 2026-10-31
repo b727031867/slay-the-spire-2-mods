@@ -29,6 +29,7 @@ public partial class TravelerTestRunner
     {
         var start = _assertions;
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
+        await TestEventTypography();
         foreach (var relic in _player.Relics.Where(r => r is not JourneyCompass).ToArray()) await RelicCmd.Remove(relic);
         foreach (var model in ModelDb.AllEvents.OfType<TravelerEvent>())
         {
