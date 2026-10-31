@@ -9,3 +9,8 @@
 扩大条件：原生身体节点或坐标变换断言失败时重新评估；Full仍需明确请求。
 
 验证：待构建和受影响专项。当前用户游戏正在运行，部署/无界面测试需等待用户自行退出，不终止用户进程。
+
+构建：bf8b85b16bacbb88f3a9af2ef4eaa44a77f8103c 干净核心 Build-Mod 成功；git diff --check 通过。现有 TravelerSandwormTests.cs:70 的两条 nullable 警告未改动。
+包：artifacts/Sts2Mod-0.3.18-v0.107.1-bf8b85b16bac/Sts2Mod（build-info.txt 记录完整哈希）。DLL SHA256 A89061A5DA932DF45F13C91D1EEBA96ACA1DACA09B6C6D682BC41EE8547033FB；PCK SHA256 2AF7E200016635CC50A854F36FD514355D7E2F632466B9AE29CE8098F8A1A813。
+Visuals：BLOCKED，用户游戏 PID 24488 仍在运行；未部署、未启动测试进程、未合入main、未上传工坊。新增回归已编译，但尚未执行。
+后续：用户退出游戏后，部署上述同包 → Invoke-ModTests -Suite Visuals 并绑定 PackageDirectory → 成功后合并/推送main → 复用报告执行 Invoke-ReleasePreparation（含保留清理）→ 本地用户试玩。
