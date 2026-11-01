@@ -101,7 +101,10 @@ public sealed class MisalignedSurvey : TravelerEvent
         _modified < 2 && Owner!.Deck.Cards.Any(CanModify) && (_modified == 0 || Owner.Gold >= 60) ? Select : null), Pick("LEAVE", Leave)];
     private async Task Select()
     {
-        _selected = (await CardSelectCmd.FromDeckGeneric(Owner!, new CardSelectorPrefs(new LocString("events", IsTraveler ? "TC_E02.select" : "TC_E02.selectGuest"), 0, 1) { Cancelable = true }, CanModify)).FirstOrDefault();
+        var prefs = new CardSelectorPrefs(new LocString("events", IsTraveler ? "TC_E02.select" : "TC_E02.selectGuest"), 0, 1) { Cancelable = true };
+        _selected = (IsTraveler
+            ? await CardSelectCmd.FromDeckGeneric(Owner!, prefs, CanModify)
+            : await CardSelectCmd.FromDeckForUpgrade(Owner!, prefs)).FirstOrDefault();
         if (_selected is null) { Page("INITIAL", Options()); return; }
         if (!IsTraveler) { await Assign(Element.None); return; }
         Page("ELEMENT", Pick("WIND", () => Assign(Element.Wind)), Pick("ROCK", () => Assign(Element.Rock)), Pick("THUNDER", () => Assign(Element.Lightning)));

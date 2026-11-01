@@ -56,6 +56,7 @@ public partial class TravelerTestRunner
     {
         await TestComboHud();
         await TestUncommonExpansionCards();
+        await TestJourneyPlansUpgradeUi();
         using var selector = CardSelectCmd.PushSelector(new ExpansionCardSelector());
         var start = _assertions;
         await TestEchoingBlight();

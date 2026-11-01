@@ -20,6 +20,7 @@ public sealed class JourneyPlans : CustomCardModel
     protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
+        using var previews = new Presentation.HandUpgradePreviews(Owner);
         var selected = await CardSelectCmd.FromHand(context, Owner,
             new CardSelectorPrefs(SelectionScreenPrompt, CurrentUpgradeLevel > 0 ? 0 : 1, DynamicVars.Cards.IntValue),
             card => card != this && card.IsUpgradable, this);

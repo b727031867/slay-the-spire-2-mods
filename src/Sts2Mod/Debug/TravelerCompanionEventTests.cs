@@ -79,6 +79,7 @@ public partial class TravelerTestRunner
             }
             actField.SetValue(run, 0);
             _player.Creature.SetMaxHpInternal(5000); _player.Creature.SetCurrentHpInternal(4000);
+            if (character is Ironclad) await TestGuestSurveyUpgradeUi();
             using var selector = CardSelectCmd.PushSelector(new EventCardSelector());
             // Exercise native rooms with the companion as the real local owner, without a network session.
             foreach (var model in ModelDb.AllEvents.OfType<TravelerEvent>())

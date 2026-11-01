@@ -7,6 +7,20 @@ if ($Full) {
     & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 }
 $text = Get-Content -Raw -LiteralPath $LogFile
+if ($text -notmatch '(?m)^STS2MOD_UPGRADE_UI_COMPLETE selection=native clone=isolated rendering=NOT_RUN multiplayer=NOT_RUN\r?$') {
+    throw 'Native hand upgrade preview regression incomplete.'
+}
+foreach ($up in @('False','True')) {
+    foreach ($case in @('native_selection','damage_increases','deselect_cleans','cost_decreases','keywords_and_limit',
+        'confirm_identity_and_temporary_upgrade','repeat_skip_cleanup','disposed_scope_inactive','canceled_scope_cleanup')) {
+        if (!$text.Contains("STS2MOD_TEST_PASS UPGRADE_UI_${case}_$up")) { throw "Missing native upgrade UI: $case/$up" }
+    }
+    foreach ($card in @('TC_C01','TC_C07','TC_C29')) {
+        foreach ($case in @('visual','input_passthrough')) {
+            if (!$text.Contains("STS2MOD_TEST_PASS UPGRADE_UI_${case}_${card}_$up")) { throw "Missing upgraded card presentation: $case/$card/$up" }
+        }
+    }
+}
 if ($text -notmatch '(?m)^STS2MOD_BALANCE15_COMPLETE assertions=\d+ multiplayer=NOT_RUN rendering=NOT_RUN\r?$') {
     throw '0.3.15 balance regression incomplete.'
 }

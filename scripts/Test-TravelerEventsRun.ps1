@@ -2,6 +2,9 @@ param([Parameter(Mandatory)][string]$LogFile, [Parameter(Mandatory)][string]$Cod
 $ErrorActionPreference = 'Stop'
 & (Join-Path $PSScriptRoot 'Test-ModLoad.ps1') -LogFile $LogFile -CodeCommit $CodeCommit -Headless
 $text = Get-Content -Raw -LiteralPath $LogFile
+foreach ($case in @('native_selector','native_preview_before_confirm','native_cancel_preserves_card_gold')) {
+    if (!$text.Contains("STS2MOD_TEST_PASS EVENT_guest_upgrade_$case")) { throw "Missing native guest upgrade UI: $case" }
+}
 foreach ($language in @('zhs','eng')) {
     foreach ($case in @('event_relic_consistent','watch_concise','curse_reward_preview')) {
         if (!$text.Contains("STS2MOD_TEST_PASS EVENT_copy_${case}_$language")) { throw "Missing event copy evidence: $case/$language" }
