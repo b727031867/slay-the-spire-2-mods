@@ -11,3 +11,7 @@
 诊断结果：8d1bb00的Visuals369项PASS（game-20261101T0619096250724Z.log），12种单体攻击普通/升级在普通、翱翔+易伤场景的48次首段预览与原生结果一致。截图碎岩重击+：(18+2×3)×1.5×0.5=18，数字本身正确。
 新复现：adf0ad1的Visuals FAIL（game-20261101T0622583471448Z.log），无界罗盘第3次连携前逆风牵制预览6，原生实打7。根因是Reserve先授予1力量再攻击，原预览只看已有力量。修复限于UnboundJourneyCompass的只读加算预览，在Hook.ModifyDamage同步调用范围标记预览模式，finalizer恢复嵌套上下文；实际结算None模式不增加任何伤害。仅ElementCardModel在手牌、将触发第3次连携且罗盘未用时计算；碎岩重击按3倍力量，普通牌按1倍。原生加算/附魔/乘算/伤害上限顺序保留。
 扩大检查：Visuals覆盖全部12种单体攻击的普通/升级、重复预览、同元素/额度耗尽边界；ComboRules确认连携状态规则未改。真实玩法未改，不跑Cards/Full；Full未要求。无GUI不证明图形交互或联机。
+
+最终：干净核心fec6f9d8ec1c1b9d0191251f340419de5c275bf4构建成功，Visuals443项PASS、未知错误0；ComboRules57项PASS（ComboState源码未变化）。12种攻击普通/升级、普通目标/翱翔+易伤48次首段、待触发罗盘24次首段全部等于原生DamageReceivedEntry.TotalDamage；重复读取、同元素、次数耗尽边界通过。日志.local/logs/game-20261101T0627553144881Z.log与绑定.result.json，测试PID55096已清理。DLL SHA256 2E9DF96C2584D27F1B5FA2946F8A9A2ED5F81E391BDD67E1C87C9F61B7C9BB8C，PCK SHA256 F9E7AE552BC07D53DEBAF7D6FF7F4B47D4F5CBE2F170C4F4E82CA19CB43CBA99。
+中间ac7664b、9ef2de8的24个罗盘修复对照均通过，但尾部新控制牌未挂载导致NullReference；根因是罗盘额外抽牌累积至手牌上限，补独立用例间清空手牌。两份失败日志game-20261101T0625174305861Z.log与game-20261101T0626263411882Z.log保留；不当成最终包通过证据。没有放宽断言或日志分类。
+当前安装与被测最终包一致；只复用最终报告准备候选。Full、图形、联机、自然整局、用户试玩NOT_RUN；不上传工坊，不启动GUI。
