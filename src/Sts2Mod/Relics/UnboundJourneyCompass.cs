@@ -2,12 +2,19 @@ using BaseLib.Abstracts;
 using BaseLib.Utils;
 using BaseLib.Utils.Attributes;
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.ValueProps;
+using Sts2Mod.Cards;
 using Sts2Mod.Combo;
 using Sts2Mod.Pools;
 
@@ -25,6 +32,16 @@ public sealed class UnboundJourneyCompass : CustomRelicModel, IComboRewardRelic
     protected override string BigIconPath => PackedIconPath;
 
     public override Task BeforeCombatStart() { _strengthGranted = false; return Task.CompletedTask; }
+    public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+    {
+        if (!UnboundCompassDamagePreviewPatch.InPreview || _strengthGranted || IsMelted || dealer != Owner.Creature
+            || !props.IsPoweredAttack() || cardSource is not ElementCardModel { Type: CardType.Attack }
+            || cardSource.Owner != Owner || cardSource.Pile?.Type != PileType.Hand) return 0;
+        var state = Owner.Creature.GetPower<ComboPower>()?.State;
+        // This Strength is granted by Reserve before the main hit; preview without mutating powers.
+        return state is { Used: 2 } && state.Preview(CombatCardElements.Get(cardSource)) != ComboKind.None
+            ? cardSource is ShatteringRock ? 3 : 1 : 0;
+    }
     public override Task AfterPlayerTurnStartEarly(PlayerChoiceContext context, Player player)
     {
         if (player == Owner) _strengthGranted = false;
@@ -49,4 +66,16 @@ public sealed class UnboundJourneyCompass : CustomRelicModel, IComboRewardRelic
         var actual = (await CardPileCmd.Draw(context, 1m, Owner)).Count();
         GD.Print($"STS2MOD_UNBOUND_COMPASS draw={actual} requested=1 cooldown=none");
     }
+}
+
+[HarmonyPatch(typeof(Hook), nameof(Hook.ModifyDamage))]
+internal static class UnboundCompassDamagePreviewPatch
+{
+    [ThreadStatic] internal static bool InPreview;
+    private static void Prefix(CardPreviewMode previewMode, out bool __state)
+    {
+        __state = InPreview;
+        InPreview = previewMode != CardPreviewMode.None;
+    }
+    private static void Finalizer(bool __state) => InPreview = __state;
 }

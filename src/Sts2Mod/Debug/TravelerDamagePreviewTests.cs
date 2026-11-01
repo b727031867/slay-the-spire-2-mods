@@ -89,6 +89,12 @@ public partial class TravelerTestRunner
             await PowerCmd.Remove<VulnerablePower>(_target);
             await PowerCmd.Remove<WeakPower>(_target);
             await PowerCmd.Remove<PoisonPower>(_target);
+            await PowerCmd.Remove<SoarPower>(_target);
+            if (upgraded)
+            {
+                await PowerCmd.Apply<SoarPower>(context, _target, 1, _target, null);
+                await PowerCmd.Apply<VulnerablePower>(context, _target, 2, _player.Creature, null);
+            }
             Power.State.ClearCombat();
             var last = CombatCardElements.Get(canonical) == Element.Wind ? Element.Rock : Element.Wind;
             Power.State.Reserve(new object(), last);
@@ -104,14 +110,35 @@ public partial class TravelerTestRunner
             node.SetPreviewTarget(_target);
             var damage = card.DynamicVars.Values.Single(value => value is DamageVar or CalculatedDamageVar);
             var preview = (int)damage.PreviewValue;
+            var state = Power.State.Encoded;
+            var rng = _player.RunState.Rng.CombatCardGeneration.Counter;
+            for (var read = 0; read < 20; read++) node.UpdateVisuals(PileType.Hand, CardPreviewMode.Normal);
             Check(_player.Creature.GetPower<StrengthPower>()!.Amount == 2 && Power.State.Used == 2,
                 $"PREVIEW_pending_compass_readonly_{card.Id.Entry}_{upgraded}");
+            Check(Power.State.Encoded == state && _player.RunState.Rng.CombatCardGeneration.Counter == rng
+                && !UnboundCompassDamagePreviewPatch.InPreview && (int)damage.PreviewValue == preview,
+                $"PREVIEW_pending_compass_repeated_reads_{card.Id.Entry}_{upgraded}");
             await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(card, _target));
             var actual = CombatManager.Instance.History.Entries.OfType<DamageReceivedEntry>()
                 .First(entry => entry.CardSource == card && entry.Receiver == _target).Result.TotalDamage;
             GD.Print($"STS2MOD_PREVIEW_COMPASS card={card.Id.Entry} upgraded={upgraded} preview={preview} actual={actual}");
             Check(preview == actual, $"PREVIEW_pending_compass_matches_{card.Id.Entry}_{upgraded}");
         }
+        await PowerCmd.Remove<SoarPower>(_target);
+        await PowerCmd.Remove<VulnerablePower>(_target);
+        var control = await Add<WindBlade>();
+        var controlNode = NCard.FindOnTable(control)!;
+        var strength = _player.Creature.GetPower<StrengthPower>()!.Amount;
+        Power.State.ClearCombat();
+        Power.State.Reserve(new object(), Element.Wind);
+        controlNode.SetPreviewTarget(_target);
+        Check(control.DynamicVars.Damage.PreviewValue == 6 + strength, "PREVIEW_pending_compass_same_element_no_bonus");
+        Power.State.Reserve(new object(), Element.Rock);
+        Power.State.Reserve(new object(), Element.Wind);
+        Power.State.Reserve(new object(), Element.Rock);
+        Power.State.SetTurnLimit(3);
+        controlNode.UpdateVisuals(PileType.Hand, CardPreviewMode.Normal);
+        Check(control.DynamicVars.Damage.PreviewValue == 6 + strength, "PREVIEW_pending_compass_exhausted_no_bonus");
         await FreshExpansion();
     }
 

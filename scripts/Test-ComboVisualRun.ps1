@@ -38,6 +38,19 @@ if(!$text.Contains('STS2MOD_TEST_PASS PREVIEW_readonly_state_rng_energy_hp') -or
  !$text.Contains('STS2MOD_DAMAGE_PREVIEW_COMPLETE formats=eng,zhs targeting=PASS readonly=PASS rendering=NOT_RUN')){
  throw 'Damage preview suite incomplete'
 }
+foreach($id in @('TC_C01','TC_C03','TC_C05','TC_C12','TC_C13','TC_C14','TC_C22','TC_C23','TC_C26','TC_C31','TC_C35','TC_STRIKE')) {
+ foreach($upgraded in @('False','True')) {
+  foreach($case in @('matches','readonly','repeated_reads')) {
+   if(!$text.Contains("STS2MOD_TEST_PASS PREVIEW_pending_compass_${case}_${id}_$upgraded")){throw "Missing pending compass preview: $id/$upgraded/$case"}
+  }
+  foreach($soaring in @('False','True')) {
+   if(!$text.Contains("STS2MOD_TEST_PASS PREVIEW_resolution_matches_${id}_${upgraded}_$soaring")){throw "Missing authoritative damage preview: $id/$upgraded/$soaring"}
+  }
+ }
+}
+foreach($case in @('same_element_no_bonus','exhausted_no_bonus')) {
+ if(!$text.Contains("STS2MOD_TEST_PASS PREVIEW_pending_compass_$case")){throw "Missing pending compass boundary: $case"}
+}
 foreach($case in @('pool_TravelerCardPool','pool_TravelerRelicPool','pool_TravelerPotionPool',
  'pool_TravelerEventCardPool','pool_TravelerEventRelicPool',
  'custom_counter_native_scene','counter_zero_darkens','counter_gain_restores','counter_rotates_about_center',
