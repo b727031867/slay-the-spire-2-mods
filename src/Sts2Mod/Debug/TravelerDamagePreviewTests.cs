@@ -127,6 +127,7 @@ public partial class TravelerTestRunner
         await PowerCmd.Remove<SoarPower>(_target);
         await PowerCmd.Remove<VulnerablePower>(_target);
         var control = await Add<WindBlade>();
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         var controlNode = NCard.FindOnTable(control)!;
         var strength = _player.Creature.GetPower<StrengthPower>()!.Amount;
         Power.State.ClearCombat();
