@@ -83,6 +83,7 @@ public partial class TravelerTestRunner
         foreach (var canonical in cards.Where(card => card.Type == CardType.Attack && card.TargetType == TargetType.AnyEnemy))
         foreach (var upgraded in new[] { false, true })
         {
+            await CardPileCmd.RemoveFromCombat(PileType.Hand.GetPile(_player).Cards.ToArray());
             await compass.BeforeCombatStart();
             await PowerCmd.Remove<StrengthPower>(_player.Creature);
             await PowerCmd.Apply<StrengthPower>(context, _player.Creature, 2, _player.Creature, null);
