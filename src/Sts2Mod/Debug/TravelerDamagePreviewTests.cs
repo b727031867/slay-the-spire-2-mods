@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using Sts2Mod.Pools;
 using Sts2Mod.Cards;
+using Sts2Mod.Combo;
+using Sts2Mod.Relics;
 
 namespace Sts2Mod.Debug;
 
@@ -27,6 +29,7 @@ public partial class TravelerTestRunner
                 .All(v => json.RootElement.GetProperty(card.Id.Entry + ".description").GetString()!
                     .Contains("{" + v.Name + ":diff()}"))), "PREVIEW_damage_format_" + language);
         }
+        await TestPendingCompassDamagePreview(cards);
         var other = _player.Creature.CombatState!.Enemies.First(enemy => enemy != _target);
         var context = new BlockingPlayerChoiceContext();
         await PowerCmd.Apply<StrengthPower>(context, _player.Creature, 2, _player.Creature, null);
@@ -70,6 +73,46 @@ public partial class TravelerTestRunner
         await TestPreviewDamageResolution(cards);
         await FreshExpansion();
         GD.Print("STS2MOD_DAMAGE_PREVIEW_COMPLETE formats=eng,zhs targeting=PASS readonly=PASS rendering=NOT_RUN");
+    }
+
+    private async Task TestPendingCompassDamagePreview(CardModel[] cards)
+    {
+        await FreshExpansion();
+        var compass = await RelicCmd.Obtain<UnboundJourneyCompass>(_player);
+        var context = new BlockingPlayerChoiceContext();
+        foreach (var canonical in cards.Where(card => card.Type == CardType.Attack && card.TargetType == TargetType.AnyEnemy))
+        foreach (var upgraded in new[] { false, true })
+        {
+            await compass.BeforeCombatStart();
+            await PowerCmd.Remove<StrengthPower>(_player.Creature);
+            await PowerCmd.Apply<StrengthPower>(context, _player.Creature, 2, _player.Creature, null);
+            await PowerCmd.Remove<VulnerablePower>(_target);
+            await PowerCmd.Remove<WeakPower>(_target);
+            await PowerCmd.Remove<PoisonPower>(_target);
+            Power.State.ClearCombat();
+            var last = CombatCardElements.Get(canonical) == Element.Wind ? Element.Rock : Element.Wind;
+            Power.State.Reserve(new object(), last);
+            Power.State.Reserve(new object(), last == Element.Wind ? Element.Rock : Element.Wind);
+            Power.State.Reserve(new object(), last);
+            await PlayerCmd.SetEnergy(100, _player);
+            _target.SetCurrentHpInternal(_target.MaxHp);
+            var card = _player.Creature.CombatState!.CreateCard(canonical, _player);
+            if (upgraded) CardCmd.Upgrade(card);
+            await CardPileCmd.Add(card, PileType.Hand);
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+            var node = NCard.FindOnTable(card)!;
+            node.SetPreviewTarget(_target);
+            var damage = card.DynamicVars.Values.Single(value => value is DamageVar or CalculatedDamageVar);
+            var preview = (int)damage.PreviewValue;
+            Check(_player.Creature.GetPower<StrengthPower>()!.Amount == 2 && Power.State.Used == 2,
+                $"PREVIEW_pending_compass_readonly_{card.Id.Entry}_{upgraded}");
+            await Queue(new MegaCrit.Sts2.Core.GameActions.PlayCardAction(card, _target));
+            var actual = CombatManager.Instance.History.Entries.OfType<DamageReceivedEntry>()
+                .First(entry => entry.CardSource == card && entry.Receiver == _target).Result.TotalDamage;
+            GD.Print($"STS2MOD_PREVIEW_COMPASS card={card.Id.Entry} upgraded={upgraded} preview={preview} actual={actual}");
+            Check(preview == actual, $"PREVIEW_pending_compass_matches_{card.Id.Entry}_{upgraded}");
+        }
+        await FreshExpansion();
     }
 
     private async Task TestPreviewDamageResolution(CardModel[] cards)
