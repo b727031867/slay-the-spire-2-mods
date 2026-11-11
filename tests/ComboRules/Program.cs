@@ -156,4 +156,16 @@ combatCount.MarkRewardGranted();
 Check(combatCount.CombosThisCombat == 4, "combat count has no three-use lifetime cap and rewards do not double count");
 combatCount.ClearCombat();
 Check(combatCount.CombosThisCombat == 0, "combat count resets between combats");
+// Dedupe scope: duplicates inside one combat stay suppressed across turns, while a new
+// combat must not inherit the previous combat's action identities.
+var dedupe = new ComboState();
+var reused = new object();
+Check(dedupe.Reserve(reused, Element.Wind).Advanced, "first combat records action identity");
+dedupe.BeginTurn();
+Check(!dedupe.Reserve(reused, Element.Rock).Advanced && dedupe.Used == 0,
+    "dedupe survives a turn boundary inside the combat");
+dedupe.ClearCombat();
+Check(dedupe.Reserve(reused, Element.Rock).Advanced && dedupe.Last == Element.Rock,
+    "combat end releases recorded action identities");
+Check(dedupe.SeenCount == 1, "combat end shrinks the dedupe set to the new combat");
 Console.WriteLine($"COMBO_RULES_PASS assertions={passed}");

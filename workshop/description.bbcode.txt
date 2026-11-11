@@ -1,6 +1,15 @@
 [h1]旅行者·元素连携 / Traveler Elements[/h1]
-[b]0.3.18 · 支持单人和联机 · 简体中文/英文[/b]
+[b]0.3.19 · 支持单人和联机 · 简体中文/英文[/b]
 可选角色「旅行者」拥有38张专属奖励牌（13攻击/18技能/7能力）、10张起始牌，以及专属遗物、四个主题事件和旅行者契约。通过风、岩、雷的出牌顺序组合防御、过牌和追击。
+
+[h2]0.3.19：性能与稳定性修复[/h2]
+[list]
+[*]角色动画改为复用顶点与骨骼缓冲，逐帧不再重复分配，多人同屏时开销更低。
+[*]战斗结束时释放出牌去重记录，长战斗不再持续累积引用；同回合内的重复结算保护不变。
+[*]事件选项字号适配按整页合并为每帧一次，内容与窗口尺寸未变时跳过重排，避免反复触发布局。
+[*]自动测试改为增量读取日志，严格检查器与失败判定不变；这只影响开发工具，不改变游戏内容。
+[/list]
+玩法、数值、卡牌、遗物与事件效果均未改动。此前0.3.18的十张罕见牌与全部调整照常生效；完整升级与规则见玩家指南。
 
 [h2]0.3.18：十张罕见牌[/h2]
 [list]
@@ -15,7 +24,7 @@
 [*]毒雾行囊：每回合首次实际雷风奖励后，全体2（3）原生中毒。
 [*]沉毒岩障：7（10）格挡；有存活中毒敌人时再获得3基础格挡。
 [/list]
-全部1费罕见牌，起始卡组不变。补充元素调度、防守、活力爆发和原生中毒路线，附10张生成式插图。活力可跨回合，对下一次攻击的每段加伤；岩雷追击也会消耗活力。层岩回响和毒雾行囊多份相加。完整升级与规则见玩家指南。
+全部1费罕见牌，起始卡组不变。0.3.18 的规则与升级说明保持不变，详见玩家指南。
 
 [h2]连携规则[/h2]
 [list]
@@ -35,7 +44,7 @@
 
 [h2]安装与验证[/h2]
 Windows x64，游戏v0.107.1/build23811903，BaseLib3.4.7。工坊依赖不能锁版本，本Mod拒绝其他BaseLib版本。每个Mod只保留一份生效副本；联机各方须使用相同游戏、Mod及BaseLib版本。
-本次新增牌106项定向无GUI检查通过，未知错误0；按用户要求发布后试玩，未运行Full。新版本图形、自然整局平衡、旧档及真实联机尚未验收；此前版本双人联机反馈不代替本版本验证。卡图含生成式素材，工坊封面和规则图为说明素材，不是游戏截图。
+本次改动仅涉及动画缓冲、连携状态清理、事件字号刷新与测试工具日志读取，玩法逻辑未变。按用户要求验证受影响的无GUI专项后发布，未运行Full。图形观感、自然整局平衡、旧档及真实联机尚未验收；此前版本双人联机反馈不代替本版本验证。卡图含生成式素材，工坊封面和规则图为说明素材，不是游戏截图。
 
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/README.zh-CN.md]完整玩家指南与卡牌[/url]
 [url=https://github.com/b727031867/slay-the-spire-2-mods/blob/main/docs/player/CHANGELOG.md]历史更新[/url]
@@ -43,5 +52,5 @@ Windows x64，游戏v0.107.1/build23811903，BaseLib3.4.7。工坊依赖不能�
 [url=https://github.com/b727031867/slay-the-spire-2-mods/issues]问题反馈[/url]
 
 [h2]English[/h2]
-Traveler Elements 0.3.18 adds ten Uncommon cards for elemental tutoring, temporary Retain, Dexterity, native Vigor and Poison. The reward pool contains 38 cards: 13 Attacks, 18 Skills and 7 Powers. Starter deck unchanged. Vigor persists until the next eligible attack, boosts every hit, and can be consumed by a Rock-Lightning combo follow-up. Echoing Blight adds 3 (6 upgraded) stacks to existing stackable debuffs rather than doubling them. Four themed events support parties with at least one Traveler and give character-appropriate choices.
-Requires Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7. All multiplayer clients need matching versions. The 106 focused new-card headless checks passed; Full, graphical playtesting and real multiplayer were not run for this release. User playtesting follows publication. This item and future updates remain public. Unofficial fan mod, not affiliated with Mega Crit.
+Traveler Elements 0.3.19 is a performance and stability update with no gameplay changes. The Traveler rig now reuses its vertex and bone buffers instead of allocating every frame, combat-end releases the card dedupe set, and event option font fitting is coalesced to one pass per page and skipped when layout is unchanged. The reward pool stays at 38 cards: 13 Attacks, 18 Skills and 7 Powers, including the ten 0.3.18 Uncommon cards. Four themed events support parties with at least one Traveler. Development log polling is incremental; the strict validators are unchanged.
+Requires Windows x64, game v0.107.1/build23811903 and BaseLib 3.4.7. All multiplayer clients need matching versions. Affected headless suites passed; Full, graphical playtesting and real multiplayer were not run for this release. User playtesting follows publication. This item and future updates remain public. Unofficial fan mod, not affiliated with Mega Crit.

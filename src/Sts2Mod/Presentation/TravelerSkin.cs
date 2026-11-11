@@ -12,10 +12,19 @@ internal sealed class TravelerSkin
     internal readonly Dictionary<string,Node2D> Bones=[];
     internal readonly Dictionary<string,Vector2> Bind=[];
     internal readonly Vector2[] Uv;
-    internal Vector2[] Vertices { get; private set; }
+    internal Vector2[] Vertices { get; }
     internal readonly List<Polygon2D> Layers=[];
     internal readonly List<int[]>[] Triangles=[[],[],[],[],[],[],[]];
-    private readonly (string name,float weight)[][] _weights;
+    // Diagnostic: counts polygon re-uploads so tests can prove unchanged frames skip them.
+    internal int PolygonWrites { get; private set; }
+    // Bone order never changes after construction, so weights are indexed once and the
+    // per-frame update reuses its transform and vertex buffers instead of allocating.
+    private readonly (int bone,float weight)[][] _weights;
+    private readonly List<Node2D> BoneNodes=[];
+    private readonly Dictionary<string,int> _boneIndices=[];
+    private readonly Node2D[] _bones;
+    private readonly Transform2D[] _bind;
+    private readonly Transform2D[] _matrices;
 
     internal TravelerSkin(Node2D owner)
     {
@@ -24,6 +33,7 @@ internal sealed class TravelerSkin
         {
             var node=new Node2D {Name=name,Position=bind-(parent is null?Vector2.Zero:Bind[parent])};
             (parent is null?Canvas:Bones[parent]).AddChild(node); Bones.Add(name,node); Bind.Add(name,bind);
+            _boneIndices.Add(name,BoneNodes.Count); BoneNodes.Add(node);
         }
         Bone("Pelvis",null,new(760,620)); Bone("Torso","Pelvis",new(760,550)); Bone("Head","Torso",new(790,190));
         Bone("SwordArm","Torso",new(650,300)); Bone("SwordForearm","SwordArm",new(545,445));
@@ -37,7 +47,11 @@ internal sealed class TravelerSkin
         var ys=Enumerable.Range(0,Height/28+1).Select(i=>(float)(i*28)).Append(Height).Distinct().ToArray();
         var grid=ys.SelectMany(y=>xs.Select(x=>new Vector2(x,y))).ToArray();
         Uv=grid.Concat(Weapon).ToArray(); Vertices=Uv.ToArray();
-        _weights=grid.Select(Weights).Concat(Weapon.Select(_=>new[]{("Hand",1f)})).ToArray();
+        var boneWeights=grid.Select(Weights).Concat(Weapon.Select(_=>new[]{("Hand",1f)}));
+        _weights=boneWeights.Select(weights=>weights.Select(w=>(_boneIndices[w.Item1],w.Item2)).ToArray()).ToArray();
+        _bones=BoneNodes.ToArray();
+        _bind=_bones.Select(node=>new Transform2D(0,-Bind[node.Name])).ToArray();
+        _matrices=new Transform2D[_bones.Length];
         for(var y=0;y<ys.Length-1;y++) for(var x=0;x<xs.Length-1;x++)
         {
             var a=y*xs.Length+x; var b=a+1; var c=a+xs.Length; var d=c+1;
@@ -134,8 +148,7 @@ internal sealed class TravelerSkin
             bone.Scale=Vector2.One;
             bone.Position=Bind[name]-(bone.GetParent()==Canvas?Vector2.Zero:Bind[bone.GetParent().Name.ToString()]);
         }
-    }
-    internal Vector2 BonePosition(string name)=>Canvas.ToLocal(Bones[name].GlobalPosition);
+    }    internal Vector2 BonePosition(string name)=>Canvas.ToLocal(Bones[name].GlobalPosition);
     // Solve in torso space so the small side-on body turn does not stretch limb lengths.
     internal void AimArm(bool sword,Vector2 target,float angle,float weight)
     {
@@ -178,10 +191,19 @@ internal sealed class TravelerSkin
     internal void Update()
     {
         var inverse=Canvas.GlobalTransform.AffineInverse();
-        var matrices=Bones.ToDictionary(e=>e.Key,e=>inverse*e.Value.GlobalTransform*new Transform2D(0,-Bind[e.Key]));
-        var vertices=new Vector2[Uv.Length];
-        for(var i=0;i<vertices.Length;i++) foreach(var (name,weight) in _weights[i]) vertices[i]+=(matrices[name]*Uv[i])*weight;
-        Vertices=vertices; foreach(var layer in Layers) layer.Polygon=vertices;
+        var bones=_bones; var bind=_bind; var matrices=_matrices;
+        for(var i=0;i<bones.Length;i++) matrices[i]=inverse*bones[i].GlobalTransform*bind[i];
+        var vertices=Vertices; var uv=Uv;
+        var changed=false;
+        for(var i=0;i<vertices.Length;i++)
+        {
+            var sum=Vector2.Zero;
+            foreach(var (bone,weight) in _weights[i]) sum+=matrices[bone]*uv[i]*weight;
+            if(vertices[i]!=sum){vertices[i]=sum;changed=true;}
+        }
+        // Re-uploading identical geometry would only re-marshal 7 polygons per frame.
+        if(changed) foreach(var layer in Layers) layer.Polygon=vertices;
+        if(changed) PolygonWrites++;
     }
 }
 

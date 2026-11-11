@@ -10,7 +10,8 @@ foreach ($language in @('zhs','eng')) {
         if (!$text.Contains("STS2MOD_TEST_PASS EVENT_copy_${case}_$language")) { throw "Missing event copy evidence: $case/$language" }
     }
     if (!$text.Contains("STS2MOD_TEST_PASS EVENT_option_font_uniform_$language") -or
-        !$text.Contains("STS2MOD_TEST_PASS EVENT_option_text_fits_$language")) { throw "Missing event typography: $language" }
+        !$text.Contains("STS2MOD_TEST_PASS EVENT_option_text_fits_$language") -or
+        !$text.Contains("STS2MOD_TEST_PASS EVENT_option_font_stable_after_repeat_resize_$language")) { throw "Missing event typography: $language" }
 }
 if ($text -match 'STS2MOD_TEST_FAIL|SCRIPT ERROR') { throw 'Traveler event tests failed.' }
 if ($text -notmatch '(?m)^STS2MOD_EVENTS_COMPLETE assertions=(\d+) logic=PASS rendering=NOT_RUN multiplayer=NOT_RUN' -or [int]$Matches[1] -lt 90) {
