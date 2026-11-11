@@ -32,7 +32,7 @@ public partial class TravelerTestRunner
             var card = await Add<EchoingBlight>(up);
             var description = card.GetDescriptionForPile(PileType.Hand);
             Check(!description.Contains("{Stacks}") && !description.Contains("{ComboPreview}")
-                && System.Text.RegularExpressions.Regex.Matches(description, $@"(?<!\d){increase}(?!\d)").Count == 3,
+                && System.Text.RegularExpressions.Regex.Matches(description.Split('\n')[0], $@"(?<!\d){increase}(?!\d)").Count == 3,
                 "BLIGHT_description_all_three_amounts_" + up);
             await Queue(new PlayCardAction(card, _target));
             Check(effects.Length == 5 && effects.All(e => e.Power.Amount == e.Amount + Math.Sign(e.Amount) * increase)
