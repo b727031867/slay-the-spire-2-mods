@@ -32,7 +32,7 @@ public partial class TravelerTestRunner
             var card = await Add<EchoingBlight>(up);
             var description = card.GetDescriptionForPile(PileType.Hand);
             Check(!description.Contains("{Stacks}") && !description.Contains("{ComboPreview}")
-                && System.Text.RegularExpressions.Regex.Matches(description.Replace(ComboPresentation.Preview(card).GetFormattedText(), ""),
+                && System.Text.RegularExpressions.Regex.Matches(description.Replace(ComboPresentation.Preview((EchoingBlight)card).GetFormattedText(), ""),
                     $@"(?<!\d){increase}(?!\d)").Count == 3,
                 "BLIGHT_description_all_three_amounts_" + up);
             await Queue(new PlayCardAction(card, _target));
