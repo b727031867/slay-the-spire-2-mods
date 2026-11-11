@@ -196,7 +196,7 @@ $focused=& (Join-Path $scripts 'Invoke-ReleasePreparation.ps1') -PackageDirector
 Check (($focused.Tests.Suite -join ',') -eq 'Cards,Events' -and !$focused.Full) 'explicit focused suites do not silently run Full'
 
 # Exercise the real evidence recorder with a disposable hidden shell, never the game.
-foreach($name in @('Invoke-ModTests','ModTestSuites')) {
+foreach($name in @('Invoke-ModTests','ModTestSuites','Read-LogChunk')) {
     Copy-Item -LiteralPath (Join-Path $root "scripts/$name.ps1") -Destination $scripts -Force
 }
 $info.gameAssemblySha256='fixture-game'

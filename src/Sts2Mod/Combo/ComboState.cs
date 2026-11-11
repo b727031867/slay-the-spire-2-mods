@@ -15,6 +15,8 @@ public sealed class ComboState
     public int TurnLimit { get; private set; } = Limit;
     public void SetTurnLimit(int limit) => TurnLimit = Math.Max(Limit, limit);
     private readonly HashSet<object> _seen = new(ReferenceEqualityComparer.Instance);
+    // Diagnostic only: lets the rules test observe that combat end releases the dedupe set.
+    internal int SeenCount => _seen.Count;
     public Element Last { get; private set; }
     public int Used { get; private set; }
     public int RewardsThisTurn { get; private set; }
@@ -24,7 +26,14 @@ public sealed class ComboState
     public int Encoded => 1 + (int)Last + 4 * Used;
 
     public void BeginTurn() { Used = 0; RewardsThisTurn = 0; }
-    public void ClearCombat() { Last = Element.None; Used = 0; RewardsThisTurn = 0; CombosThisCombat = 0; }
+    // The dedupe set only spans one combat: keeping it would retain every action object
+    // and grow without bound in long fights. Natural cross-turn duplicates still work
+    // because turns do not clear it; only a combat end does.
+    public void ClearCombat()
+    {
+        Last = Element.None; Used = 0; RewardsThisTurn = 0; CombosThisCombat = 0;
+        if (_seen.Count > 0) _seen.Clear();
+    }
     public int MarkRewardGranted() => ++RewardsThisTurn;
 
     // Read-only: hovering must never reserve an action or spend a combo use.

@@ -57,6 +57,15 @@ public partial class TravelerTestRunner
                             $"EVENT_option_font_uniform_{language}_{group[0].Name}_{width}");
                         Check(labels.All(label => label.GetContentHeight() <= label.Size.Y + 1),
                             $"EVENT_option_text_fits_{language}_{group[0].Name}_{width}");
+                        // Coalescing must be idempotent: returning to an already measured width
+                        // must restore the same font size instead of ratcheting it down.
+                        var sizes = labels.Select(label => label.GetThemeFontSize("normal_font_size")).ToArray();
+                        container.Size = new Vector2(width == 900 ? 650 : 900, 600);
+                        for (var frame = 0; frame < 3; frame++) await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+                        container.Size = new Vector2(width, 600);
+                        for (var frame = 0; frame < 4; frame++) await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+                        Check(labels.Select(label => label.GetThemeFontSize("normal_font_size")).SequenceEqual(sizes),
+                            $"EVENT_option_font_stable_after_repeat_resize_{language}_{group[0].Name}_{width}");
                     }
                 }
                 finally { container.Free(); }

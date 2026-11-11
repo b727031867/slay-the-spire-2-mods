@@ -7,6 +7,7 @@ param(
 )
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'ModTestSuites.ps1')
+. (Join-Path $PSScriptRoot 'Read-LogChunk.ps1')
 if (!$PSBoundParameters.ContainsKey('TimeoutSeconds') -and $Suite -in @('Cards','Full','SaveResume')) { $TimeoutSeconds=1800 }
 $definition=Get-ModTestSuite $Suite
 $total=[Diagnostics.Stopwatch]::StartNew()
@@ -28,11 +29,24 @@ $launch=& (Join-Path $PSScriptRoot 'Start-ModTest.ps1') -Suite $Suite -SandboxDi
 $ownedProcess=$launch.Process
 try {
     $clock=[Diagnostics.Stopwatch]::StartNew()
+    # Poll only bytes appended since the last read; the complete log is still validated
+    # strictly by Test-ModRun once the suite finishes.
+    $readOffset=[long]0
+    $pending=[byte[]]::new(0)
     do {
-        $text=if(Test-Path -LiteralPath $launch.LogFile){Get-Content -Raw -LiteralPath $launch.LogFile}else{''}
-        if($text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.'){throw 'Native test reported a failure; inspect the test log.'}
-        if($text -match $definition.Marker){break}
-        if(!$ownedProcess -or $ownedProcess.HasExited){throw 'Test process exited before its suite completed.'}
+        $chunk=(Read-LogChunk -Path $launch.LogFile -Offset $readOffset -Pending $pending)
+        $readOffset=$chunk.Offset
+        $pending=$chunk.Pending
+        if($chunk.Text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.'){throw 'Native test reported a failure; inspect the test log.'}
+        if($chunk.Text -match $definition.Marker){break}
+        if(!$ownedProcess -or $ownedProcess.HasExited){
+            # A final line without a trailing newline would still be in Pending. Check it once
+            # before reporting an early exit, matching the previous whole-file behaviour.
+            $tail=if($pending.Length -gt 0){[Text.Encoding]::UTF8.GetString($pending)}else{''}
+            if($tail -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.'){throw 'Native test reported a failure; inspect the test log.'}
+            if($tail -match $definition.Marker){break}
+            throw 'Test process exited before its suite completed.'
+        }
         if($clock.Elapsed.TotalSeconds -ge $TimeoutSeconds){throw "Test suite timed out: $Suite"}
         Start-Sleep -Milliseconds 500
     } while($true)

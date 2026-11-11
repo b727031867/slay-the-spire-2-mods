@@ -3,7 +3,7 @@
   "name": "STS2 Mod - Traveler Elements",
   "author": "b727031867",
   "description": "Playable Traveler with 38 reward cards, native Poison, elemental combos and four Spire events.",
-  "version": "0.3.18",
+  "version": "0.3.19",
   "has_pck": true,
   "has_dll": true,
   "affects_gameplay": true,

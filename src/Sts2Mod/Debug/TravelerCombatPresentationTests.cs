@@ -27,6 +27,13 @@ public partial class TravelerTestRunner
         Check(rig.Skin.Layers.All(layer => layer.Texture.ResourcePath == TravelerSkin.TexturePath)
             && rig.Skin.Vertices.Zip(rig.Skin.Uv).All(p => p.First.DistanceTo(p.Second) < .01f),
             "ANIM_bind_pose_reconstructs_original_mother_without_rescaling_parts");
+        // Per-frame skinning must reuse its vertex buffer; reallocating it every frame was the
+        // hot allocation this guards against.
+        var sharedVertices = rig.Skin.Vertices;
+        rig.PlayAction("Defend");
+        for (var i = 0; i < 5; i++) rig.Advance(.02);
+        Check(ReferenceEquals(sharedVertices, rig.Skin.Vertices), "ANIM_skin_update_reuses_vertex_buffer");
+        rig.ResetForPreview();
         Check(rig.Skin.Triangles.SelectMany(t => t).Select(t => string.Join(',',t)).Distinct().Count()
             == rig.Skin.Triangles.Sum(t => t.Count), "ANIM_source_triangles_drawn_once_no_duplicate_shoulders");
         rig.PlayAction("Defend");
