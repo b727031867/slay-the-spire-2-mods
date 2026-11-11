@@ -33,4 +33,11 @@
 - `6ef160a`的Cards在683项后实际FAIL：`BLIGHT_description_all_three_amounts_False`，原因是上述虚无前缀行；日志`game-20261111T1400267181799Z.log`及原FAIL报告保留。
 - 中间`d61ad8d`构建识别到`Add<T>`返回`CardModel`而预览格式化要求`ElementCardModel`；补上已知卡牌类型转换后重建为最终`7ae5a75`。未交付或发布中间失败包。
 
-最终专项、冻结、发布与下载核验待完成后追加。
+### 最终Cards专项
+
+- 同一最终核心无GUI Cards：1196项PASS，未知错误0；分类器接受的原生headless诊断6条，未忽略未知错误。普通/升级的两个新增描述标记及既有全部BLIGHT边界标记均存在。
+- 日志：`.local/logs/game-20261111T1409363852444Z.log`；SHA256：`E3FBBCD322BEE75873F123048CD18D5CCFDB142DAA68D1F23D65B221F127D293`；耗时1248.183秒。
+- 绑定报告：上述日志的`.result.json`（schemaVersion2，完整核心与游戏/依赖/设备哈希）；副本`.local/blight-copy-cards.json`。套件自带加载、资源和身份验证，不另跑本地Load。
+- 后续仅补充验证/交付文档，不重建或改变该被测核心；冻结时复用同包报告。
+
+冻结、发布与下载核验待完成后追加。Full、图形、自然整局、真实联机与用户试玩均NOT_RUN。
