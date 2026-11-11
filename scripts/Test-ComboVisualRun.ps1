@@ -95,6 +95,7 @@ foreach($direction in @('left','right')) {
 }
 if(!$text.Contains('STS2MOD_TEST_PASS ANIM_surrounded_native_body_is_rig')){throw 'Missing surrounded native body check'}
 foreach($case in @('native_scene_single_mother_connected_skin','native_attack_reaches_layered_rig',
+ 'skin_update_reuses_vertex_buffer','skin_skips_identical_polygon_upload',
  'independent_arm_and_torso_not_whole_image_slide','mixed_card_defense_uses_attack_recovery',
  'pose_returns_without_drift','death_cannot_be_overwritten_by_old_actions','native_revive_restores_pose','lowercase_revive_alias_restores_pose',
  'simultaneous_effects_bounded','effects_free_without_combo_or_rng_changes','native_plain_strike_contact',

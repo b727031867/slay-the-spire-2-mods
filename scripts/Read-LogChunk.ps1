@@ -32,15 +32,22 @@ function Read-LogChunk {
         $combined = [byte[]]::new($Pending.Length + $read)
         [Array]::Copy($Pending, 0, $combined, 0, $Pending.Length)
         [Array]::Copy($buffer, 0, $combined, $Pending.Length, $read)
+        # The file start is a fixed byte position; strip a BOM before any line splitting so a
+        # BOM kept in Pending by an incomplete first line cannot leak into the returned text.
+        if ($result.Reset -or ($Offset -eq $read -and $combined.Length -ge 3 -and
+            $combined[0] -eq 0xEF -and $combined[1] -eq 0xBB -and $combined[2] -eq 0xBF)) {
+            if ($combined.Length -ge 3 -and $combined[0] -eq 0xEF -and $combined[1] -eq 0xBB -and $combined[2] -eq 0xBF) {
+                $trimmed = [byte[]]::new($combined.Length - 3)
+                [Array]::Copy($combined, 3, $trimmed, 0, $trimmed.Length)
+                $combined = $trimmed
+            }
+        }
         $lastLineBreak = -1
         for ($i = $combined.Length - 1; $i -ge 0; $i--) { if ($combined[$i] -eq 10) { $lastLineBreak = $i; break } }
         if ($lastLineBreak -ge 0) {
             $result.Text = [Text.Encoding]::UTF8.GetString($combined, 0, $lastLineBreak + 1)
             $Pending = [byte[]]::new($combined.Length - $lastLineBreak - 1)
             [Array]::Copy($combined, $lastLineBreak + 1, $Pending, 0, $Pending.Length)
-            # Strip a UTF-8 BOM only when the scan starts at the file start.
-            if ($Offset -eq $read -and $result.Text.Length -gt 0 -and $result.Text[0] -eq [char]0xFEFF)
-            { $result.Text = $result.Text.Substring(1) }
         } else {
             $Pending = $combined
         }

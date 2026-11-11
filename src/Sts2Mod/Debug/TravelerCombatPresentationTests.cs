@@ -33,6 +33,11 @@ public partial class TravelerTestRunner
         rig.PlayAction("Defend");
         for (var i = 0; i < 5; i++) rig.Advance(.02);
         Check(ReferenceEquals(sharedVertices, rig.Skin.Vertices), "ANIM_skin_update_reuses_vertex_buffer");
+        // An idle frame reproduces identical geometry, so the polygon upload is skipped.
+        rig.Advance(0);
+        var writes = rig.Skin.PolygonWrites;
+        rig.Advance(0);
+        Check(rig.Skin.PolygonWrites == writes, "ANIM_skin_skips_identical_polygon_upload");
         rig.ResetForPreview();
         Check(rig.Skin.Triangles.SelectMany(t => t).Select(t => string.Join(',',t)).Distinct().Count()
             == rig.Skin.Triangles.Sum(t => t.Count), "ANIM_source_triangles_drawn_once_no_duplicate_shoulders");

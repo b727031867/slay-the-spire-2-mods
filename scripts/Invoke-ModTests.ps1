@@ -37,12 +37,16 @@ try {
         $chunk=(Read-LogChunk -Path $launch.LogFile -Offset $readOffset -Pending $pending)
         $readOffset=$chunk.Offset
         $pending=$chunk.Pending
-        if($chunk.Text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.'){throw 'Native test reported a failure; inspect the test log.'}
+        # A final line that has no trailing newline is still readable as pending bytes; scan it
+        # for failures so an ERROR without a newline cannot be missed. The completion marker is
+        # only accepted from complete lines, otherwise a half-written marker could end the wait
+        # before the suite actually finished.
+        $tail=if($pending.Length -gt 0){[Text.Encoding]::UTF8.GetString($pending)}else{''}
+        if($chunk.Text -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.' -or
+           $tail -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.'){throw 'Native test reported a failure; inspect the test log.'}
         if($chunk.Text -match $definition.Marker){break}
         if(!$ownedProcess -or $ownedProcess.HasExited){
-            # A final line without a trailing newline would still be in Pending. Check it once
-            # before reporting an early exit, matching the previous whole-file behaviour.
-            $tail=if($pending.Length -gt 0){[Text.Encoding]::UTF8.GetString($pending)}else{''}
+            # The log is final now, so a marker or failure in an unterminated last line counts.
             if($tail -match 'STS2MOD_TEST_FAIL|\[ERROR\]|SCRIPT ERROR|(?m)^ERROR: System\.'){throw 'Native test reported a failure; inspect the test log.'}
             if($tail -match $definition.Marker){break}
             throw 'Test process exited before its suite completed.'

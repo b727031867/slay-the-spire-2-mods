@@ -15,6 +15,8 @@ internal sealed class TravelerSkin
     internal Vector2[] Vertices { get; }
     internal readonly List<Polygon2D> Layers=[];
     internal readonly List<int[]>[] Triangles=[[],[],[],[],[],[],[]];
+    // Diagnostic: counts polygon re-uploads so tests can prove unchanged frames skip them.
+    internal int PolygonWrites { get; private set; }
     // Bone order never changes after construction, so weights are indexed once and the
     // per-frame update reuses its transform and vertex buffers instead of allocating.
     private readonly (int bone,float weight)[][] _weights;
@@ -201,6 +203,7 @@ internal sealed class TravelerSkin
         }
         // Re-uploading identical geometry would only re-marshal 7 polygons per frame.
         if(changed) foreach(var layer in Layers) layer.Polygon=vertices;
+        if(changed) PolygonWrites++;
     }
 }
 

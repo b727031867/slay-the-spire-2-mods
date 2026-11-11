@@ -54,6 +54,13 @@ try {
     $chunk = Read-LogChunk -Path $log -Offset 0 -Pending ([byte[]]::new(0))
     Check ($chunk.Text -eq "alpha`r`nbeta`r`n" -and $chunk.Pending.Length -eq 0) 'CRLF lines returned whole'
 
+    # A BOM followed by an incomplete first line must not leak a BOM into later text.
+    [IO.File]::WriteAllBytes($log, [byte[]](0xEF, 0xBB, 0xBF) + $utf8.GetBytes('partial'))
+    $chunk = Read-LogChunk -Path $log -Offset 0 -Pending ([byte[]]::new(0))
+    [IO.File]::AppendAllText($log, " line`n", $utf8)
+    $chunk = Read-LogChunk -Path $log -Offset $chunk.Offset -Pending $chunk.Pending
+    Check ($chunk.Text -eq "partial line`n" -and $chunk.Text[0] -ne [char]0xFEFF) 'BOM stripped when first line was incomplete'
+
     # Large log: one bounded chunk per call, and repeated calls drain it.
     $many = ((1..3000 | ForEach-Object { "line $_`n" }) -join '')
     [IO.File]::WriteAllText($log, $many, $utf8)
