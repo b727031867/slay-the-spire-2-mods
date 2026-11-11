@@ -2,7 +2,7 @@
   "title": "旅行者·元素连携 | Traveler Elements [支持联机]",
   "description": "由 Build-ReleaseCandidate.ps1 从 description.bbcode.txt 填充并冻结。",
   "visibility": "public",
-  "changeNote": "0.3.19：性能与稳定性修复。角色动画复用顶点与骨骼缓冲；战斗结束释放出牌去重记录；事件选项字号按整页合并刷新；开发测试改为增量读取日志。玩法、数值与内容未改动。",
+  "changeNote": "0.3.19 文案修正：雷蚀回响及升级版明确分别增加3/6层或3/6回合；负力量、负敏捷只进一步降低一次，不重复叠加。同步英文说明，卡牌效果、数值与费用不变。",
   "tags": [],
   "dependencies": [
     3737335127
